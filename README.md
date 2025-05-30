@@ -1,3 +1,5 @@
+# TODO OUTDATED DOCUMENT
+
 # How to start using GAMS Engine in Kubernetes?
 
 The following prerequisites are required for using GAMS Engine in Kubernetes.
