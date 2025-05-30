@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer-deployment
+  labels:
+    app: pgbouncer
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+    {{- if .Values.pgbouncer.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.pgbouncer.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      containers:
+        - name: engine-pgbouncer
+          image: bitnami/pgbouncer:1.19.1
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.pgBouncer.resources | indent 12 }}
+          env:
+            - name: POSTGRESQL_USERNAME
+              value: worker
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_WORKER_PWD
+            - name: POSTGRESQL_DATABASE
+              value: gamsrest
+            - name: POSTGRESQL_HOST
+              value: database
+            - name: PGBOUNCER_POOL_MODE
+              value: transaction
+            - name: PGBOUNCER_DATABASE
+              value: gamsrest
+            - name: PGBOUNCER_MAX_CLIENT_CONN
+              value: "5000"
+            - name: PGBOUNCER_DEFAULT_POOL_SIZE
+              value: "50"
+            - name: PGBOUNCER_USERLIST
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_PGBOUNCER_USERLIST

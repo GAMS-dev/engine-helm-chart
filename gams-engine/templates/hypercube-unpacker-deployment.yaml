@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hunpacker-deployment
+  labels:
+    app: hunpacker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hypercube-unpacker
+  template:
+    metadata:
+      labels:
+        app: hypercube-unpacker
+    spec:
+    {{- if .Values.hypercubeUnpacker.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.hypercubeUnpacker.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.hypercubeUnpacker.image) "context" $) | indent 6}}
+      containers:
+        - name: hypercube-unpacker
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.hypercubeUnpacker.image.registry "repository" .Values.hypercubeUnpacker.image.repository "tag" (coalesce .Values.hypercubeUnpacker.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.hypercubeUnpacker.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: "queue"
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_USER
+              value: "hypercube_unpacker"
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD

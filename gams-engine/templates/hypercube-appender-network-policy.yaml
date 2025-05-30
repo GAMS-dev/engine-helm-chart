@@ -1,0 +1,40 @@
+{{ if .Values.useNetworkPolicies }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hypercube-appender-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: hypercube-appender
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress: []
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app: queue
+      ports:
+        - protocol: TCP
+          port: 5672
+    - to:
+      - podSelector:
+          matchLabels:
+            app: mongo
+      ports:
+        - protocol: TCP
+          port: 27017
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+{{ end }}

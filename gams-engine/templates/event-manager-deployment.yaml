@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-manager-deployment
+  labels:
+    app: event-manager
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-manager
+  template:
+    metadata:
+      labels:
+        app: event-manager
+    spec:
+    {{- if .Values.eventManager.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.eventManager.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.eventManager.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-event-manager
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.eventManager.image.registry "repository" .Values.eventManager.image.repository "tag" (coalesce .Values.eventManager.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.eventManager.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: "queue"
+            - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_USER
+              value: "event_manager"
+            - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_EVENT_MANAGER_USER
+              value: "event_manager"
+            - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "database"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_USER
+              value: "event_manager"
+            - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD

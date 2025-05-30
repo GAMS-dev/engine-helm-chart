@@ -1,0 +1,333 @@
+{
+  "rabbit_version": "3.8.2",
+  "users": [
+    {
+      "name": "broker",
+      "password_hash": "{{ .Values.gmsRunnerRabbitBrokerPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "worker",
+      "password_hash": "{{ .Values.gmsRunnerRabbitWorkerPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "hypercube_appender",
+      "password_hash": "{{ .Values.gmsRunnerRabbitHypercubeAppenderPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "cleaner",
+      "password_hash": "{{ .Values.gmsRunnerRabbitCleanerPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "hypercube_unpacker",
+      "password_hash": "{{ .Values.gmsRunnerRabbitHypercubeUnpackerPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "migrate",
+      "password_hash": "{{ .Values.gmsRunnerRabbitMigratePwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    },
+    {
+      "name": "job_spawner",
+      "password_hash": "{{ .Values.gmsRunnerRabbitSpwnPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "dep_check",
+      "password_hash": "{{ .Values.gmsRunnerRabbitDependencyCheckPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "event_manager",
+      "password_hash": "{{ .Values.gmsRunnerRabbitEventManagerPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "k8s_job_canceler",
+      "password_hash": "{{ .Values.gmsRunnerRabbitK8sCancelPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "k8s_job_watcher",
+      "password_hash": "{{ .Values.gmsRunnerRabbitK8sJobWatcherPwdHash }}",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "worker_vhost"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "worker",
+      "vhost": "worker_vhost",
+      "configure": "gams_log_\\d+|gams_signal_\\w+|gams_log_\\d+_.+|gams_flush_\\d+",
+      "write": "gams_log_\\d+|log_exchange|gams_signal_\\w+|solve_complete_exchange|event_exchange|gams_log_\\d+_.+|gams_flush_\\d+",
+      "read": "solve|solve_pool_.+|log_exchange|flush_exchange|signal_exchange|gams_signal_\\w+|gams_flush_\\d+"
+    },
+    {
+      "user": "broker",
+      "vhost": "worker_vhost",
+      "configure": "gams_log_\\d+|gams_flush_\\d+|solve_pool_.+|solve",
+      "write": "solve_exchange|signal_exchange|flush_exchange|unpack_exchange|solve_complete_exchange|event_exchange|solve_pool_.+|solve",
+      "read": "solve_exchange|gams_log_\\d+|solve"
+    },
+    {
+      "user": "hypercube_appender",
+      "vhost": "worker_vhost",
+      "configure": "^$",
+      "write": "^event_exchange$",
+      "read": "hypercube_append_queue"
+    },
+    {
+      "user": "cleaner",
+      "vhost": "worker_vhost",
+      "configure": "gams_signal_\\d+|gams_flush_\\d+|gams_log_\\d+|gams_log_\\d+_.+|solve_pool_.+",
+      "write": "^solve_complete_exchange|event_exchange$",
+      "read": "^after_job_cleanup_queue|solve_pool_.+$"
+    },
+    {
+      "user": "hypercube_unpacker",
+      "vhost": "worker_vhost",
+      "configure": "^$",
+      "write": "^solve_exchange|event_exchange$",
+      "read": "hypercube_unpack_queue"
+    },
+    {
+      "user": "migrate",
+      "vhost": "worker_vhost",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "job_spawner",
+      "vhost": "worker_vhost",
+      "configure": "^$",
+      "write": "^solve_complete_exchange|event_exchange|solve_exchange$",
+      "read": "^solve$"
+    },
+    {
+      "user": "dep_check",
+      "vhost": "worker_vhost",
+      "configure": "^$",
+      "write": "^solve_exchange|unpack_exchange|solve_complete_exchange|event_exchange$",
+      "read": "^dependency_check_queue$"
+    },
+    {
+      "user": "event_manager",
+      "vhost": "worker_vhost",
+      "configure": "^$",
+      "write": "^$",
+      "read": "^event_queue$"
+    },
+    {
+      "user": "k8s_job_canceler",
+      "vhost": "worker_vhost",
+      "configure": "^k8s_cancel_queue$",
+      "write": "^k8s_cancel_queue|solve_complete_exchange|event_exchange$",
+      "read": "^signal_exchange|k8s_cancel_queue$"
+    },
+    {
+      "user": "k8s_job_watcher",
+      "vhost": "worker_vhost",
+      "configure": "^$",
+      "write": "^signal_exchange|event_exchange$",
+      "read": "^$"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "cluster_name",
+      "value": "gamsweb_cluster"
+    },
+    {
+      "name": "schema_migrations",
+      "value": {
+        "version": 8,
+        "dirty": false
+      }
+    }
+  ],
+  "policies": [],
+  "queues": [
+    {
+      "vhost": "worker_vhost",
+      "name": "solve",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "vhost": "worker_vhost",
+      "name": "hypercube_append_queue",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "vhost": "worker_vhost",
+      "name": "after_job_cleanup_queue",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "vhost": "worker_vhost",
+      "name": "hypercube_unpack_queue",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "vhost": "worker_vhost",
+      "name": "dependency_check_queue",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "vhost": "worker_vhost",
+      "name": "event_queue",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "solve_exchange",
+      "vhost": "worker_vhost",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "solve_complete_exchange",
+      "vhost": "worker_vhost",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "log_exchange",
+      "vhost": "worker_vhost",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "signal_exchange",
+      "vhost": "worker_vhost",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "flush_exchange",
+      "vhost": "worker_vhost",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "unpack_exchange",
+      "vhost": "worker_vhost",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "event_exchange",
+      "vhost": "worker_vhost",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "solve_exchange",
+      "vhost": "worker_vhost",
+      "destination": "solve",
+      "destination_type": "queue",
+      "routing_key": "solve",
+      "arguments": {}
+    },
+    {
+      "source": "solve_complete_exchange",
+      "vhost": "worker_vhost",
+      "destination": "hypercube_append_queue",
+      "destination_type": "queue",
+      "arguments": {}
+    },
+    {
+      "source": "solve_complete_exchange",
+      "vhost": "worker_vhost",
+      "destination": "after_job_cleanup_queue",
+      "destination_type": "queue",
+      "arguments": {}
+    },
+    {
+      "source": "unpack_exchange",
+      "vhost": "worker_vhost",
+      "destination": "hypercube_unpack_queue",
+      "routing_key": "hypercube_unpack_queue",
+      "destination_type": "queue",
+      "arguments": {}
+    },
+    {
+      "source": "solve_complete_exchange",
+      "vhost": "worker_vhost",
+      "destination": "dependency_check_queue",
+      "destination_type": "queue",
+      "arguments": {}
+    },
+    {
+      "source": "event_exchange",
+      "vhost": "worker_vhost",
+      "destination": "event_queue",
+      "destination_type": "queue",
+      "arguments": {}
+    },
+    {
+      "source": "solve_complete_exchange",
+      "vhost": "worker_vhost",
+      "destination": "event_exchange",
+      "destination_type": "exchange",
+      "arguments": {}
+    }
+  ]
+}

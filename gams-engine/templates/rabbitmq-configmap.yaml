@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: queue-definition
+  namespace: {{ .Release.Namespace }}
+data:
+  definitions.json: |-
+{{ (tpl (.Files.Get "definitions.json") .) | indent 4 }}

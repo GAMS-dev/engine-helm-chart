@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forward-proxy-deployment
+  labels:
+    app: forward-proxy
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forward-proxy
+  template:
+    metadata:
+      labels:
+        app: forward-proxy
+    spec:
+    {{- if .Values.forwardProxy.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.forwardProxy.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.forwardProxy.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-dependency-checker
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.forwardProxy.image.registry "repository" .Values.forwardProxy.image.repository "tag" (coalesce .Values.forwardProxy.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.forwardProxy.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_USER
+              value: "forward_proxy"
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_FORWARD_PROXY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_FORWARD_PROXY_SECRET
+            - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY

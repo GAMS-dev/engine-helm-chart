@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-ext
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: broker
+  ports:
+    - port: {{ ternary 443 80 .Values.service.useTLS }}
+      targetPort: {{ ternary 443 80 .Values.service.useTLS }}
+      nodePort: {{ .Values.service.nodePort }}
+  type: {{ required "value 'service.type' is required" .Values.service.type }}

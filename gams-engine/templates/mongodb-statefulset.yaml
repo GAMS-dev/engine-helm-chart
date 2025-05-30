@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-mongo
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+    {{- if .Values.mongodb.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: engine-mongo
+          image: mongo:4.2.0-bionic
+          resources:
+{{ toYaml .Values.mongodb.resources | indent 12 }}
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+            - name: mongo-config-data
+              mountPath: /docker-entrypoint-initdb.d/
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "mongo_broker"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: MONGO_INITDB_DATABASE
+              value: "gams_worker"
+          imagePullPolicy: Always
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+        - name: mongo-config-data
+          configMap:
+            name: mongo-config
+            items:
+              - key: setup.js
+                path: setup.js

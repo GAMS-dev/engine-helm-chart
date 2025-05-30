@@ -1,0 +1,116 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-migrate
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      containers:
+        - name: mongo-migrate
+          image: gams/engine-mongo-migrate:{{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          env:
+            - name: GMS_RUNNER_MONGO_BROKER_USER
+              value: "mongo_broker"
+            - name: GMS_RUNNER_MONGO_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_INITDB_MAIN
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+      restartPolicy: OnFailure
+  backoffLimit: 8
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: database-migrate
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      containers:
+        - name: database-migrate
+          image: gams/engine-postgres-migrate:{{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          env:
+            - name: GMS_RUNNER_DATABASE_ADMIN_USER
+              value: "GMSMASTER"
+            - name: GMS_RUNNER_DATABASE_ADMIN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_ADMIN_PWD
+            - name: GMS_RUNNER_DATABASE_INITDB_MAIN
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+      restartPolicy: OnFailure
+  backoffLimit: 8
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: queue-migrate
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    spec:
+      containers:
+        - name: queue-migrate
+          image: gams/engine-queue-migrate:{{ .Chart.AppVersion }}
+          imagePullPolicy: Always
+          env:
+            - name: GMS_RUNNER_RABBIT_MIGRATE_USER
+              value: "migrate"
+            - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_MIGRATE_PWD
+            - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
+      restartPolicy: OnFailure
+  backoffLimit: 8

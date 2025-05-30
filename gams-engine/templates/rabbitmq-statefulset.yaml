@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-rabbitmq
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: queue
+  serviceName: queue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: queue
+    spec:
+    {{- if .Values.rabbitmq.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: gamswebqueue
+          image: rabbitmq:3.8.2-management-alpine
+          resources:
+{{ toYaml .Values.rabbitmq.resources | indent 12 }}
+          env:
+            - name: RABBITMQ_VM_MEMORY_HIGH_WATERMARK
+              value: "0.7"
+          ports:
+            - containerPort: 5672
+          volumeMounts:
+            - name: queue-data
+              mountPath: /var/lib/rabbitmq/mnesia/
+            - name: queue-definition-data
+              mountPath: /etc/rabbitmq/definitions.json
+              subPath: definitions.json
+              readOnly: true
+      volumes:
+        - name: queue-data
+          persistentVolumeClaim:
+            claimName: queue-pvc
+        - name: queue-definition-data
+          configMap:
+            name: queue-definition
+            items:
+              - key: definitions.json
+                path: definitions.json

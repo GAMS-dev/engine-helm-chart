@@ -1,0 +1,347 @@
+# mountUrl is the location of the url where Engine UI will be hosted. API will be bound to mountUrl/api.
+# mountUrl can contain only one level, for example, "/gams-engine" is valid but "/gams-engine/runner" isn't.
+# currently only 2 valid values are "/" and "/engine"
+mountUrl: "/"
+# GAMS Engine service parameters
+service:
+# service.type determines the type of the service that will be used to expose the GAMS Engine API
+# Possible values: NodePort and LoadBalancer
+  type: NodePort
+# service.nodePort of the service. If not provided, a random port within the NodePort range is used.
+  nodePort: ""
+# service.useTLS determines whether to expose GAMS Engine API securely or not
+  useTLS: false
+# service.tlsSecretName, name of the TLS Secret to be used. Only used when useTLS is true.
+# its type must be kubernetes.io/tls and it should be in the deployed namespace.
+  tlsSecretName: ""
+# Job spawner can customize job definitions to cover wider range of use cases.
+# e.g it can include init containers to workers. To do that create a Python file
+# that defines customizes the job definition in a function called 'customize_job_definition'
+# and create a configMap from that. And pass name of that configMap to this variable
+workerCustomizeJobConfigMapName: ""
+# Default deny network policy ensures all the communication within the namespace
+# is denied by default unless the otherwise is specified. We suggest setting this to
+# true if that namespace only contains the Engine installation.
+useDefaultDenyNetworkPolicy: false
+# Network policies provides an extra layer of protection that we suggest. However,
+# Network Policies only work if your CNI plugin implements them. We recommmend keeping this
+# true because it provides extra security. (If your CNI does not implement, they will be ignored.)
+useNetworkPolicies: true
+# Job Canceler, Job Cleaner, Job Spawner and Job Watcher requires communication via Kubernetes API.
+# Client version that is used in those pods needs to be compatible with the Kubernetes API version.
+# You can read more on https://kubernetes.io/releases/version-skew-policy/
+# Available client versions - compatible kubernetes versions are:
+# v29.0.0     1.29
+# v30.1.0     1.30
+# v31.0.0     1.31
+# v32.0.0     1.32
+kubernetesClientVersion: "v32.0.0"
+global:
+  # Global Docker image registry
+  imageRegistry: ""
+  # imagePullSecrets:
+  #   - registryKeySecretName
+  imagePullSecrets: []
+image:
+  tag: ""
+broker:
+  affinity: {}
+  uwsgi:
+    image:
+      registry: docker.io/gams
+      repository: engine-broker
+      # Tag of the image. If not specified, AppVersion is used.
+      tag: ""
+      pullSecrets: []
+    resources:
+      requests:
+        cpu: "100m"
+        memory: 250Mi
+      limits:
+        cpu: "400m"
+        memory: 500Mi
+  nginx:
+    image:
+      registry: docker.io/gams
+      repository: engine-nginx
+      # Tag of the image. If not specified, AppVersion is used.
+      tag: ""
+      pullSecrets: []
+    resources:
+      requests:
+        cpu: "100m"
+        memory: 100Mi
+      limits:
+        cpu: "200m"
+        memory: 200Mi
+# Forward Proxy forwards the requests from the Engine API
+# Forward Proxy pod resource definitions
+forwardProxy:
+  affinity: {}
+  image:
+    registry: docker.io/gams
+    repository: engine-forward-proxy
+    tag: ""
+    pullSecrets: []
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 100Mi
+    limits:
+      cpu: "100m"
+      memory: 100Mi
+# Event manager listens to event queue and handles events.
+# For example, it can call a webhook to notify a job is finished.
+eventManager:
+  affinity: {}
+  image:
+    registry: docker.io/gams
+    repository: engine-event-manager
+    tag: ""
+    pullSecrets: []
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 100Mi
+    limits:
+      cpu: "100m"
+      memory: 100Mi
+ # Cleaner chronologically removes unused files.
+ # Cleaner pod resource definitions
+cleaner:
+  affinity: {}
+  # Cleaner cleans up queues/pools etc. every 'heartbeatSeconds' seconds.
+  # Do not touch this value unless you know what you are doing!
+  heartbeatSeconds: 300
+  image:
+    registry: docker.io/gams
+    repository: engine-cleaner
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets: []
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 200Mi
+    limits:
+      cpu: "100m"
+      memory: 300Mi
+# Dependency checker spawns jobs that are dependent to other jobs
+# when the other jobs complete. Dependency checker pod resource definitions
+dependencyChecker:
+  affinity: {}
+  image:
+    registry: docker.io/gams
+    repository: engine-dependency-checker
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets: []
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 100Mi
+    limits:
+      cpu: "100m"
+      memory: 100Mi
+# Hypercube appender appends multiple results into a single result.
+# Hypercube appender pod resource definitions
+hypercubeAppender:
+  affinity: {}
+  image:
+    registry: docker.io/gams
+    repository: engine-hypercube-appender
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets: []
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 100Mi
+      ephemeral-storage: 512Mi
+    limits:
+      cpu: "300m"
+      memory: 100Mi
+      ephemeral-storage: 4Gi
+# Hypercube unpacker used while sending hypercube jobs.
+# Hypercube unpacker pod resource definitions
+hypercubeUnpacker:
+  affinity: {}
+  image:
+    registry: docker.io/gams
+    repository: engine-hypercube-unpacker
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets: []
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 100Mi
+    limits:
+      cpu: "200m"
+      memory: 100Mi
+# Job canceler can cancel job pods that are in pending state.
+# Job canceler pod resource definitions
+jobCanceler:
+  affinity: {}
+  image:
+    registry: ""
+    repository: engine-job-canceler
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets:
+      - aws-ecr-secret
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 100Mi
+    limits:
+      cpu: "100m"
+      memory: 100Mi
+# Job spawner takes a Engine job and creates a Kubernetes Job.
+# Job spawner pod resource definitions.
+jobSpawner:
+  affinity: {}
+  # Job spawner will keep the new jobs in the queue if there are
+  # more than 'maxPendingJobs' pending jobs.
+  maxPendingJobs: 5
+  # Job spawner will keep the new jobs in the queue if there is
+  # any job pending more than 'maxPendingJobDurationSeconds' seconds.
+  maxPendingJobDurationSeconds: 120
+  # Job spawner will subtract 'workerStartupDurationSeconds*idle_multiplier'
+  # from user's volume quota for each worker spawned (e.g. any job outside of a
+  # worker pool or each worker of a pool).
+  workerStartupDurationSeconds: 0
+  workerImage:
+    registry: docker.io/gams
+    repository: engine-worker
+    tag: ""
+    pullSecrets: []
+  image:
+    registry: ""
+    repository: engine-job-spawner
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets:
+      - aws-ecr-secret
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 150Mi
+    limits:
+      cpu: "100m"
+      memory: 150Mi
+# Job watcher watches for OOM killed and evicted jobs.
+# Job watcher pod resource definitions.
+jobWatcher:
+  affinity: {}
+  image:
+    registry: ""
+    repository: engine-job-watcher
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: ""
+    pullSecrets:
+      - aws-ecr-secret
+  resources:
+    requests:
+      cpu: "50m"
+      memory: 100Mi
+    limits:
+      cpu: "100m"
+      memory: 200Mi
+# PG Bouncer is a connection pooler for PostgreSQL
+# PG Bouncer pod resource definitions
+pgBouncer:
+  affinity: {}
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 200Mi
+    limits:
+      memory: 300Mi
+# MongoDB is used to store structured and unstructured data.
+# MongoDB pod resource definitions
+mongodb:
+  affinity: {}
+  resources:
+    requests:
+      memory: 3Gi
+      cpu: 100m
+    limits:
+      memory: 3Gi
+      cpu: 400m
+# PostgreSQL is used to store structured data.
+# PostgreSQL pod resource definitions
+postgresql:
+  affinity: {}
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 1024Mi
+    limits:
+      cpu: "400m"
+      memory: 3072Mi
+# RabbitMQ is used to pass messages between different components.
+# RabbitMQ pod resource definitions
+rabbitmq:
+  affinity: {}
+  resources:
+    limits:
+      memory: 2048Mi
+      cpu: 400m
+    requests:
+      memory: 2048Mi
+      cpu: 100m
+
+# Default Admin Password Hash, this is only effective during the installation. Updating this will not change
+# the admin password. For generating hash, see `generate_password_hash` from werkzeug.security
+# https://werkzeug.palletsprojects.com/en/2.0.x/utils/#werkzeug.security.generate_password_hash
+gmsRunnerDefaultAdminPasswordHash: "pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91"
+# Internally used passwords. Setup script will replace 'insert_password' fields with
+# new passwords and generate hashes when required. If a field is not set to 'insert_password'
+# the value in the field will be used for the hashing and a new password won't be generated.
+gmsRunnerDatabaseAdminPwd: "insert_password"
+gmsRunnerDatabaseBrokerPwd: "insert_password"
+gmsRunnerDatabaseWorkerPwd: "insert_password"
+gmsRunnerDatabaseCleanerPwd: "insert_password"
+gmsRunnerDatabaseSpwnPwd: "insert_password"
+gmsRunnerDatabaseK8sCancelPwd: "insert_password"
+gmsRunnerDatabaseDependencyCheckPwd: "insert_password"
+gmsRunnerDatabaseEventManagerPwd: "insert_password"
+gmsRunnerRabbitBrokerPwd: "insert_password"
+gmsRunnerRabbitBrokerPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitWorkerPwd: "insert_password"
+gmsRunnerRabbitWorkerPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitHypercubeAppenderPwd: "insert_password"
+gmsRunnerRabbitHypercubeAppenderPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitCleanerPwd: "insert_password"
+gmsRunnerRabbitCleanerPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitHypercubeUnpackerPwd: "insert_password"
+gmsRunnerRabbitHypercubeUnpackerPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitMigratePwd: "insert_password"
+gmsRunnerRabbitMigratePwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitSpwnPwd: "insert_password"
+gmsRunnerRabbitSpwnPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitK8sCleanPwd: "insert_password"
+gmsRunnerRabbitK8sCleanPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitK8sCancelPwd: "insert_password"
+gmsRunnerRabbitK8sCancelPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitDependencyCheckPwd: "insert_password"
+gmsRunnerRabbitDependencyCheckPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitEventManagerPwd: "insert_password"
+gmsRunnerRabbitEventManagerPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerRabbitK8sJobWatcherPwd: "insert_password"
+gmsRunnerRabbitK8sJobWatcherPwdHash: "pw/UBM/rZ7RUfGwVd8l6fE3VxVQX2v1f9xLCwB/BPC5Csk/S"
+gmsRunnerMongoBrokerPwd: "insert_password"
+gmsRunnerMongoWorkerPwd: "insert_password"
+gmsRunnerMongoHypercubeAppenderPwd: "insert_password"
+gmsRunnerMongoCleanerPwd: "insert_password"
+gmsRunnerMongoSpwnPwd: "insert_password"
+gmsRunnerMongoK8sCancelPwd: "insert_password"
+gmsRunnerMongoDependencyCheckPwd: "insert_password"
+gmsRunnerMongoEventManagerPwd: "insert_password"
+gmsRunnerMongoForwardProxyPwd: "insert_password"
+gmsRunnerMongoK8sJobWatcherPwd: "insert_password"
+gmsRunnerDatabaseK8sJobWatcherPwd: "insert_password"
+gmsRunnerForwardProxyPwd: "insert_password"
+gmsRunnerForwardProxySecret: "insert_password"
+gmsRunnerForwardProxyEncKey: "insert_password"

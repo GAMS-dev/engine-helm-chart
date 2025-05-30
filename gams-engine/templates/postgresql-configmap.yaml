@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-config
+  namespace: {{ .Release.Namespace }}
+data:
+{{ tpl (.Files.Glob "init/*").AsConfig . | indent 2 }}

@@ -1,0 +1,484 @@
+CREATE TYPE jobpriorityenum AS ENUM ('low', 'medium', 'high');
+CREATE TYPE appuserroleenum AS ENUM ('inviter', 'admin');
+CREATE TABLE schema_migrations (
+	version BIGINT NOT NULL, 
+	dirty BOOLEAN NOT NULL, 
+	PRIMARY KEY (version)
+);
+
+CREATE TABLE app_user (
+	id SERIAL NOT NULL, 
+	username VARCHAR(255) NOT NULL, 
+	password_hash VARCHAR NOT NULL, 
+	deleted BOOLEAN NOT NULL, 
+	old_username VARCHAR(255), 
+	username_changed TIMESTAMP WITHOUT TIME ZONE, 
+	password_changed TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	UNIQUE (username)
+);
+
+CREATE TABLE identity_provider_oidc (
+	id SERIAL NOT NULL, 
+	random_text VARCHAR(255) NOT NULL, 
+	issuer VARCHAR(255) NOT NULL, 
+	authorization_endpoint VARCHAR(255) NOT NULL, 
+	token_endpoint VARCHAR(255), 
+	jwks_uri VARCHAR(255) NOT NULL, 
+	end_session_endpoint VARCHAR(255), 
+	device_authorization_endpoint VARCHAR(255), 
+	web_ui_client_id VARCHAR(255) NOT NULL, 
+	web_ui_client_secret VARCHAR(1000), 
+	device_client_id VARCHAR(255), 
+	device_client_secret VARCHAR(1000), 
+	PRIMARY KEY (id), 
+	UNIQUE (random_text)
+);
+
+CREATE TABLE identity_provider_oauth2 (
+	id SERIAL NOT NULL, 
+	issuer VARCHAR(255) NOT NULL, 
+	authorization_endpoint VARCHAR(255) NOT NULL, 
+	token_endpoint VARCHAR(255), 
+	jwks_uri VARCHAR(255) NOT NULL, 
+	end_session_endpoint VARCHAR(255), 
+	device_authorization_endpoint VARCHAR(255), 
+	web_ui_client_id VARCHAR(255) NOT NULL, 
+	web_ui_client_secret VARCHAR(1000), 
+	device_client_id VARCHAR(255), 
+	override_audience VARCHAR(255), 
+	PRIMARY KEY (id), 
+	UNIQUE (issuer)
+);
+
+CREATE TABLE identity_provider_ldap (
+	id SERIAL NOT NULL, 
+	random_text VARCHAR(255) NOT NULL, 
+	host VARCHAR(255) NOT NULL, 
+	port INTEGER NOT NULL, 
+	uid VARCHAR(255) NOT NULL, 
+	bind_dn VARCHAR(255), 
+	password VARCHAR(255), 
+	encryption VARCHAR(255) NOT NULL, 
+	active_directory BOOLEAN NOT NULL, 
+	base VARCHAR(255) NOT NULL, 
+	user_filter VARCHAR(255) NOT NULL, 
+	verify_certificates BOOLEAN NOT NULL, 
+	PRIMARY KEY (id), 
+	UNIQUE (random_text), 
+	UNIQUE (host)
+);
+
+CREATE TABLE identity_provider_used_identity_token (
+	id SERIAL NOT NULL, 
+	id_token_hash VARCHAR(64) NOT NULL, 
+	valid_till TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id), 
+	UNIQUE (id_token_hash)
+);
+
+CREATE TABLE submission (
+	id SERIAL NOT NULL, 
+	app_user_id INTEGER NOT NULL, 
+	data_zip_name VARCHAR, 
+	finished_at TIMESTAMP WITHOUT TIME ZONE, 
+	inex_filename VARCHAR, 
+	model VARCHAR NOT NULL, 
+	model_zip_name VARCHAR NOT NULL, 
+	namespace VARCHAR NOT NULL, 
+	namespace_id VARCHAR NOT NULL, 
+	process_status INTEGER, 
+	run VARCHAR, 
+	status INTEGER NOT NULL, 
+	stdout_filename VARCHAR, 
+	submitted_at TIMESTAMP WITHOUT TIME ZONE, 
+	token UUID NOT NULL, 
+	tag VARCHAR, 
+	pool_label VARCHAR, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id)
+);
+
+CREATE INDEX ix_submission_token ON submission (token);
+CREATE TABLE invitation_code (
+	id SERIAL NOT NULL, 
+	token VARCHAR NOT NULL, 
+	app_user_id INTEGER, 
+	inviter_id INTEGER NOT NULL, 
+	created TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	used BOOLEAN NOT NULL, 
+	gams_license VARCHAR, 
+	inherit_instances BOOLEAN, 
+	PRIMARY KEY (id), 
+	UNIQUE (token), 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id), 
+	FOREIGN KEY(inviter_id) REFERENCES app_user (id)
+);
+
+CREATE TABLE app_user_role (
+	user_id INTEGER NOT NULL, 
+	role appuserroleenum NOT NULL, 
+	PRIMARY KEY (user_id, role), 
+	FOREIGN KEY(user_id) REFERENCES app_user (id)
+);
+
+CREATE TABLE app_user_groups (
+	id SERIAL NOT NULL, 
+	namespace_id VARCHAR NOT NULL, 
+	label VARCHAR NOT NULL, 
+	owned_by INTEGER NOT NULL, 
+	created_by INTEGER NOT NULL, 
+	created_at TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	UNIQUE (namespace_id, label), 
+	FOREIGN KEY(owned_by) REFERENCES app_user (id), 
+	FOREIGN KEY(created_by) REFERENCES app_user (id)
+);
+
+CREATE TABLE app_user_has_instance_map (
+	app_user_id INTEGER NOT NULL, 
+	PRIMARY KEY (app_user_id), 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id)
+);
+
+CREATE TABLE app_user_quota (
+	user_id INTEGER NOT NULL, 
+	parallel_quota FLOAT, 
+	volume_quota FLOAT, 
+	volume_used FLOAT NOT NULL, 
+	disk_quota BIGINT, 
+	PRIMARY KEY (user_id), 
+	FOREIGN KEY(user_id) REFERENCES app_user (id)
+);
+
+CREATE TABLE app_user_webhook (
+	id SERIAL NOT NULL, 
+	app_user_id INTEGER NOT NULL, 
+	url VARCHAR, 
+	created_at TIMESTAMP WITHOUT TIME ZONE, 
+	content_type VARCHAR(255) NOT NULL, 
+	insecure_ssl BOOLEAN NOT NULL, 
+	secret VARCHAR(255), 
+	recursive BOOLEAN NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oidc_extra_client (
+	id SERIAL NOT NULL, 
+	oidc_provider_id INTEGER NOT NULL, 
+	client_id VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(oidc_provider_id) REFERENCES identity_provider_oidc (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oidc_scope (
+	id SERIAL NOT NULL, 
+	oidc_provider_id INTEGER NOT NULL, 
+	scope VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(oidc_provider_id) REFERENCES identity_provider_oidc (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oidc_token_auth_method (
+	id SERIAL NOT NULL, 
+	oidc_provider_id INTEGER NOT NULL, 
+	auth_method VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(oidc_provider_id) REFERENCES identity_provider_oidc (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider (
+	id SERIAL NOT NULL, 
+	name VARCHAR(255) NOT NULL, 
+	label VARCHAR(255) NOT NULL, 
+	is_main_identity_provider BOOLEAN NOT NULL, 
+	hidden BOOLEAN NOT NULL, 
+	oauth2_provider_id INTEGER, 
+	ldap_provider_id INTEGER, 
+	oidc_provider_id INTEGER, 
+	PRIMARY KEY (id), 
+	UNIQUE (name), 
+	UNIQUE (label), 
+	FOREIGN KEY(oauth2_provider_id) REFERENCES identity_provider_oauth2 (id) ON DELETE CASCADE, 
+	FOREIGN KEY(ldap_provider_id) REFERENCES identity_provider_ldap (id) ON DELETE CASCADE, 
+	FOREIGN KEY(oidc_provider_id) REFERENCES identity_provider_oidc (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oauth2_response_type (
+	id SERIAL NOT NULL, 
+	identity_provider_oauth2_id INTEGER NOT NULL, 
+	response_type VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(identity_provider_oauth2_id) REFERENCES identity_provider_oauth2 (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oauth2_grant_type (
+	id SERIAL NOT NULL, 
+	identity_provider_oauth2_id INTEGER NOT NULL, 
+	grant_type VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(identity_provider_oauth2_id) REFERENCES identity_provider_oauth2 (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oauth2_scope (
+	id SERIAL NOT NULL, 
+	identity_provider_oauth2_id INTEGER NOT NULL, 
+	scope VARCHAR(255) NOT NULL, 
+	request_scope VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(identity_provider_oauth2_id) REFERENCES identity_provider_oauth2 (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_oauth2_token_auth_method (
+	id SERIAL NOT NULL, 
+	identity_provider_oauth2_id INTEGER NOT NULL, 
+	auth_method VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(identity_provider_oauth2_id) REFERENCES identity_provider_oauth2 (id) ON DELETE CASCADE
+);
+
+CREATE TABLE submission_text_entry (
+	id SERIAL NOT NULL, 
+	submission_id INTEGER NOT NULL, 
+	path VARCHAR NOT NULL, 
+	value VARCHAR, 
+	is_stream BOOLEAN NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(submission_id) REFERENCES submission (id)
+);
+
+CREATE TABLE submission_argument (
+	submission_id INTEGER NOT NULL, 
+	argument VARCHAR NOT NULL, 
+	PRIMARY KEY (submission_id, argument), 
+	FOREIGN KEY(submission_id) REFERENCES submission (id)
+);
+
+CREATE TABLE submission_time (
+	id SERIAL NOT NULL, 
+	submission_id INTEGER NOT NULL, 
+	start TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	finish TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(submission_id) REFERENCES submission (id)
+);
+
+CREATE TABLE submission_access_group (
+	submission_id INTEGER NOT NULL, 
+	user_group_id INTEGER NOT NULL, 
+	PRIMARY KEY (submission_id, user_group_id), 
+	FOREIGN KEY(submission_id) REFERENCES submission (id), 
+	FOREIGN KEY(user_group_id) REFERENCES app_user_groups (id) ON DELETE CASCADE
+);
+
+CREATE TABLE submission_priority (
+	submission_id INTEGER NOT NULL, 
+	priority jobpriorityenum NOT NULL, 
+	timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (submission_id), 
+	FOREIGN KEY(submission_id) REFERENCES submission (id)
+);
+
+CREATE TABLE invitation_code_user_role (
+	id SERIAL NOT NULL, 
+	invitation_code_id INTEGER NOT NULL, 
+	role appuserroleenum NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(invitation_code_id) REFERENCES invitation_code (id) ON DELETE CASCADE
+);
+
+CREATE TABLE invitation_code_namespace_permission (
+	id SERIAL NOT NULL, 
+	invitation_id INTEGER NOT NULL, 
+	namespace VARCHAR NOT NULL, 
+	permission INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(invitation_id) REFERENCES invitation_code (id) ON DELETE CASCADE
+);
+
+CREATE TABLE invitation_code_quota (
+	invitation_id INTEGER NOT NULL, 
+	parallel_quota FLOAT, 
+	volume_quota FLOAT, 
+	disk_quota BIGINT, 
+	PRIMARY KEY (invitation_id), 
+	FOREIGN KEY(invitation_id) REFERENCES invitation_code (id) ON DELETE CASCADE
+);
+
+CREATE TABLE invitation_code_instance (
+	id SERIAL NOT NULL, 
+	invitation_id INTEGER NOT NULL, 
+	instance_id VARCHAR(24) NOT NULL, 
+	is_default BOOLEAN NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(invitation_id) REFERENCES invitation_code (id) ON DELETE CASCADE
+);
+
+CREATE TABLE invitation_code_user_group (
+	id SERIAL NOT NULL, 
+	invitation_id INTEGER NOT NULL, 
+	user_group_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(invitation_id) REFERENCES invitation_code (id) ON DELETE CASCADE, 
+	FOREIGN KEY(user_group_id) REFERENCES app_user_groups (id) ON DELETE CASCADE
+);
+
+CREATE TABLE app_user_group_map (
+	group_id INTEGER NOT NULL, 
+	app_user_id INTEGER NOT NULL, 
+	added_by INTEGER NOT NULL, 
+	added_at TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (group_id, app_user_id), 
+	FOREIGN KEY(group_id) REFERENCES app_user_groups (id) ON DELETE CASCADE, 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id), 
+	FOREIGN KEY(added_by) REFERENCES app_user (id)
+);
+
+CREATE TABLE app_user_webhook_webpush_subscription (
+	id SERIAL NOT NULL, 
+	webhook_id INTEGER NOT NULL, 
+	endpoint VARCHAR NOT NULL, 
+	key_p256dh VARCHAR NOT NULL, 
+	key_auth VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(webhook_id) REFERENCES app_user_webhook (id) ON DELETE CASCADE, 
+	UNIQUE (endpoint)
+);
+
+CREATE TABLE app_user_webhook_event (
+	id SERIAL NOT NULL, 
+	webhook_id INTEGER NOT NULL, 
+	event_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(webhook_id) REFERENCES app_user_webhook (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_provider_inviter (
+	identity_provider_id INTEGER NOT NULL, 
+	app_user_id INTEGER NOT NULL, 
+	PRIMARY KEY (identity_provider_id, app_user_id), 
+	FOREIGN KEY(identity_provider_id) REFERENCES identity_provider (id) ON DELETE CASCADE, 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id) ON DELETE CASCADE
+);
+
+CREATE TABLE identity_tuple (
+	id SERIAL NOT NULL, 
+	identity_provider_id INTEGER, 
+	sub VARCHAR(255), 
+	issuer VARCHAR(255), 
+	PRIMARY KEY (id), 
+	UNIQUE (identity_provider_id, sub), 
+	UNIQUE (issuer, sub), 
+	FOREIGN KEY(identity_provider_id) REFERENCES identity_provider (id) ON DELETE CASCADE
+);
+
+CREATE TABLE invitation_code_invitable_identity_provider (
+	id SERIAL NOT NULL, 
+	invitation_code_id INTEGER NOT NULL, 
+	identity_provider_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(invitation_code_id) REFERENCES invitation_code (id) ON DELETE CASCADE, 
+	FOREIGN KEY(identity_provider_id) REFERENCES identity_provider (id) ON DELETE CASCADE
+);
+
+CREATE TABLE app_user_webhook_event_parameter (
+	webhook_event_id INTEGER NOT NULL, 
+	parameter VARCHAR NOT NULL, 
+	PRIMARY KEY (webhook_event_id, parameter), 
+	FOREIGN KEY(webhook_event_id) REFERENCES app_user_webhook_event (id) ON DELETE CASCADE
+);
+
+CREATE TABLE app_user_identity_tuple (
+	id SERIAL NOT NULL, 
+	app_user_id INTEGER NOT NULL, 
+	identity_tuple_id INTEGER, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(app_user_id) REFERENCES app_user (id) ON DELETE CASCADE, 
+	FOREIGN KEY(identity_tuple_id) REFERENCES identity_tuple (id) ON DELETE SET NULL
+);
+
+CREATE TABLE invitation_code_identity_tuple (
+	id SERIAL NOT NULL, 
+	invitation_code_id INTEGER NOT NULL, 
+	identity_tuple_id INTEGER, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(invitation_code_id) REFERENCES invitation_code (id) ON DELETE CASCADE, 
+	FOREIGN KEY(identity_tuple_id) REFERENCES identity_tuple (id) ON DELETE SET NULL
+);
+
+INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', '{{ .Values.gmsRunnerDefaultAdminPasswordHash }}', false);
+INSERT INTO app_user_role (user_id, role) VALUES (1, 'admin');
+INSERT INTO identity_provider (name, label, is_main_identity_provider, hidden) VALUES ('gams_engine', 'Login', true, false);
+INSERT INTO schema_migrations (version, dirty) VALUES (17, false);
+
+CREATE VIEW user_tree AS SELECT inviter_id, app_user_id FROM invitation_code WHERE app_user_id IS NOT NULL;
+GRANT INSERT, SELECT ON submission TO broker;
+GRANT UPDATE, SELECT ON submission TO worker;
+GRANT UPDATE ON submission TO broker;
+GRANT USAGE, SELECT ON SEQUENCE submission_id_seq TO broker;
+GRANT SELECT, DELETE ON submission TO broker;
+GRANT SELECT, INSERT, DELETE, UPDATE ON submission_text_entry, submission_argument, submission_access_group, submission_priority TO broker;
+GRANT SELECT, UPDATE ON submission_text_entry, submission_argument TO worker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user, invitation_code TO broker;
+GRANT USAGE, SELECT ON app_user_id_seq, invitation_code_id_seq TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_role TO broker;
+GRANT INSERT, SELECT, DELETE, UPDATE ON invitation_code_user_role TO broker;
+GRANT USAGE, SELECT ON invitation_code_user_role_id_seq TO broker;
+GRANT INSERT, SELECT, DELETE, UPDATE ON invitation_code_namespace_permission TO broker;
+GRANT USAGE, SELECT ON invitation_code_namespace_permission_id_seq TO broker;
+GRANT USAGE, SELECT ON submission_text_entry_id_seq TO broker;
+GRANT SELECT ON submission_text_entry TO cleaner;
+GRANT SELECT ON submission TO cleaner;
+GRANT UPDATE, SELECT ON submission TO cleaner;
+GRANT SELECT ON submission_time TO broker;
+GRANT SELECT, UPDATE, INSERT ON submission_time TO worker;
+GRANT USAGE, SELECT ON submission_time_id_seq TO worker;
+GRANT UPDATE, SELECT ON submission TO dep_check;
+GRANT SELECT ON submission_priority TO dep_check;
+GRANT SELECT ON app_user, app_user_role, app_user_quota, app_user_groups, user_tree, submission, submission_text_entry, submission_argument, app_user_webhook, app_user_webhook_event, app_user_webhook_event_parameter TO event_manager;
+GRANT SELECT, DELETE ON app_user_webhook_webpush_subscription TO event_manager;
+GRANT UPDATE, SELECT ON submission TO job_spawner;
+GRANT UPDATE, SELECT ON submission TO k8s_job_canceler;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_quota TO broker;
+GRANT SELECT ON user_tree, app_user_quota TO job_spawner;
+GRANT SELECT ON user_tree, app_user_quota TO worker;
+GRANT UPDATE ON app_user_quota TO worker;
+GRANT SELECT ON app_user_role, app_user_webhook, app_user_webhook_event, app_user_webhook_event_parameter TO worker;
+GRANT UPDATE ON app_user_quota TO job_spawner;
+GRANT SELECT ON user_tree TO broker;
+GRANT USAGE, SELECT ON app_user_groups_id_seq TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_has_instance_map TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_groups TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_group_map TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_webhook TO broker;
+GRANT USAGE, SELECT ON app_user_webhook_id_seq TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_webhook_event TO broker;
+GRANT USAGE, SELECT ON app_user_webhook_event_id_seq TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_webhook_event_parameter TO broker;
+GRANT INSERT, SELECT, DELETE, UPDATE ON invitation_code_quota TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON app_user_webhook_webpush_subscription TO broker;
+GRANT USAGE, SELECT ON app_user_webhook_webpush_subscription_id_seq TO broker;
+GRANT USAGE, SELECT ON invitation_code_instance_id_seq TO broker;
+GRANT INSERT, SELECT, DELETE, UPDATE ON invitation_code_instance TO broker;
+GRANT USAGE, SELECT ON invitation_code_user_group_id_seq TO broker;
+GRANT INSERT, SELECT, DELETE, UPDATE ON invitation_code_user_group TO broker;
+GRANT SELECT, UPDATE ON submission to k8s_job_watcher;
+GRANT SELECT, INSERT, UPDATE, DELETE ON identity_tuple, invitation_code_identity_tuple, app_user_identity_tuple, identity_provider, identity_provider_oauth2, identity_provider_ldap TO broker;
+GRANT USAGE, SELECT ON identity_tuple_id_seq, identity_provider_id_seq, identity_provider_oauth2_id_seq, identity_provider_ldap_id_seq TO broker;
+GRANT SELECT, INSERT, UPDATE, DELETE ON identity_provider_inviter, identity_provider_oauth2_response_type, identity_provider_oauth2_grant_type, identity_provider_oauth2_scope TO broker;
+GRANT USAGE, SELECT ON invitation_code_identity_tuple_id_seq, app_user_identity_tuple_id_seq, identity_provider_oauth2_response_type_id_seq, identity_provider_oauth2_grant_type_id_seq, identity_provider_oauth2_scope_id_seq TO broker;
+GRANT USAGE, SELECT ON invitation_code_invitable_identity_provider_id_seq TO broker;
+GRANT SELECT, INSERT, UPDATE, DELETE ON invitation_code_invitable_identity_provider TO broker;
+GRANT INSERT, SELECT, UPDATE, DELETE ON identity_provider_oidc TO broker;
+GRANT USAGE, SELECT ON identity_provider_oidc_id_seq TO broker;
+GRANT SELECT, UPDATE, INSERT, DELETE ON identity_provider_used_identity_token TO broker;
+GRANT USAGE, SELECT ON identity_provider_used_identity_token_id_seq TO broker;
+GRANT SELECT, UPDATE, INSERT, DELETE ON identity_provider_oidc_extra_client TO broker;
+GRANT USAGE, SELECT ON identity_provider_oidc_extra_client_id_seq TO broker;
+GRANT SELECT, UPDATE, INSERT, DELETE ON identity_provider_oidc_scope TO broker;
+GRANT USAGE, SELECT ON identity_provider_oidc_scope_id_seq TO broker;
+GRANT SELECT, UPDATE, INSERT, DELETE ON identity_provider_oauth2_token_auth_method TO broker;
+GRANT USAGE, SELECT ON identity_provider_oauth2_token_auth_method_id_seq TO broker;
+GRANT SELECT, UPDATE, INSERT, DELETE ON identity_provider_oidc_token_auth_method TO broker;
+GRANT USAGE, SELECT ON identity_provider_oidc_token_auth_method_id_seq TO broker;

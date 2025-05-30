@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-canceler-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: job-canceler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-canceler
+  template:
+    metadata:
+      labels:
+        app: job-canceler
+    spec:
+    {{- if .Values.jobCanceler.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobCanceler.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      serviceAccountName: canceler-account
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobCanceler.image) "context" $) | indent 6}}
+      containers:
+        - name: job-canceler
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobCanceler.image.registry "repository" .Values.jobCanceler.image.repository "tag" (coalesce .Values.jobCanceler.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.jobCanceler.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION
+              value: {{ .Values.kubernetesClientVersion }}
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: queue
+            - name: GMS_RUNNER_RABBIT_K8S_CANCEL_USER
+              value: "k8s_job_canceler"
+            - name: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_MONGO_K8S_CANCEL_USER
+              value: "k8s_job_canceler"
+            - name: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "database"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_K8S_CANCEL_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_K8S_CANCEL_USER
+              value: "k8s_job_canceler"
+            - name: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD

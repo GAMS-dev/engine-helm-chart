@@ -1,0 +1,138 @@
+{{- $mountApiUrl := printf "%s/api" .Values.mountUrl | replace "//" "/"}}
+{{- $rootUrl := ternary "/usr/share/nginx/engine" "/usr/share/nginx" (eq .Values.mountUrl "/") }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker-deployment
+  labels:
+    app: broker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+    {{- if .Values.broker.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.broker.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
+      containers:
+        - name: broker
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.uwsgi.image.registry "repository" .Values.broker.uwsgi.image.repository "tag" (coalesce .Values.broker.uwsgi.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.broker.uwsgi.resources | indent 12 }}
+          volumeMounts:
+            - name: uwsgi-socket
+              mountPath: /tmp
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_FORWARD_PROXY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_FORWARD_PROXY_SECRET
+            - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+            - name: UWSGI_NUM_PROCESSES
+              value: "1"
+            - name: UWSGI_MOUNT_LOCATION
+              value: "{{ $mountApiUrl }}"
+            - name: UWSGI_SOCKET
+              value: "/tmp/uwsgi.sock"
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "database-bouncer"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "6432"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_BROKER_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_BROKER_USER
+              value: "broker"
+            - name: GMS_RUNNER_DATABASE_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_BROKER_PWD
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: "queue"
+            - name: GMS_RUNNER_RABBIT_BROKER_USER
+              value: "broker"
+            - name: GMS_RUNNER_RABBIT_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_BROKER_USER
+              value: "mongo_broker"
+            - name: GMS_RUNNER_MONGO_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+        - name: nginx
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.nginx.image.registry "repository" .Values.broker.nginx.image.repository "tag" (coalesce .Values.broker.nginx.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.broker.nginx.resources | indent 12 }}
+          volumeMounts:
+            - name: uwsgi-socket
+              mountPath: /tmp
+          {{- if .Values.service.useTLS }}
+            - name: tls-secrets
+              mountPath: "/etc/nginx/certs"
+              readOnly: true
+          {{- end }}
+          ports:
+            - containerPort: {{ ternary 443 80 .Values.service.useTLS }}
+          env:
+            - name: mount_url
+              value: {{ required "value 'mountUrl' is required" .Values.mountUrl | quote }}
+            - name: mount_api_url
+              value: {{ $mountApiUrl | quote }}
+            - name: uwsgi_pass_url
+              value: unix:///tmp/uwsgi.sock
+            - name: root_url
+              value: {{ $rootUrl | quote }}
+            - name: ENGINE_URL
+              value: {{ $mountApiUrl | quote }}
+            - name: BASE_URL
+              value: {{ required "value 'mountUrl' is required" .Values.mountUrl | quote }}
+            - name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
+              value: {{ ternary ".template-secure" ".template" .Values.service.useTLS }}
+      volumes:
+        - name: uwsgi-socket
+          emptyDir: {}
+        {{- if .Values.service.useTLS }}
+        - name: tls-secrets
+          secret:
+            secretName: {{ .Values.service.tlsSecretName }}
+            defaultMode: 0440
+            items:
+              - key: tls.crt
+                path: cert.crt
+              - key: tls.key
+                path: cert.key
+              {{- end }}

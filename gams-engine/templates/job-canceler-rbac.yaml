@@ -1,0 +1,32 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: cancel-jobs-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list", "delete"]
+  - apiGroups: ["batch", "extensions"]
+    resources: ["jobs"]
+    verbs: ["delete"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: canceler-account
+  namespace: {{ .Release.Namespace }}
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: canceler-account-rb
+  namespace: {{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: canceler-account
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: cancel-jobs-role
+  apiGroup: rbac.authorization.k8s.io

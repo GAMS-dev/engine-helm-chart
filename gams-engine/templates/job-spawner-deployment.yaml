@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-spawner-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: job-spawner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-spawner
+  template:
+    metadata:
+      name: job-spawner
+      labels:
+        app: job-spawner
+    spec:
+      serviceAccountName: job-spawner-account
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-job-spawner
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.image.registry "repository" .Values.jobSpawner.image.repository "tag" (coalesce .Values.jobSpawner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.jobSpawner.resources | indent 12 }}
+{{ if .Values.workerCustomizeJobConfigMapName }}
+          volumeMounts:
+            - name: worker-customize-job-config-map
+              mountPath: /root/job_spawner/app/customize_job.py
+              subPath: customize_job.py
+{{ end }}
+          env:
+            - name: GMS_RUNNER_WORKER_DATABASE_SERVER
+              value: "database-bouncer"
+            - name: GMS_RUNNER_WORKER_DATABASE_PORT
+              value: "6432"
+            - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION
+              value: {{ .Values.kubernetesClientVersion }}
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_SPWN_WORKER_IMAGE
+              value: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.workerImage.registry "repository" .Values.jobSpawner.workerImage.repository "tag" (coalesce .Values.jobSpawner.workerImage.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+            - name: GMS_RUNNER_SPWN_WORKER_IMAGE_PULL_SECRETS
+              value: '{{ coalesce (join "," .Values.jobSpawner.workerImage.pullSecrets) (join "," .Values.global.imagePullSecrets) }}'
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: "queue"
+            - name: GMS_RUNNER_RABBIT_SPWN_USER
+              value: "job_spawner"
+            - name: GMS_RUNNER_RABBIT_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_SPWN_PWD
+            - name: GMS_RUNNER_MONGO_SPWN_USER
+              value: "job_spawner"
+            - name: GMS_RUNNER_MONGO_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_SPWN_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "database"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_SPWN_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_SPWN_USER
+              value: "job_spawner"
+            - name: GMS_RUNNER_SPWN_MAX_PENDING_JOBS
+              value: "{{ .Values.jobSpawner.maxPendingJobs }}"
+            - name: GMS_RUNNER_SPWN_MAX_PENDING_SECONDS_JOB
+              value: "{{ .Values.jobSpawner.maxPendingJobDurationSeconds }}"
+            - name: GMS_RUNNER_SPWN_WORKER_STARTUP_SECONDS
+              value: "{{ .Values.jobSpawner.workerStartupDurationSeconds }}"
+            - name: GMS_RUNNER_DATABASE_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_SPWN_PWD
+{{ if .Values.workerCustomizeJobConfigMapName }}
+      volumes:
+        - name: worker-customize-job-config-map
+          configMap:
+            name: {{ .Values.workerCustomizeJobConfigMapName }}
+            items:
+              - key: customize_job.py
+                path: customize_job.py
+{{ end }}

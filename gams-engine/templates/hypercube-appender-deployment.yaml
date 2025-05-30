@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: happender-deployment
+  labels:
+    app: happender
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hypercube-appender
+  template:
+    metadata:
+      labels:
+        app: hypercube-appender
+    spec:
+    {{- if .Values.hypercubeAppender.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.hypercubeAppender.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.hypercubeAppender.image) "context" $) | indent 6}}
+      containers:
+        - name: hypercube-appender
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.hypercubeAppender.image.registry "repository" .Values.hypercubeAppender.image.repository "tag" (coalesce .Values.hypercubeAppender.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.hypercubeAppender.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: "queue"
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_USER
+              value: "hypercube_appender"
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_USER
+              value: "stein"
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"

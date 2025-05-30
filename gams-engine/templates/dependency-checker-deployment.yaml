@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-checker-deployment
+  labels:
+    app: dep-checker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dep-checker
+  template:
+    metadata:
+      labels:
+        app: dep-checker
+    spec:
+    {{- if .Values.dependencyChecker.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.dependencyChecker.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.dependencyChecker.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-dependency-checker
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.dependencyChecker.image.registry "repository" .Values.dependencyChecker.image.repository "tag" (coalesce .Values.dependencyChecker.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.dependencyChecker.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: "queue"
+            - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_USER
+              value: "dep_check"
+            - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_USER
+              value: "dep_check"
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "database"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_USER
+              value: "dep_check"
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD

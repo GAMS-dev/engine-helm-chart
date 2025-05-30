@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-watcher-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: job-watcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-watcher
+  template:
+    metadata:
+      labels:
+        app: job-watcher
+    spec:
+    {{- if .Values.jobWatcher.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobWatcher.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      serviceAccountName: job-watcher-account
+{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobWatcher.image) "context" $) | indent 6}}
+      containers:
+        - name: job-watcher
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobWatcher.image.registry "repository" .Values.jobWatcher.image.repository "tag" (coalesce .Values.jobWatcher.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.jobWatcher.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION
+              value: {{ .Values.kubernetesClientVersion }}
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_HOST
+              value: "mongo"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: queue
+            - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
+            - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "database"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD

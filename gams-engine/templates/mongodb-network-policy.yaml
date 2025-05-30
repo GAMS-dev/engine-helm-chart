@@ -1,0 +1,50 @@
+{{ if .Values.useNetworkPolicies }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongodb-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: mongo
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: worker
+      - podSelector:
+          matchLabels:
+            app: job-watcher
+      - podSelector:
+          matchLabels:
+            app: job-spawner
+      - podSelector:
+          matchLabels:
+            app: job-canceler
+      - podSelector:
+          matchLabels:
+            app: hypercube-appender
+      - podSelector:
+          matchLabels:
+            app: event-manager
+      - podSelector:
+          matchLabels:
+            app: dep-checker
+      - podSelector:
+          matchLabels:
+            app: cleaner
+      - podSelector:
+          matchLabels:
+            app: forward-proxy
+      - podSelector:
+          matchLabels:
+            app: broker
+      ports:
+        - protocol: TCP
+          port: 27017
+  egress: []
+{{ end }}

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-database
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: database
+  serviceName: database
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+    {{- if .Values.postgresql.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: engine-db
+          image: postgres:11.4-alpine
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+            - name: db-config-data
+              mountPath: /docker-entrypoint-initdb.d/
+          resources:
+{{ toYaml .Values.postgresql.resources | indent 12 }}
+          env:
+            - name: POSTGRES_USER
+              value: "GMSMASTER"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_ADMIN_PWD
+            - name: POSTGRES_DB
+              value: "gamsrest"
+          imagePullPolicy: Always
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: database-pvc
+        - name: db-config-data
+          configMap:
+            name: database-config
