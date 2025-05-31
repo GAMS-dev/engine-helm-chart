@@ -25,5 +25,5 @@ appVersion: "25.05.29"
 
 dependencies:
   - name: common
-    version: 1.x.x
+    version: 2.x.x
     repository: https://charts.bitnami.com/bitnami

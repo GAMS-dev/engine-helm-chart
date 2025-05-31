@@ -19,7 +19,7 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.eventManager.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.eventManager.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.eventManager.image) "context" $) | indent 6}}
       containers:
         - name: engine-event-manager
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.eventManager.image.registry "repository" .Values.eventManager.image.repository "tag" (coalesce .Values.eventManager.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

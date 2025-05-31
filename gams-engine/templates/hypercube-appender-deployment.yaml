@@ -19,7 +19,7 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.hypercubeAppender.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.hypercubeAppender.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.hypercubeAppender.image) "context" $) | indent 6}}
       containers:
         - name: hypercube-appender
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.hypercubeAppender.image.registry "repository" .Values.hypercubeAppender.image.repository "tag" (coalesce .Values.hypercubeAppender.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

@@ -21,7 +21,7 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.broker.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
       containers:
         - name: broker
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.uwsgi.image.registry "repository" .Values.broker.uwsgi.image.repository "tag" (coalesce .Values.broker.uwsgi.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

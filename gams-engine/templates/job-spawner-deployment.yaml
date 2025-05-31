@@ -17,7 +17,7 @@ spec:
         app: job-spawner
     spec:
       serviceAccountName: job-spawner-account
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
       containers:
         - name: engine-job-spawner
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.image.registry "repository" .Values.jobSpawner.image.repository "tag" (coalesce .Values.jobSpawner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

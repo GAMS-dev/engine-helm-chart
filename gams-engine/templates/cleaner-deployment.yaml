@@ -19,7 +19,7 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.cleaner.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.cleaner.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.cleaner.image) "context" $) | indent 6}}
       containers:
         - name: cleaner
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.cleaner.image.registry "repository" .Values.cleaner.image.repository "tag" (coalesce .Values.cleaner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

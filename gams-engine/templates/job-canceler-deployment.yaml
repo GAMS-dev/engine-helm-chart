@@ -19,7 +19,7 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobCanceler.affinity "context" $) | nindent 8 }}
     {{- end }}
       serviceAccountName: canceler-account
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobCanceler.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobCanceler.image) "context" $) | indent 6}}
       containers:
         - name: job-canceler
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobCanceler.image.registry "repository" .Values.jobCanceler.image.repository "tag" (coalesce .Values.jobCanceler.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

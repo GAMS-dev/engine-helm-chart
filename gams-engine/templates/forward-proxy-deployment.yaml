@@ -19,7 +19,7 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.forwardProxy.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
-{{- include "common.images.renderPullSecrets" ( dict "images" (list .Values.forwardProxy.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.forwardProxy.image) "context" $) | indent 6}}
       containers:
         - name: engine-dependency-checker
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.forwardProxy.image.registry "repository" .Values.forwardProxy.image.repository "tag" (coalesce .Values.forwardProxy.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

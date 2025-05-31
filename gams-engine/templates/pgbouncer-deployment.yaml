@@ -15,8 +15,8 @@ spec:
       labels:
         app: pgbouncer
     spec:
-    {{- if .Values.pgbouncer.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.pgbouncer.affinity "context" $) | nindent 8 }}
+    {{- if .Values.pgBouncer.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.pgBouncer.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
       containers:
