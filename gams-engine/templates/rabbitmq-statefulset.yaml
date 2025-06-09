@@ -21,7 +21,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: gamswebqueue
-          image: rabbitmq:3.8.2-management-alpine
+          image: rabbitmq:4.1.1-management-alpine
           resources:
 {{ toYaml .Values.rabbitmq.resources | indent 12 }}
           env:

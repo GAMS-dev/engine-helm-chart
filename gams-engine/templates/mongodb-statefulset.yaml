@@ -21,7 +21,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: engine-mongo
-          image: mongo:4.2.0-bionic
+          image: mongo:8.0.10-noble
           resources:
 {{ toYaml .Values.mongodb.resources | indent 12 }}
           ports:

@@ -21,7 +21,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: engine-db
-          image: postgres:11.4-alpine
+          image: postgres:17.5-alpine
           ports:
             - containerPort: 5432
           volumeMounts:
