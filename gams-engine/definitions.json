@@ -3,67 +3,67 @@
   "users": [
     {
       "name": "broker",
-      "password_hash": "{{ .Values.gmsRunnerRabbitBrokerPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_BROKER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "worker",
-      "password_hash": "{{ .Values.gmsRunnerRabbitWorkerPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_WORKER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "hypercube_appender",
-      "password_hash": "{{ .Values.gmsRunnerRabbitHypercubeAppenderPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "cleaner",
-      "password_hash": "{{ .Values.gmsRunnerRabbitCleanerPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_CLEANER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "hypercube_unpacker",
-      "password_hash": "{{ .Values.gmsRunnerRabbitHypercubeUnpackerPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "migrate",
-      "password_hash": "{{ .Values.gmsRunnerRabbitMigratePwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_MIGRATE_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": "administrator"
     },
     {
       "name": "job_spawner",
-      "password_hash": "{{ .Values.gmsRunnerRabbitSpwnPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_SPWN_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "dep_check",
-      "password_hash": "{{ .Values.gmsRunnerRabbitDependencyCheckPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "event_manager",
-      "password_hash": "{{ .Values.gmsRunnerRabbitEventManagerPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "k8s_job_canceler",
-      "password_hash": "{{ .Values.gmsRunnerRabbitK8sCancelPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_K8S_CANCEL_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     },
     {
       "name": "k8s_job_watcher",
-      "password_hash": "{{ .Values.gmsRunnerRabbitK8sJobWatcherPwdHash }}",
+      "password_hash": "${GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
       "tags": ""
     }

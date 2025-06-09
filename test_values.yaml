@@ -1,0 +1,30 @@
+rabbitmq:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: eks.amazonaws.com/nodegroup
+            operator: In
+            values:
+            - hercules-stateful-private-worker-ek-group
+postgresql:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: eks.amazonaws.com/nodegroup
+            operator: In
+            values:
+            - hercules-stateful-private-worker-ek-group
+mongodb:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: eks.amazonaws.com/nodegroup
+            operator: In
+            values:
+            - hercules-stateful-private-worker-ek-group
