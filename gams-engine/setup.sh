@@ -1,3 +1,7 @@
+#!/bin/bash
+cat << EOF | mongosh -u mongo_broker -p "$MONGO_INITDB_ROOT_PASSWORD"
+db = db.getSiblingDB("gams_worker");
+
 db.createRole({
   role: "job_watcher",
   roles: [],
@@ -191,38 +195,38 @@ db.createRole({
 
 db.createUser({
   user: "k8s_job_watcher",
-  pwd: "{{ .Values.gmsRunnerMongoK8sJobWatcherPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD}",
   roles: ["job_watcher"],
 });
 
 
 db.createUser({
   user: "job_spawner",
-  pwd: "{{ .Values.gmsRunnerMongoSpwnPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_SPWN_PWD}",
   roles: ["job_spawner"],
 });
 
 db.createUser({
   user: "dep_check",
-  pwd: "{{ .Values.gmsRunnerMongoDependencyCheckPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD}",
   roles: ["dependency_handler"],
 });
 
 db.createUser({
   user: "event_manager",
-  pwd: "{{ .Values.gmsRunnerMongoEventManagerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_EVENT_MANAGER_PWD}",
   roles: ["event_manager", "event_manager_role2"],
 });
 
 db.createUser({
   user: "forward_proxy",
-  pwd: "{{ .Values.gmsRunnerMongoForwardProxyPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_FORWARD_PROXY_PWD}",
   roles: ["forward_proxy_role"],
 });
 
 db.createUser({
   user: "k8s_job_canceler",
-  pwd: "{{ .Values.gmsRunnerMongoK8sCancelPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_K8S_CANCEL_PWD}",
   roles: ["job_canceler"],
 });
 
@@ -248,7 +252,7 @@ db.schema_migrations.insertOne({
 
 db.createUser({
   user: "mongo_broker",
-  pwd: "{{ .Values.gmsRunnerMongoBrokerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_BROKER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -259,7 +263,7 @@ db.createUser({
 
 db.createUser({
   user: "mongo_worker",
-  pwd: "{{ .Values.gmsRunnerMongoWorkerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_WORKER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -270,7 +274,7 @@ db.createUser({
 
 db.createUser({
   user: "stein",
-  pwd: "{{ .Values.gmsRunnerMongoHypercubeAppenderPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -281,7 +285,7 @@ db.createUser({
 
 db.createUser({
   user: "jack",
-  pwd: "{{ .Values.gmsRunnerMongoCleanerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_CLEANER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -402,25 +406,25 @@ db.createRole({
 
 db.createUser({
   user: "dep_check",
-  pwd: "{{ .Values.gmsRunnerMongoDependencyCheckPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD}",
   roles: ["dependency_handler"],
 });
 
 db.createUser({
   user: "event_manager",
-  pwd: "{{ .Values.gmsRunnerMongoEventManagerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_EVENT_MANAGER_PWD}",
   roles: ["event_manager"],
 });
 
 db.createUser({
   user: 'forward_proxy',
-  pwd: '{{ .Values.gmsRunnerMongoForwardProxyPwd }}',
+  pwd: "${GMS_RUNNER_MONGO_FORWARD_PROXY_PWD}",
   roles: ['forward_proxy_role'],
 });
 
 db.createUser({
   user: "mongo_broker",
-  pwd: "{{ .Values.gmsRunnerMongoBrokerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_BROKER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -431,7 +435,7 @@ db.createUser({
 
 db.createUser({
   user: "mongo_worker",
-  pwd: "{{ .Values.gmsRunnerMongoWorkerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_WORKER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -442,7 +446,7 @@ db.createUser({
 
 db.createUser({
   user: "stein",
-  pwd: "{{ .Values.gmsRunnerMongoHypercubeAppenderPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -453,7 +457,7 @@ db.createUser({
 
 db.createUser({
   user: "jack",
-  pwd: "{{ .Values.gmsRunnerMongoCleanerPwd }}",
+  pwd: "${GMS_RUNNER_MONGO_CLEANER_PWD}",
   roles: [
     {
       role: "readWrite",
@@ -461,3 +465,6 @@ db.createUser({
     },
   ],
 });
+EOF
+
+echo "Hello world"

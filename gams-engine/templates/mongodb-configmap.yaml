@@ -4,5 +4,5 @@ metadata:
   name: mongo-config
   namespace: {{ .Release.Namespace }}
 data:
-  setup.js: |-
-{{ (tpl (.Files.Get "setup.js") .) | indent 4 }}
+  setup.sh: |-
+{{ (.Files.Get "setup.sh") | indent 4 }}

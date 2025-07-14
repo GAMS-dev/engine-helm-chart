@@ -41,6 +41,56 @@ spec:
                   key: GMS_RUNNER_MONGO_BROKER_PWD
             - name: MONGO_INITDB_DATABASE
               value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+            - name: GMS_RUNNER_MONGO_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_SPWN_PWD
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_MONGO_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_WORKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_WORKER_PWD
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_CLEANER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_MONGO_CLEANER_PWD
           imagePullPolicy: Always
       volumes:
         - name: mongo-data
@@ -50,5 +100,5 @@ spec:
           configMap:
             name: mongo-config
             items:
-              - key: setup.js
-                path: setup.js
+              - key: setup.sh
+                path: setup.sh
