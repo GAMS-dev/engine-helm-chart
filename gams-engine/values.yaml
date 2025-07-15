@@ -261,6 +261,8 @@ pgBouncer:
 # MongoDB is used to store structured and unstructured data.
 # MongoDB pod resource definitions
 mongodb:
+  useCustomStorageClass: false
+  storageClassName: ""
   affinity: {}
   resources:
     requests:
@@ -272,6 +274,8 @@ mongodb:
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
+  useCustomStorageClass: false
+  storageClassName: ""
   affinity: {}
   resources:
     requests:
@@ -283,6 +287,8 @@ postgresql:
 # RabbitMQ is used to pass messages between different components.
 # RabbitMQ pod resource definitions
 rabbitmq:
+  useCustomStorageClass: false
+  storageClassName: ""
   affinity: {}
   resources:
     limits:

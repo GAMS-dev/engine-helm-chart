@@ -4,6 +4,9 @@ metadata:
   name: queue-pvc
   namespace: {{ .Release.Namespace }}
 spec:
+{{- if .Values.rabbitmq.useCustomStorageClass }}
+  storageClassName: "{{ .Values.rabbitmq.storageClassName }}"
+{{- end }}
   accessModes:
     - ReadWriteOnce
   resources:

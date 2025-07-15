@@ -4,6 +4,9 @@ metadata:
   name: mongo-pvc
   namespace: {{ .Release.Namespace }}
 spec:
+{{- if .Values.mongodb.useCustomStorageClass }}
+  storageClassName: "{{ .Values.mongodb.storageClassName }}"
+{{- end }}
   accessModes:
     - ReadWriteOnce
   resources:
