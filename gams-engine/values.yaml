@@ -302,15 +302,3 @@ rabbitmq:
 # the admin password. For generating hash, see `generate_password_hash` from werkzeug.security
 # https://werkzeug.palletsprojects.com/en/2.0.x/utils/#werkzeug.security.generate_password_hash
 gmsRunnerDefaultAdminPasswordHash: "pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91"
-# Internally used passwords. Setup script will replace 'insert_password' fields with
-# new passwords and generate hashes when required. If a field is not set to 'insert_password'
-# the value in the field will be used for the hashing and a new password won't be generated.
-gmsRunnerDatabaseAdminPwd: "insert_password"
-gmsRunnerDatabaseBrokerPwd: "insert_password"
-gmsRunnerDatabaseWorkerPwd: "insert_password"
-gmsRunnerDatabaseCleanerPwd: "insert_password"
-gmsRunnerDatabaseSpwnPwd: "insert_password"
-gmsRunnerDatabaseK8sCancelPwd: "insert_password"
-gmsRunnerDatabaseDependencyCheckPwd: "insert_password"
-gmsRunnerDatabaseEventManagerPwd: "insert_password"
-gmsRunnerDatabaseK8sJobWatcherPwd: "insert_password"

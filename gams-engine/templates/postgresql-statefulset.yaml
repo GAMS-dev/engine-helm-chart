@@ -33,6 +33,8 @@ spec:
           resources:
 {{ toYaml .Values.postgresql.resources | indent 12 }}
           env:
+            - name: POSTGRES_DB
+              value: "gamsrest"
             - name: POSTGRES_USER
               value: "GMSMASTER"
             - name: POSTGRES_PASSWORD
@@ -40,8 +42,46 @@ spec:
                 secretKeyRef:
                   name: gamsworker
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
-            - name: POSTGRES_DB
-              value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_BROKER_PWD
+            - name: GMS_RUNNER_DATABASE_WORKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_WORKER_PWD
+            - name: GMS_RUNNER_DATABASE_CLEANER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_CLEANER_PWD
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_DATABASE_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_SPWN_PWD
+            - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: gamsworker
+                  key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
           imagePullPolicy: Always
       volumes:
         - name: db-data

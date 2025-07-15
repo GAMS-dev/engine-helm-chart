@@ -1,8 +1,0 @@
-CREATE USER broker WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseBrokerPwd }}';
-CREATE USER worker WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseWorkerPwd }}';
-CREATE USER cleaner WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseCleanerPwd }}';
-CREATE USER dep_check WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseDependencyCheckPwd }}';
-CREATE USER job_spawner WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseSpwnPwd }}';
-CREATE USER event_manager WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseEventManagerPwd }}';
-CREATE USER k8s_job_canceler WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseK8sCancelPwd }}';
-CREATE USER k8s_job_watcher WITH ENCRYPTED PASSWORD '{{ .Values.gmsRunnerDatabaseK8sJobWatcherPwd }}';

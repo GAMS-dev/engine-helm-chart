@@ -1,5 +1,16 @@
 #!/bin/bash
-cat /docker-entrypoint-initdb.d/users | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "gamsrest"
+#echo "CREATE DATABASE gamsrest;" | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER"
+
+
+cat << EOF | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "gamsrest"
+CREATE USER broker WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_BROKER_PWD}';
+CREATE USER worker WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_WORKER_PWD}';
+CREATE USER cleaner WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_CLEANER_PWD}';
+CREATE USER dep_check WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD}';
+CREATE USER job_spawner WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_SPWN_PWD}';
+CREATE USER event_manager WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD}';
+CREATE USER k8s_job_canceler WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_K8S_CANCEL_PWD}';
+CREATE USER k8s_job_watcher WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD}';
+EOF
+
 cat /docker-entrypoint-initdb.d/create_tables_and_set_permissions | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "gamsrest"
-echo "CREATE DATABASE test_gamsrest;" | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "gamsrest"
-cat /docker-entrypoint-initdb.d/create_tables_and_set_permissions | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "test_gamsrest"
