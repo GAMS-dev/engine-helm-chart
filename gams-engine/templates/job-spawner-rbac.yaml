@@ -2,7 +2,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: spawn-jobs-role
+  name: {{ include "common.names.fullname" . }}-spawn-jobs-role
 rules:
   - apiGroups: ["batch", "extensions"]
     resources: ["jobs"]
@@ -14,18 +14,18 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: job-spawner-account
+  name: {{ include "common.names.fullname" . }}-job-spawner-account
   namespace: {{ .Release.Namespace }}
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: job-spawner-account-rb
+  name: {{ include "common.names.fullname" . }}-job-spawner-account-rb
 subjects:
   - kind: ServiceAccount
-    name: job-spawner-account
+    name: {{ include "common.names.fullname" . }}-job-spawner-account
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: spawn-jobs-role
+  name: {{ include "common.names.fullname" . }}-spawn-jobs-role
   apiGroup: rbac.authorization.k8s.io

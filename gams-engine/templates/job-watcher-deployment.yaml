@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: job-watcher-deployment
+  name: {{ include "common.names.fullname" . }}-job-watcher
   namespace: {{ .Release.Namespace }}
   labels:
-    app: job-watcher
+    app: {{ include "common.names.fullname" . }}-job-watcher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: job-watcher
+      app: {{ include "common.names.fullname" . }}-job-watcher
   template:
     metadata:
       labels:
-        app: job-watcher
+        app: {{ include "common.names.fullname" . }}-job-watcher
     spec:
     {{- if .Values.jobWatcher.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobWatcher.affinity "context" $) | nindent 8 }}
     {{- end }}
-      serviceAccountName: job-watcher-account
+      serviceAccountName: {{ include "common.names.fullname" . }}-job-watcher-account
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobWatcher.image) "context" $) | indent 6}}
       containers:
         - name: job-watcher

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: job-spawner-deployment
+  name: {{ include "common.names.fullname" . }}-job-spawner
   namespace: {{ .Release.Namespace }}
   labels:
-    app: job-spawner
+    app: {{ include "common.names.fullname" . }}-job-spawner
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: job-spawner
+      app: {{ include "common.names.fullname" . }}-job-spawner
   template:
     metadata:
-      name: job-spawner
+      name: {{ include "common.names.fullname" . }}-job-spawner
       labels:
-        app: job-spawner
+        app: {{ include "common.names.fullname" . }}-job-spawner
     spec:
-      serviceAccountName: job-spawner-account
+      serviceAccountName: {{ include "common.names.fullname" . }}-job-spawner-account
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
       containers:
         - name: engine-job-spawner
@@ -32,7 +32,7 @@ spec:
 {{ end }}
           env:
             - name: GMS_RUNNER_WORKER_DATABASE_SERVER
-              value: "database-bouncer"
+              value: {{ include "common.names.fullname" . }}-database-bouncer
             - name: GMS_RUNNER_WORKER_DATABASE_PORT
               value: "6432"
             - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION

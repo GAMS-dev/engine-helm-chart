@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: job-canceler-deployment
+  name: {{ include "common.names.fullname" . }}-job-canceler
   namespace: {{ .Release.Namespace }}
   labels:
-    app: job-canceler
+    app: {{ include "common.names.fullname" . }}-job-canceler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: job-canceler
+      app: {{ include "common.names.fullname" . }}-job-canceler
   template:
     metadata:
       labels:
-        app: job-canceler
+        app: {{ include "common.names.fullname" . }}-job-canceler
     spec:
     {{- if .Values.jobCanceler.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobCanceler.affinity "context" $) | nindent 8 }}
     {{- end }}
-      serviceAccountName: canceler-account
+      serviceAccountName: {{ include "common.names.fullname" . }}-canceler-account
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobCanceler.image) "context" $) | indent 6}}
       containers:
         - name: job-canceler

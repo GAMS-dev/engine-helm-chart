@@ -2,7 +2,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: cancel-jobs-role
+  name: {{ include "common.names.fullname" . }}-cancel-jobs-role
 rules:
   - apiGroups: [""]
     resources: ["pods"]
@@ -14,19 +14,19 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: canceler-account
+  name: {{ include "common.names.fullname" . }}-canceler-account
   namespace: {{ .Release.Namespace }}
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: canceler-account-rb
+  name: {{ include "common.names.fullname" . }}-canceler-account-rb
   namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
-    name: canceler-account
+    name: {{ include "common.names.fullname" . }}-canceler-account
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: cancel-jobs-role
+  name: {{ include "common.names.fullname" . }}-cancel-jobs-role
   apiGroup: rbac.authorization.k8s.io
