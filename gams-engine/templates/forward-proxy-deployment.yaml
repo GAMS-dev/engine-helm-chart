@@ -36,22 +36,22 @@ spec:
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_FORWARD_PROXY_PWD
             - name: GMS_RUNNER_FORWARD_PROXY_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_FORWARD_PROXY_SECRET
             - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY

@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: postgresql-network-policy
+  name: {{ include "common.names.fullname" . }}-postgresql-network-policy
 {{- if not .Values.postgresql.externalDatabase.enabled }}
   namespace: {{ .Release.Namespace }}
 {{- else }}

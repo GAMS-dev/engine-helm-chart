@@ -36,7 +36,7 @@ spec:
             - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
@@ -49,7 +49,7 @@ spec:
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
@@ -75,5 +75,5 @@ spec:
             - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD

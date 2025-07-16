@@ -27,19 +27,19 @@ spec:
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_BROKER_PWD
             - name: GMS_RUNNER_MONGO_INITDB_MAIN
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
@@ -73,14 +73,14 @@ spec:
             - name: GMS_RUNNER_DATABASE_ADMIN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
               value: "gamsrest"
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
@@ -114,12 +114,12 @@ spec:
             - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_MIGRATE_PWD
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
       restartPolicy: OnFailure
   backoffLimit: 8

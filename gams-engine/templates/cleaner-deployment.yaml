@@ -55,7 +55,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_DATABASE_CLEANER_PWD
             - name: GMS_RUNNER_MONGO_HOST
               value: mongo
@@ -66,7 +66,7 @@ spec:
             - name: GMS_RUNNER_MONGO_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_CLEANER_PWD
             - name: GMS_RUNNER_RABBIT_HOST
               value: queue
@@ -75,5 +75,5 @@ spec:
             - name: GMS_RUNNER_RABBIT_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_CLEANER_PWD
