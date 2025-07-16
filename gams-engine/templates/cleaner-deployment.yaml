@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cleaner-deployment
+  name: {{ include "common.names.fullname" . }}-cleaner
   labels:
-    app: cleaner
+    app:  {{ include "common.names.fullname" . }}-cleaner
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cleaner
+      app: {{ include "common.names.fullname" . }}-cleaner
   template:
     metadata:
       labels:
-        app: cleaner
+        app: {{ include "common.names.fullname" . }}-cleaner
     spec:
     {{- if .Values.cleaner.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.cleaner.affinity "context" $) | nindent 8 }}
