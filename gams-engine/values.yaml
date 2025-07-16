@@ -35,7 +35,8 @@ useNetworkPolicies: true
 # v30.1.0     1.30
 # v31.0.0     1.31
 # v32.0.0     1.32
-kubernetesClientVersion: "v32.0.0"
+# v33.1.0     1.32
+kubernetesClientVersion: "v33.1.0"
 global:
   # Global Docker image registry
   imageRegistry: ""
