@@ -1,5 +1,5 @@
-{{- $mountApiUrl := printf "%s/api" .Values.mountUrl | replace "//" "/"}}
-{{- $rootUrl := ternary "/usr/share/nginx/engine" "/usr/share/nginx" (eq .Values.mountUrl "/") }}
+{{- $mountApiUrl := printf "%s/api" "/" | replace "//" "/"}}
+{{- $rootUrl := ternary "/usr/share/nginx/engine" "/usr/share/nginx" (eq "/" "/") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -114,7 +114,7 @@ spec:
             - containerPort: {{ ternary 443 80 .Values.service.useTLS }}
           env:
             - name: mount_url
-              value: {{ required "value 'mountUrl' is required" .Values.mountUrl | quote }}
+              value: "/"
             - name: mount_api_url
               value: {{ $mountApiUrl | quote }}
             - name: uwsgi_pass_url
@@ -124,7 +124,7 @@ spec:
             - name: ENGINE_URL
               value: {{ $mountApiUrl | quote }}
             - name: BASE_URL
-              value: {{ required "value 'mountUrl' is required" .Values.mountUrl | quote }}
+              value: "/"
             - name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
               value: {{ ternary ".template-secure" ".template" .Values.service.useTLS }}
       volumes:

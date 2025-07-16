@@ -1,11 +1,7 @@
-# mountUrl is the location of the url where Engine UI will be hosted. API will be bound to mountUrl/api.
-# mountUrl can contain only one level, for example, "/gams-engine" is valid but "/gams-engine/runner" isn't.
-# currently only 2 valid values are "/" and "/engine"
-mountUrl: "/"
 # GAMS Engine service parameters
 service:
 # service.type determines the type of the service that will be used to expose the GAMS Engine API
-# Possible values: NodePort and LoadBalancer
+# Possible values: NodePort, LoadBalancer and ClusterIp
   type: NodePort
 # service.nodePort of the service. If not provided, a random port within the NodePort range is used.
   nodePort: ""
