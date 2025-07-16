@@ -35,8 +35,13 @@ spec:
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
             - name: POSTGRESQL_DATABASE
               value: gamsrest
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: POSTGRESQL_HOST
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+{{- else }}
             - name: POSTGRESQL_HOST
               value: database
+{{- end }}
             - name: PGBOUNCER_POOL_MODE
               value: transaction
             - name: PGBOUNCER_DATABASE

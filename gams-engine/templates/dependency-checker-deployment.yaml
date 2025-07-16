@@ -49,8 +49,13 @@ spec:
                 secretKeyRef:
                   name: gamsworker
                   key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+{{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: "database"
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+{{- else }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: database
+{{- end }}
             - name: GMS_RUNNER_DATABASE_PORT
               value: "5432"
             - name: GMS_RUNNER_DATABASE_NAME

@@ -276,6 +276,14 @@ mongodb:
 postgresql:
   useCustomStorageClass: false
   storageClassName: ""
+  externalDatabase:
+    enabled: false
+    host: ""
+    database: "gamsrest"
+    port: "5432"
+    initialize:
+      run: true
+      connectionString: ""
   affinity: {}
   resources:
     requests:
