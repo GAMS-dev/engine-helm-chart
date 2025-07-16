@@ -285,6 +285,10 @@ postgresql:
     initialize:
       run: true
       connectionString: ""
+    networkPolicy:
+      podSelector: {}
+      namespaceSelector: {}
+      databaseNamespace: ""
   affinity: {}
   resources:
     requests:

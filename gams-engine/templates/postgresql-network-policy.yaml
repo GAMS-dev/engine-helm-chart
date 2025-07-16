@@ -1,52 +1,94 @@
 {{ if .Values.useNetworkPolicies }}
-{{- if not .Values.postgresql.externalDatabase.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: postgresql-network-policy
+{{- if not .Values.postgresql.externalDatabase.enabled }}
   namespace: {{ .Release.Namespace }}
+{{- else }}
+  namespace: {{ .Values.postgresql.externalDatabase.networkPolicy.databaseNamespace }}
+{{- end }}
 spec:
   podSelector:
+{{- if not .Values.postgresql.externalDatabase.enabled }}
     matchLabels:
       app: database
+{{- else }}
+{{ toYaml .Values.postgresql.externalDatabase.networkPolicy.podSelector | indent 4 }}
+{{- end }}
   policyTypes:
-    - Egress
     - Ingress
   ingress:
     - from:
+{{- if .Values.postgresql.externalDatabase.enabled }}
+      - podSelector:
+          matchLabels:
+            app: external-database-initialize
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+{{- end }}
       - podSelector:
           matchLabels:
             app: worker
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: job-watcher
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: job-spawner
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: job-canceler
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: hypercube-appender
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: event-manager
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: dep-checker
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: cleaner
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: broker
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
             app: pgbouncer
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       ports:
         - protocol: TCP
           port: 5432
-  egress: []
-{{- end }}
 {{ end }}
