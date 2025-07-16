@@ -33,19 +33,27 @@ spec:
                 secretKeyRef:
                   name: gamsworker
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
-            - name: POSTGRESQL_DATABASE
-              value: gamsrest
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRESQL_HOST
               value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: PGBOUNCER_DATABASE
+              value: "{{ .Values.postgresql.externalDatabase.database }}"
+            - name: POSTGRESQL_DATABASE
+              value: "{{ .Values.postgresql.externalDatabase.database }}"
+            - name: POSTGRESQL_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: POSTGRESQL_HOST
               value: database
+            - name: PGBOUNCER_DATABASE
+              value: gamsrest
+            - name: POSTGRESQL_DATABASE
+              value: gamsrest
+            - name: POSTGRESQL_PORT
+              value: "5432"
 {{- end }}
             - name: PGBOUNCER_POOL_MODE
               value: transaction
-            - name: PGBOUNCER_DATABASE
-              value: gamsrest
             - name: PGBOUNCER_MAX_CLIENT_CONN
               value: "5000"
             - name: PGBOUNCER_DEFAULT_POOL_SIZE

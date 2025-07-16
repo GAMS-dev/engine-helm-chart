@@ -54,14 +54,18 @@ spec:
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.externalDatabase.database }}"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: database
-{{- end }}
-            - name: GMS_RUNNER_DATABASE_PORT
-              value: "5432"
             - name: GMS_RUNNER_DATABASE_NAME
               value: "gamsrest"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+{{- end }}
             - name: GMS_RUNNER_DATABASE_DIALECT
               value: "postgresql"
             - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_DRIVER

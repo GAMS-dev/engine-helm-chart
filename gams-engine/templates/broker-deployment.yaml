@@ -59,8 +59,13 @@ spec:
               value: "database-bouncer"
             - name: GMS_RUNNER_DATABASE_PORT
               value: "6432"
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.externalDatabase.database }}"
+{{- else }}
             - name: GMS_RUNNER_DATABASE_NAME
               value: "gamsrest"
+{{- end }}
             - name: GMS_RUNNER_DATABASE_DIALECT
               value: "postgresql"
             - name: GMS_RUNNER_DATABASE_BROKER_DRIVER
