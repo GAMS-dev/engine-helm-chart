@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
-    app: queue
+    app: {{ include "common.names.fullname" . }}-queue
   ports:
     - protocol: TCP
       port: 5672

@@ -12,7 +12,7 @@ spec:
   podSelector:
 {{- if not .Values.postgresql.externalDatabase.enabled }}
     matchLabels:
-      app: database
+      app: {{ include "common.names.fullname" . }}-postgres
 {{- else }}
 {{ toYaml .Values.postgresql.externalDatabase.networkPolicy.podSelector | indent 4 }}
 {{- end }}
@@ -23,7 +23,7 @@ spec:
 {{- if .Values.postgresql.externalDatabase.enabled }}
       - podSelector:
           matchLabels:
-            app: external-database-initialize
+            app: {{ include "common.names.fullname" . }}-external-database-initialize
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -36,55 +36,61 @@ spec:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: job-watcher
+            app: {{ include "common.names.fullname" . }}-job-watcher
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: job-spawner
+            app: {{ include "common.names.fullname" . }}-job-spawner
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: job-canceler
+            app: {{ include "common.names.fullname" . }}-job-canceler
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: hypercube-appender
+            app: {{ include "common.names.fullname" . }}-hypercube-appender
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: event-manager
+            app: {{ include "common.names.fullname" . }}-event-manager
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: dep-checker
+            app: {{ include "common.names.fullname" . }}-dependency-checker
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: cleaner
+            app: {{ include "common.names.fullname" . }}-cleaner
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: broker
+            app: {{ include "common.names.fullname" . }}-broker
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: pgbouncer
+            app: {{ include "common.names.fullname" . }}-pgbouncer
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "common.names.fullname" . }}-database-migrate
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}

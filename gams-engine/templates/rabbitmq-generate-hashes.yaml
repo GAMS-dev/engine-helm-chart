@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: queue-generate-hashes
+  name: {{ include "common.names.fullname" . }}-queue-generate-hashes
   namespace: {{ .Release.Namespace }}
 data:
   generate_hashes.py: |-

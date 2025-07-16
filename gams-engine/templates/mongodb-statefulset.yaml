@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: sts-mongo
+  name: {{ include "common.names.fullname" . }}-mongodb
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: mongo
+      app: {{ include "common.names.fullname" . }}-mongo
   serviceName: mongo
   replicas: 1
   template:
     metadata:
       labels:
-        app: mongo
+        app: {{ include "common.names.fullname" . }}-mongo
     spec:
     {{- if .Values.mongodb.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
@@ -95,10 +95,10 @@ spec:
       volumes:
         - name: mongo-data
           persistentVolumeClaim:
-            claimName: mongo-pvc
+            claimName: {{ include "common.names.fullname" . }}-mongo-pvc
         - name: mongo-config-data
           configMap:
-            name: mongo-config
+            name: {{ include "common.names.fullname" . }}-mongo-config
             items:
               - key: setup.sh
                 path: setup.sh

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hunpacker-deployment
+  name: {{ include "common.names.fullname" . }}-hypercube-unpacker
   labels:
-    app: hunpacker
+    app: {{ include "common.names.fullname" . }}-hypercube-unpacker
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hypercube-unpacker
+      app: {{ include "common.names.fullname" . }}-hypercube-unpacker
   template:
     metadata:
       labels:
-        app: hypercube-unpacker
+        app: {{ include "common.names.fullname" . }}-hypercube-unpacker
     spec:
     {{- if .Values.hypercubeUnpacker.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.hypercubeUnpacker.affinity "context" $) | nindent 8 }}

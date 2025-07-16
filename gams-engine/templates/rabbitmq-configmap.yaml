@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: queue-definition
+  name: {{ include "common.names.fullname" . }}-queue-definition
   namespace: {{ .Release.Namespace }}
 data:
   definitions.json: |-

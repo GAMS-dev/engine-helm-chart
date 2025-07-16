@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: sts-database
+  name: {{ include "common.names.fullname" . }}-postgres
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: database
+      app: {{ include "common.names.fullname" . }}-postgres
   serviceName: database
   replicas: 1
   template:
     metadata:
       labels:
-        app: database
+        app: {{ include "common.names.fullname" . }}-postgres
     spec:
     {{- if .Values.postgresql.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
@@ -87,8 +87,8 @@ spec:
       volumes:
         - name: db-data
           persistentVolumeClaim:
-            claimName: database-pvc
+            claimName: {{ include "common.names.fullname" . }}-database-pvc
         - name: db-config-data
           configMap:
-            name: database-config
+            name: {{ include "common.names.fullname" . }}-database-config
 {{- end }}

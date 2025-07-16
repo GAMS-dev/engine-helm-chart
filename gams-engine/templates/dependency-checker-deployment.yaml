@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dep-checker-deployment
+  name: {{ include "common.names.fullname" . }}-dependency-checker
   labels:
-    app: dep-checker
+    app: {{ include "common.names.fullname" . }}-dependency-checker
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dep-checker
+      app: {{ include "common.names.fullname" . }}-dependency-checker
   template:
     metadata:
       labels:
-        app: dep-checker
+        app: {{ include "common.names.fullname" . }}-dependency-checker
     spec:
     {{- if .Values.dependencyChecker.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.dependencyChecker.affinity "context" $) | nindent 8 }}

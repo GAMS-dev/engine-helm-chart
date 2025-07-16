@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: database-pvc
+  name: {{ include "common.names.fullname" . }}-database-pvc
   namespace: {{ .Release.Namespace }}
 spec:
 {{- if .Values.postgresql.useCustomStorageClass }}

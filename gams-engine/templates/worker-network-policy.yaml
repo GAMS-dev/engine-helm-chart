@@ -17,21 +17,21 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: queue
+            app: {{ include "common.names.fullname" . }}-queue
       ports:
         - protocol: TCP
           port: 5672
     - to:
       - podSelector:
           matchLabels:
-            app: pgbouncer
+            app: {{ include "common.names.fullname" . }}-pgbouncer
       ports:
         - protocol: TCP
           port: 6432
     - to:
       - podSelector:
           matchLabels:
-            app: mongo
+            app: {{ include "common.names.fullname" . }}-mongo
       ports:
         - protocol: TCP
           port: 27017

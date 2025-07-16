@@ -3,9 +3,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: external-database-initialize
+  name: {{ include "common.names.fullname" . }}-external-database-initialize
   labels:
-    app: external-database-initialize
+    app: {{ include "common.names.fullname" . }}-external-database-initialize
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        app: external-database-initialize
+        app: {{ include "common.names.fullname" . }}-external-database-initialize
     spec:
       volumes:
         - name: db-config-data
           configMap:
-            name: database-config
+            name: {{ include "common.names.fullname" . }}-database-config
       containers:
         - name: external-db-initialize
           image: alpine/psql:17.5

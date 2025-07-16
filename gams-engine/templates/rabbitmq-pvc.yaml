@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: queue-pvc
+  name: {{ include "common.names.fullname" . }}-queue-pvc
   namespace: {{ .Release.Namespace }}
 spec:
 {{- if .Values.rabbitmq.useCustomStorageClass }}

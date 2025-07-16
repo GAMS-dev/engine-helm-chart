@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mongo-config
+  name: {{ include "common.names.fullname" . }}-mongo-config
   namespace: {{ .Release.Namespace }}
 data:
   setup.sh: |-

@@ -2,12 +2,12 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: rabbitmq-network-policy
+  name: {{ include "common.names.fullname" . }}-rabbitmq
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
     matchLabels:
-      app: queue
+      app: {{ include "common.names.fullname" . }}-queue
   policyTypes:
     - Egress
     - Ingress
@@ -18,31 +18,34 @@ spec:
             app: worker
       - podSelector:
           matchLabels:
-            app: job-watcher
+            app: {{ include "common.names.fullname" . }}-job-watcher
       - podSelector:
           matchLabels:
-            app: job-spawner
+            app: {{ include "common.names.fullname" . }}-job-spawner
       - podSelector:
           matchLabels:
-            app: job-canceler
+            app: {{ include "common.names.fullname" . }}-job-canceler
       - podSelector:
           matchLabels:
-            app: hypercube-unpacker
+            app: {{ include "common.names.fullname" . }}-hypercube-unpacker
       - podSelector:
           matchLabels:
-            app: hypercube-appender
+            app: {{ include "common.names.fullname" . }}-hypercube-appender
       - podSelector:
           matchLabels:
-            app: event-manager
+            app: {{ include "common.names.fullname" . }}-event-manager
       - podSelector:
           matchLabels:
-            app: dep-checker
+            app: {{ include "common.names.fullname" . }}-dependency-checker
       - podSelector:
           matchLabels:
-            app: cleaner
+            app: {{ include "common.names.fullname" . }}-cleaner
       - podSelector:
           matchLabels:
-            app: broker
+            app: {{ include "common.names.fullname" . }}-broker
+      - podSelector:
+          matchLabels:
+            app: {{ include "common.names.fullname" . }}-queue-migrate
       ports:
         - protocol: TCP
           port: 5672

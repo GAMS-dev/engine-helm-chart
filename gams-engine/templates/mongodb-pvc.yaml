@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: mongo-pvc
+  name: {{ include "common.names.fullname" . }}-mongo-pvc
   namespace: {{ .Release.Namespace }}
 spec:
 {{- if .Values.mongodb.useCustomStorageClass }}

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: event-manager-deployment
+  name: {{ include "common.names.fullname" . }}-event-manager
   labels:
-    app: event-manager
+    app: {{ include "common.names.fullname" . }}-event-manager
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: event-manager
+      app: {{ include "common.names.fullname" . }}-event-manager
   template:
     metadata:
       labels:
-        app: event-manager
+        app: {{ include "common.names.fullname" . }}-event-manager
     spec:
     {{- if .Values.eventManager.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.eventManager.affinity "context" $) | nindent 8 }}

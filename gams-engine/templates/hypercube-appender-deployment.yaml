@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: happender-deployment
+  name: {{ include "common.names.fullname" . }}-hypercube-appender
   labels:
-    app: happender
+    app: {{ include "common.names.fullname" . }}-hypercube-appender
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hypercube-appender
+      app: {{ include "common.names.fullname" . }}-hypercube-appender
   template:
     metadata:
       labels:
-        app: hypercube-appender
+        app: {{ include "common.names.fullname" . }}-hypercube-appender
     spec:
     {{- if .Values.hypercubeAppender.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.hypercubeAppender.affinity "context" $) | nindent 8 }}

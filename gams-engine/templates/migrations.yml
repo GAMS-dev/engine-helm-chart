@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: mongo-migrate
+  name: {{ include "common.names.fullname" . }}-mongo-migrate
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -13,6 +13,9 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   template:
+    metadata:
+      labels:
+        app: {{ include "common.names.fullname" . }}-mongo-migrate
     spec:
       containers:
         - name: mongo-migrate
@@ -44,7 +47,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: database-migrate
+  name: {{ include "common.names.fullname" . }}-database-migrate
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -56,6 +59,9 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   template:
+    metadata:
+      labels:
+        app: {{ include "common.names.fullname" . }}-database-migrate
     spec:
       containers:
         - name: database-migrate
@@ -94,6 +100,9 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   template:
+    metadata:
+      labels:
+        app: {{ include "common.names.fullname" . }}-queue-migrate
     spec:
       containers:
         - name: queue-migrate

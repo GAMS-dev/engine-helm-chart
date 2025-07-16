@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: forward-proxy-deployment
+  name: {{ include "common.names.fullname" . }}-forward-proxy
   labels:
-    app: forward-proxy
+    app: {{ include "common.names.fullname" . }}-forward-proxy
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: forward-proxy
+      app: {{ include "common.names.fullname" . }}-forward-proxy
   template:
     metadata:
       labels:
-        app: forward-proxy
+        app: {{ include "common.names.fullname" . }}-forward-proxy
     spec:
     {{- if .Values.forwardProxy.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.forwardProxy.affinity "context" $) | nindent 8 }}

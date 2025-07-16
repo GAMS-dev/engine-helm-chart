@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pgbouncer-deployment
+  name: {{ include "common.names.fullname" . }}-pgbouncer
   labels:
-    app: pgbouncer
+    app: {{ include "common.names.fullname" . }}-pgbouncer
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pgbouncer
+      app: {{ include "common.names.fullname" . }}-pgbouncer
   template:
     metadata:
       labels:
-        app: pgbouncer
+        app: {{ include "common.names.fullname" . }}-pgbouncer
     spec:
     {{- if .Values.pgBouncer.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.pgBouncer.affinity "context" $) | nindent 8 }}

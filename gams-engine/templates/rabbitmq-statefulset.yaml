@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: sts-rabbitmq
+  name: {{ include "common.names.fullname" . }}-rabbitmq
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: queue
+      app: {{ include "common.names.fullname" . }}-queue
   serviceName: queue
   replicas: 1
   template:
     metadata:
       labels:
-        app: queue
+        app: {{ include "common.names.fullname" . }}-queue
     spec:
     {{- if .Values.rabbitmq.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
@@ -106,10 +106,10 @@ spec:
       volumes:
         - name: queue-data
           persistentVolumeClaim:
-            claimName: queue-pvc
+            claimName: {{ include "common.names.fullname" . }}-queue-pvc
         - name: queue-definition-data
           configMap:
-            name: queue-definition
+            name: {{ include "common.names.fullname" . }}-queue-definition
             items:
               - key: definitions.json
                 path: definitions.json
@@ -117,7 +117,7 @@ spec:
           emptyDir: {}
         - name: queue-generate-hashes-code
           configMap:
-            name: queue-generate-hashes
+            name: {{ include "common.names.fullname" . }}-queue-generate-hashes
             items:
               - key: generate_hashes.py
                 path: generate_hashes.py
