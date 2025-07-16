@@ -1,13 +1,13 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: broker-scaler
+  name: {{ include "common.names.fullname" . }}-broker-scaler
   namespace: {{ .Release.Namespace }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: broker-deployment
+    name: {{ include "common.names.fullname" . }}-broker
   minReplicas: 1
   maxReplicas: 3
   targetCPUUtilizationPercentage: 90

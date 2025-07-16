@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: broker-ext
+  name: {{ include "common.names.fullname" . }}-broker
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
-    app: broker
+    app: {{ include "common.names.fullname" . }}-broker
   ports:
     - port: {{ ternary 443 80 .Values.service.useTLS }}
       targetPort: {{ ternary 443 80 .Values.service.useTLS }}

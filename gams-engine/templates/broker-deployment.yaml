@@ -3,19 +3,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: broker-deployment
+  name: {{ include "common.names.fullname" . }}-broker
   labels:
-    app: broker
+    app: {{ include "common.names.fullname" . }}-broker
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: broker
+      app: {{ include "common.names.fullname" . }}-broker
   template:
     metadata:
       labels:
-        app: broker
+        app: {{ include "common.names.fullname" . }}-broker
     spec:
     {{- if .Values.broker.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.broker.affinity "context" $) | nindent 8 }}
@@ -56,7 +56,7 @@ spec:
             - name: UWSGI_SOCKET
               value: "/tmp/uwsgi.sock"
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: "database-bouncer"
+              value: {{ include "common.names.fullname" . }}-database-bouncer
             - name: GMS_RUNNER_DATABASE_PORT
               value: "6432"
 {{- if .Values.postgresql.externalDatabase.enabled }}
