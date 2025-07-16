@@ -1,0 +1,7 @@
+Thank you for installing the GAMS Engine Helm chart.
+Your release is named {{ .Release.Name }}.
+
+Accessing your GAMS Engine application
+You can reach GAMS Engine via service `{{ include "common.names.fullname" . }}-broker`
+
+Please refer to the values.yaml file for more details on configuration options.
