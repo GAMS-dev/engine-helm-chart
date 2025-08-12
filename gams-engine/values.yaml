@@ -22,7 +22,7 @@ useDefaultDenyNetworkPolicy: false
 # Network policies provides an extra layer of protection that we suggest. However,
 # Network Policies only work if your CNI plugin implements them. We recommmend keeping this
 # true because it provides extra security. (If your CNI does not implement, they will be ignored.)
-useNetworkPolicies: true
+
 # Job Canceler, Job Cleaner, Job Spawner and Job Watcher requires communication via Kubernetes API.
 # Client version that is used in those pods needs to be compatible with the Kubernetes API version.
 # You can read more on https://kubernetes.io/releases/version-skew-policy/
@@ -39,6 +39,7 @@ global:
   # imagePullSecrets:
   #   - registryKeySecretName
   imagePullSecrets: []
+  useNetworkPolicies: true
 image:
   tag: ""
 broker:
