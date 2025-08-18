@@ -107,8 +107,18 @@ spec:
               mountPath: /etc/rabbitmq/advanced.config
               subPath: advanced.config
               readOnly: true
+            - name: queue-config
+              mountPath: /etc/rabbitmq/rabbitmq.conf
+              subPath: rabbitmq.conf
+              readOnly: true
       volumes:
-        - name: advanced-queue-config 
+        - name: queue-config
+          configMap:
+            name: {{ include "common.names.fullname" . }}-queue-config
+            items:
+            - key: rabbitmq.conf
+              path: rabbitmq.conf
+        - name: advanced-queue-config
           configMap:
             name: {{ include "common.names.fullname" . }}-queue-advanced-config
             items:
