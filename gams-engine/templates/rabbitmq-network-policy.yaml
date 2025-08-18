@@ -46,14 +46,12 @@ spec:
       - podSelector:
           matchLabels:
             app: {{ include "common.names.fullname" . }}-queue-migrate
-{{- if .Values.broker.networkPolicy.extraEgress }}
-{{- include "common.tplvalues.render" ( dict "value" .Values.broker.networkPolicy.extraEgress "context" $ ) | nindent 4 }}
-{{- end }}
-
       ports:
         - protocol: TCP
           port: 5672
-        - port: 15692
-          protocol: TCP
+    {{- if .Values.rabbitmq.networkPolicy.extraIngress }}
+    # Optional extra ingress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.networkPolicy.extraIngress "context" $) | nindent 4 }}
+    {{- end }}
   egress: []
 {{ end }}

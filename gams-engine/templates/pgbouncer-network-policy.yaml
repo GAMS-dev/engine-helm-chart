@@ -44,6 +44,10 @@ spec:
         - protocol: TCP
           port: 6432
   egress:
+    {{- if .Values.pgBouncer.networkPolicy.extraEgress }}
+    # Optional extra egress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.pgBouncer.networkPolicy.extraEgress "context" $) | nindent 4 }}
+    {{- end }}
 {{- if .Values.postgresql.externalDatabase.enabled }}
     - to:
       - podSelector:

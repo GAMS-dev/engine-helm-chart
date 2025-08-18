@@ -14,9 +14,6 @@ spec:
   ingress: []
   egress:
     - to:
-      - ipBlock:
-          cidr: 0.0.0.0/0
-    - to:
       - podSelector:
           matchLabels:
             app: {{ include "common.names.fullname" . }}-queue
@@ -58,4 +55,8 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
+    {{- if .Values.eventManager.networkPolicy.extraEgress }}
+    # Optional extra egress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.eventManager.networkPolicy.extraEgress "context" $) | nindent 4 }}
+    {{- end }}
 {{ end }}

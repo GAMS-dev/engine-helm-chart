@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-worker-network-policy
+  name: {{ include "common.names.fullname" . }}-worker
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector:
@@ -10,10 +10,13 @@ spec:
       app: worker
   policyTypes:
     - Egress
+    - Ingress
+  ingress: []
   egress:
-    - to:
-      - ipBlock:
-          cidr: 0.0.0.0/0
+    {{- if .Values.jobSpawner.workerNetworkPolicy.extraEgress }}
+    # Optional extra egress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.jobSpawner.workerNetworkPolicy.extraEgress "context" $) | nindent 4 }}
+    {{- end }}
     - to:
       - podSelector:
           matchLabels:

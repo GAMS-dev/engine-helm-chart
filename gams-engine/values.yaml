@@ -64,6 +64,12 @@ broker:
       limits:
         cpu: "200m"
         memory: 200Mi
+    # Add extra ingress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+  networkPolicy:
+    extraIngress: []
+    extraEgress: []
+
 # Forward Proxy forwards the requests from the Engine API
 # Forward Proxy pod resource definitions
 forwardProxy:
@@ -80,6 +86,16 @@ forwardProxy:
     limits:
       cpu: "100m"
       memory: 100Mi
+  networkPolicy:
+    extraIngress: []
+    extraEgress: []
+    #  - ports:  # allows HTTPS access to any IP in public networks
+    #    - protocol: TCP
+    #      port: 443
+    #    to:
+    #    - ipBlock:
+    #        cidr: 0.0.0.0/0
+
 # Event manager listens to event queue and handles events.
 # For example, it can call a webhook to notify a job is finished.
 eventManager:
@@ -96,6 +112,11 @@ eventManager:
     limits:
       cpu: "100m"
       memory: 100Mi
+  networkPolicy:
+    # Add extra egress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraEgress: []
+
  # Cleaner chronologically removes unused files.
  # Cleaner pod resource definitions
 cleaner:
@@ -187,6 +208,11 @@ jobCanceler:
     limits:
       cpu: "100m"
       memory: 100Mi
+  networkPolicy:
+    # Add extra egress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraEgress: []
+
 # Job spawner takes a Engine job and creates a Kubernetes Job.
 # Job spawner pod resource definitions.
 jobSpawner:
@@ -220,6 +246,15 @@ jobSpawner:
     limits:
       cpu: "100m"
       memory: 150Mi
+  workerNetworkPolicy:
+    # Add extra egress rules to the NetworkPolicy of worker pods
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraEgress: []
+  networkPolicy:
+    # Add extra egress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraEgress: []
+
 # Job watcher watches for OOM killed and evicted jobs.
 # Job watcher pod resource definitions.
 jobWatcher:
@@ -238,6 +273,11 @@ jobWatcher:
     limits:
       cpu: "100m"
       memory: 200Mi
+  networkPolicy:
+    # Add extra egress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraEgress: []
+
 # PG Bouncer is a connection pooler for PostgreSQL
 # PG Bouncer pod resource definitions
 pgBouncer:
@@ -248,6 +288,11 @@ pgBouncer:
       memory: 200Mi
     limits:
       memory: 300Mi
+  networkPolicy:
+    # Add extra egress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraEgress: []
+
 # MongoDB is used to store structured and unstructured data.
 # MongoDB pod resource definitions
 mongodb:
@@ -261,6 +306,7 @@ mongodb:
     limits:
       memory: 3Gi
       cpu: 400m
+
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
@@ -286,6 +332,7 @@ postgresql:
     limits:
       cpu: "400m"
       memory: 3072Mi
+
 # RabbitMQ is used to pass messages between different components.
 # RabbitMQ pod resource definitions
 rabbitmq:
@@ -299,7 +346,10 @@ rabbitmq:
     requests:
       memory: 2048Mi
       cpu: 100m
-
+  networkPolicy:
+    # Add extra ingress rules to the NetworkPolicy
+    # (only relevent if global.networkPolicy.enabled is true)
+    extraIngress: []
 # Default Admin Password Hash, this is only effective during the installation. Updating this will not change
 # the admin password. For generating hash, see `generate_password_hash` from werkzeug.security
 # https://werkzeug.palletsprojects.com/en/2.0.x/utils/#werkzeug.security.generate_password_hash

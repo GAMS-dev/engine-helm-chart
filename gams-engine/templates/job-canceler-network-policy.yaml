@@ -13,6 +13,10 @@ spec:
     - Ingress
   ingress: []
   egress:
+    {{- if .Values.jobCanceler.networkPolicy.extraEgress }}
+    # Optional extra egress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.jobCanceler.networkPolicy.extraEgress "context" $) | nindent 4 }}
+    {{- end }}
     - to:
       - podSelector:
           matchLabels:

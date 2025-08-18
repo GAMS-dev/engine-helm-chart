@@ -12,7 +12,10 @@ spec:
     - Egress
     - Ingress
   ingress:
-    - {}
+    {{- if .Values.broker.networkPolicy.extraIngress }}
+    # Optional extra ingress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.extraIngress "context" $) | nindent 4 }}
+    {{- end }}
   egress:
     - to:
       - podSelector:
@@ -45,4 +48,8 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
+    {{- if .Values.broker.networkPolicy.extraEgress }}
+    # Optional extra egress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.extraEgress "context" $) | nindent 4 }}
+    {{- end }}
 {{ end }}
