@@ -5,6 +5,25 @@ service:
   type: NodePort
 # service.nodePort of the service. If not provided, a random port within the NodePort range is used.
   nodePort: ""
+ingress:
+  enabled: false
+  ingressClassName: alb
+  annotations: {}
+    #alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    #alb.ingress.kubernetes.io/scheme: internet-facing
+    #alb.ingress.kubernetes.io/ssl-redirect: "443"
+    #alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+    #alb.ingress.kubernetes.io/target-type: ip
+    #nginx.ingress.kubernetes.io/rewrite-target: /
+  labels: {}
+  path: /
+  pathType: Prefix
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 # Default deny network policy ensures all the communication within the namespace
 # is denied by default unless the otherwise is specified. We suggest setting this to
 # true if that namespace only contains the Engine installation.
