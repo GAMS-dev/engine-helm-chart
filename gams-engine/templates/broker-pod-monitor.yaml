@@ -1,4 +1,4 @@
-{{ if .Values.broker.metrics.enabled }}
+{{ if and .Values.broker.monitoring.metricsEnabled .Values.broker.monitoring.podMonitorEnabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:

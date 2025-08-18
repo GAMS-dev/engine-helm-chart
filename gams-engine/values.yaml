@@ -73,8 +73,12 @@ image:
   tag: ""
 broker:
   affinity: {}
-  metrics:
-    enabled: false
+  monitoring:
+    # When set to True exposes metric at /api/metrics
+    metricsEnabled: false
+    # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
+    # Requires metricsEnabled to be true to work.
+    podMonitorEnabled: false
   uwsgi:
     image:
       registry: docker.io/gams

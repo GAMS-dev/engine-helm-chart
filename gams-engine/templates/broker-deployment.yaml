@@ -101,7 +101,7 @@ spec:
               value: "mongo"
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
-{{- if .Values.broker.metrics.enabled }}
+{{- if .Values.broker.monitoring.metricsEnabled }}
             - name: PROMETHEUS_AUTH_USERNAME
               valueFrom:
                 secretKeyRef:
