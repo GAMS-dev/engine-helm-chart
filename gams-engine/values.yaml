@@ -1,3 +1,23 @@
+# Common configuration settings for Engine
+config:
+  # Cleaner cleans up queues/pools etc. every 'heartbeatSeconds' seconds.
+  # Do not touch this value unless you know what you are doing!
+  cleanerHeartbeatSeconds: 300
+  # Job spawner will subtract 'workerStartupDurationSeconds*idle_multiplier'
+  # from user's volume quota for each worker spawned (e.g. any job outside of a
+  # worker pool or each worker of a pool).
+  workerStartupDurationSeconds: 0
+  # Job spawner will keep the new jobs in the queue if there are
+  # more than 'maxPendingJobs' pending jobs.
+  maxPendingJobs: 5
+  # Job spawner will keep the new jobs in the queue if there is
+  # any job pending more than 'maxPendingJobDurationSeconds' seconds.
+  maxPendingJobDurationSeconds: 120
+  # TODO initialAdminPassword: "admin"     # instead of gmsRunnerDefaultAdminPasswordHash
+  # Default Admin Password Hash, this is only effective during the installation. Updating this will not change
+  # the admin password. For generating hash, see `generate_password_hash` from werkzeug.security
+  # https://werkzeug.palletsprojects.com/en/2.0.x/utils/#werkzeug.security.generate_password_hash
+  gmsRunnerDefaultAdminPasswordHash: "pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91"
 # GAMS Engine service parameters
 service:
 # service.type determines the type of the service that will be used to expose the GAMS Engine API
@@ -140,9 +160,6 @@ eventManager:
  # Cleaner pod resource definitions
 cleaner:
   affinity: {}
-  # Cleaner cleans up queues/pools etc. every 'heartbeatSeconds' seconds.
-  # Do not touch this value unless you know what you are doing!
-  heartbeatSeconds: 300
   image:
     registry: docker.io/gams
     repository: engine-cleaner
@@ -236,16 +253,6 @@ jobCanceler:
 # Job spawner pod resource definitions.
 jobSpawner:
   affinity: {}
-  # Job spawner will keep the new jobs in the queue if there are
-  # more than 'maxPendingJobs' pending jobs.
-  maxPendingJobs: 5
-  # Job spawner will keep the new jobs in the queue if there is
-  # any job pending more than 'maxPendingJobDurationSeconds' seconds.
-  maxPendingJobDurationSeconds: 120
-  # Job spawner will subtract 'workerStartupDurationSeconds*idle_multiplier'
-  # from user's volume quota for each worker spawned (e.g. any job outside of a
-  # worker pool or each worker of a pool).
-  workerStartupDurationSeconds: 0
   workerImage:
     registry: docker.io/gams
     repository: engine-worker
@@ -369,7 +376,3 @@ rabbitmq:
     # Add extra ingress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
     extraIngress: []
-# Default Admin Password Hash, this is only effective during the installation. Updating this will not change
-# the admin password. For generating hash, see `generate_password_hash` from werkzeug.security
-# https://werkzeug.palletsprojects.com/en/2.0.x/utils/#werkzeug.security.generate_password_hash
-gmsRunnerDefaultAdminPasswordHash: "pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91"

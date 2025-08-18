@@ -28,7 +28,7 @@ spec:
 {{ toYaml .Values.cleaner.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_CLEANER_HEARTBEAT_SEC
-              value: "{{ .Values.cleaner.heartbeatSeconds }}"
+              value: "{{ .Values.config.cleanerHeartbeatSeconds }}"
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
 {{- if .Values.postgresql.externalDatabase.enabled }}

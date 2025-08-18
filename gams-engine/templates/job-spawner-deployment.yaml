@@ -85,11 +85,11 @@ spec:
             - name: GMS_RUNNER_DATABASE_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_SPWN_MAX_PENDING_JOBS
-              value: "{{ .Values.jobSpawner.maxPendingJobs }}"
+              value: "{{ .Values.config.maxPendingJobs }}"
             - name: GMS_RUNNER_SPWN_MAX_PENDING_SECONDS_JOB
-              value: "{{ .Values.jobSpawner.maxPendingJobDurationSeconds }}"
+              value: "{{ .Values.config.maxPendingJobDurationSeconds }}"
             - name: GMS_RUNNER_SPWN_WORKER_STARTUP_SECONDS
-              value: "{{ .Values.jobSpawner.workerStartupDurationSeconds }}"
+              value: "{{ .Values.config.workerStartupDurationSeconds }}"
             - name: GMS_RUNNER_DATABASE_SPWN_PWD
               valueFrom:
                 secretKeyRef:
