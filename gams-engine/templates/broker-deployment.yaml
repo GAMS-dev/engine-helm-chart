@@ -109,13 +109,8 @@ spec:
           volumeMounts:
             - name: uwsgi-socket
               mountPath: /tmp
-          {{- if .Values.service.useTLS }}
-            - name: tls-secrets
-              mountPath: "/etc/nginx/certs"
-              readOnly: true
-          {{- end }}
           ports:
-            - containerPort: {{ ternary 443 80 .Values.service.useTLS }}
+            - containerPort: 80
           env:
             - name: mount_url
               value: "/"
@@ -130,18 +125,7 @@ spec:
             - name: BASE_URL
               value: "/"
             - name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
-              value: {{ ternary ".template-secure" ".template" .Values.service.useTLS }}
+              value: ".template"
       volumes:
         - name: uwsgi-socket
           emptyDir: {}
-        {{- if .Values.service.useTLS }}
-        - name: tls-secrets
-          secret:
-            secretName: {{ .Values.service.tlsSecretName }}
-            defaultMode: 0440
-            items:
-              - key: tls.crt
-                path: cert.crt
-              - key: tls.key
-                path: cert.key
-              {{- end }}

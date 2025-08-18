@@ -7,7 +7,7 @@ spec:
   selector:
     app: {{ include "common.names.fullname" . }}-broker
   ports:
-    - port: {{ ternary 443 80 .Values.service.useTLS }}
-      targetPort: {{ ternary 443 80 .Values.service.useTLS }}
+    - port: 80
+      targetPort: 80
       nodePort: {{ .Values.service.nodePort }}
   type: {{ required "value 'service.type' is required" .Values.service.type }}

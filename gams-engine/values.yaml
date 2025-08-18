@@ -1,20 +1,10 @@
 # GAMS Engine service parameters
 service:
 # service.type determines the type of the service that will be used to expose the GAMS Engine API
-# Possible values: NodePort, LoadBalancer and ClusterIp
+# Possible values: NodePort and ClusterIp
   type: NodePort
 # service.nodePort of the service. If not provided, a random port within the NodePort range is used.
   nodePort: ""
-# service.useTLS determines whether to expose GAMS Engine API securely or not
-  useTLS: false
-# service.tlsSecretName, name of the TLS Secret to be used. Only used when useTLS is true.
-# its type must be kubernetes.io/tls and it should be in the deployed namespace.
-  tlsSecretName: ""
-# Job spawner can customize job definitions to cover wider range of use cases.
-# e.g it can include init containers to workers. To do that create a Python file
-# that defines customizes the job definition in a function called 'customize_job_definition'
-# and create a configMap from that. And pass name of that configMap to this variable
-workerCustomizeJobConfigMapName: ""
 # Default deny network policy ensures all the communication within the namespace
 # is denied by default unless the otherwise is specified. We suggest setting this to
 # true if that namespace only contains the Engine installation.
