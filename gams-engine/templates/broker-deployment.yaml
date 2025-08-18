@@ -101,6 +101,18 @@ spec:
               value: "mongo"
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
+{{- if .Values.broker.metrics.enabled }}
+            - name: PROMETHEUS_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: PROMETHEUS_AUTH_USERNAME
+                  name: {{ include "common.names.fullname" . }}-gamsworker
+            - name: PROMETHEUS_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PROMETHEUS_AUTH_PASSWORD
+                  name: {{ include "common.names.fullname" . }}-gamsworker
+{{- end }}
         - name: nginx
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.nginx.image.registry "repository" .Values.broker.nginx.image.repository "tag" (coalesce .Values.broker.nginx.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           imagePullPolicy: Always

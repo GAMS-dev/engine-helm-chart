@@ -1,0 +1,21 @@
+{{ if .Values.broker.metrics.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "common.names.fullname" . }}-broker-pod-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  podMetricsEndpoints:
+  - basicAuth:
+      password:
+        key: PROMETHEUS_AUTH_PASSWORD
+        name: {{ include "common.names.fullname" . }}-gamsworker
+      username:
+        key: PROMETHEUS_AUTH_USERNAME
+        name: {{ include "common.names.fullname" . }}-gamsworker
+    path: api/metrics
+    portNumber: 80
+  selector:
+    matchLabels:
+      app: {{ include "common.names.fullname" . }}-broker
+{{end}}

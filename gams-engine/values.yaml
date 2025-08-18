@@ -34,6 +34,8 @@ image:
   tag: ""
 broker:
   affinity: {}
+  metrics:
+    enabled: false
   uwsgi:
     image:
       registry: docker.io/gams
