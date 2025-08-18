@@ -91,7 +91,7 @@ spec:
                   key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
       containers:
         - name: gamswebqueue
-          image: rabbitmq:3.8.2-management-alpine
+          image: rabbitmq:4.0-management-alpine
           resources:
 {{ toYaml .Values.rabbitmq.resources | indent 12 }}
           ports:
@@ -103,7 +103,17 @@ spec:
               mountPath: /etc/rabbitmq/definitions.json
               subPath: definitions.json
               readOnly: true
+            - name: advanced-queue-config
+              mountPath: /etc/rabbitmq/advanced.config
+              subPath: advanced.config
+              readOnly: true
       volumes:
+        - name: advanced-queue-config 
+          configMap:
+            name: {{ include "common.names.fullname" . }}-queue-advanced-config
+            items:
+            - key: advanced.config
+              path: advanced.config
         - name: queue-data
           persistentVolumeClaim:
             claimName: {{ include "common.names.fullname" . }}-queue-pvc
