@@ -39,7 +39,7 @@ spec:
                   name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
             - name: GMS_RUNNER_MONGO_HOST
-              value: "mongo"
+              value: {{ include "common.names.fullname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_USER

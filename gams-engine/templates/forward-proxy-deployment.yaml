@@ -28,7 +28,7 @@ spec:
 {{ toYaml .Values.forwardProxy.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_MONGO_HOST
-              value: "mongo"
+              value: {{ include "common.names.fullname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_USER
