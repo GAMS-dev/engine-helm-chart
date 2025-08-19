@@ -53,6 +53,8 @@ spec:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+            - name: GMS_RUNNER_FORWARD_PROXY_HOST
+              value: http://{{ include "common.names.fullname" . }}-forward-proxy:8000
             - name: UWSGI_NUM_PROCESSES
               value: "1"
             - name: UWSGI_MOUNT_LOCATION

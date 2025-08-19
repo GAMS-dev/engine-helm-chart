@@ -45,6 +45,14 @@ spec:
               value: '{{ coalesce (join "," .Values.jobSpawner.workerImage.pullSecrets) (join "," .Values.global.imagePullSecrets) }}'
             - name: GMS_RUNNER_RABBIT_HOST
               value: {{ include "common.names.fullname" . }}-queue
+            - name: GMS_RUNNER_SPWN_WORKER_QUEUE_HOST
+              value: {{ include "common.names.fullname" . }}-queue
+            - name: GMS_RUNNER_SPWN_WORKER_DB_HOST
+              value: {{ include "common.names.fullname" . }}-database-bouncer
+            - name: GMS_RUNNER_SPWN_WORKER_DB_PORT
+              value: "6432"
+            - name: GMS_RUNNER_SPWN_WORKER_MONGO_HOST
+              value: {{ include "common.names.fullname" . }}-mongo
             - name: GMS_RUNNER_RABBIT_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_RABBIT_SPWN_PWD
@@ -52,6 +60,8 @@ spec:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_SPWN_PWD
+            - name: GMS_RUNNER_SPWN_WORKER_CRED_SECRET_NAME
+              value: {{ include "common.names.fullname" . }}-gamsworker
             - name: GMS_RUNNER_MONGO_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_MONGO_SPWN_PWD
