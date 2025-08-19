@@ -28,7 +28,7 @@ spec:
 {{ toYaml .Values.eventManager.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_RABBIT_HOST
-              value: "queue"
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_USER
               value: "event_manager"
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD

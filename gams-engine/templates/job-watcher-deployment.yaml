@@ -43,7 +43,7 @@ spec:
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "common.names.fullname" . }}-mongo
             - name: GMS_RUNNER_RABBIT_HOST
-              value: queue
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_USER
               value: "k8s_job_watcher"
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD

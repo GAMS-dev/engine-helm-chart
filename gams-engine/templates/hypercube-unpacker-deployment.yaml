@@ -30,7 +30,7 @@ spec:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_RABBIT_HOST
-              value: "queue"
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_USER
               value: "hypercube_unpacker"
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD

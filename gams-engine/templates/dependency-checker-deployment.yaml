@@ -30,7 +30,7 @@ spec:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_RABBIT_HOST
-              value: "queue"
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_USER
               value: "dep_check"
             - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD

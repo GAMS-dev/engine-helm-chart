@@ -69,7 +69,7 @@ spec:
                   name:  {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_MONGO_CLEANER_PWD
             - name: GMS_RUNNER_RABBIT_HOST
-              value: queue
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_CLEANER_USER
               value: "cleaner"
             - name: GMS_RUNNER_RABBIT_CLEANER_PWD

@@ -44,7 +44,7 @@ spec:
             - name: GMS_RUNNER_SPWN_WORKER_IMAGE_PULL_SECRETS
               value: '{{ coalesce (join "," .Values.jobSpawner.workerImage.pullSecrets) (join "," .Values.global.imagePullSecrets) }}'
             - name: GMS_RUNNER_RABBIT_HOST
-              value: "queue"
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_RABBIT_SPWN_PWD

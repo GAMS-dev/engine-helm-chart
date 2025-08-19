@@ -82,7 +82,7 @@ spec:
                   name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_DATABASE_BROKER_PWD
             - name: GMS_RUNNER_RABBIT_HOST
-              value: "queue"
+              value: {{ include "common.names.fullname" . }}-queue
             - name: GMS_RUNNER_RABBIT_BROKER_USER
               value: "broker"
             - name: GMS_RUNNER_RABBIT_BROKER_PWD
