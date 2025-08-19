@@ -244,6 +244,7 @@ CREATE TABLE submission_text_entry (
 	path VARCHAR NOT NULL, 
 	value VARCHAR, 
 	is_stream BOOLEAN NOT NULL, 
+	mongo_id VARCHAR, 
 	PRIMARY KEY (id), 
 	FOREIGN KEY(submission_id) REFERENCES submission (id)
 );

@@ -44,7 +44,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: POSTGRESQL_HOST
-              value: database
+              value: {{ include "common.names.fullname" . }}-database
             - name: PGBOUNCER_DATABASE
               value: gamsrest
             - name: POSTGRESQL_DATABASE

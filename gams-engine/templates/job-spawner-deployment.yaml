@@ -72,7 +72,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: database
+              value: {{ include "common.names.fullname" . }}-database
             - name: GMS_RUNNER_DATABASE_NAME
               value: "gamsrest"
             - name: GMS_RUNNER_DATABASE_PORT
