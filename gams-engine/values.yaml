@@ -337,6 +337,13 @@ mongodb:
       memory: 3Gi
       cpu: 400m
 
+# For MongoDB migrations during upgrades that require changes in the MongoDB
+mongoMigrate:
+  image:
+    registry: docker.io/gams
+    repository: "engine-mongo-migrate"
+    tag: ""
+
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
@@ -363,6 +370,13 @@ postgresql:
       cpu: "400m"
       memory: 3072Mi
 
+# For PostgreSQL migrations during Engine upgrades that require changes in the PostgreSQL db.
+postgresqlMigrate:
+  image:
+    registry: docker.io/gams
+    repository: "engine-postgres-migrate"
+    tag: ""
+
 # RabbitMQ is used to pass messages between different components.
 # RabbitMQ pod resource definitions
 rabbitmq:
@@ -380,3 +394,10 @@ rabbitmq:
     # Add extra ingress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
     extraIngress: []
+
+# For RabbitMQ migrations during Engine upgrades that require changes in RabbitMQ 
+rabbitmqMigrate:
+  image:
+    registry: docker.io/gams
+    repository: engine-queue-migrate
+    tag: ""
