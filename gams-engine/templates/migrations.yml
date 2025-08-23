@@ -27,7 +27,7 @@ spec:
             - name: MONGODB_HOST
               value: {{ include "common.names.fullname" . }}-mongo
             - name: MONGODB_PORT
-              value: 27017
+              value: "27017"
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
@@ -82,7 +82,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
               value: "gamsrest"
 {{- if .Values.postgresql.externalDatabase.enabled }}
-            - name: POSTGRESQL_HOST
+            - name: POSTGRES_HOST
               value: "{{ .Values.postgresql.externalDatabase.host }}"
             - name: POSTGRES_PORT
               value: "{{ .Values.postgresql.externalDatabase.port }}"
@@ -90,7 +90,7 @@ spec:
             - name: POSTGRES_HOST
               value: {{ include "common.names.fullname" . }}-database
             - name: POSTGRES_PORT
-              value: 5432
+              value: "5432"
 {{- end }}
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
@@ -103,7 +103,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: queue-migrate
+  name: {{ include "common.names.fullname" . }}-queue-migrate
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -127,14 +127,14 @@ spec:
             - name: GMS_RUNNER_RABBIT_MIGRATE_USER
               value: "migrate"
             - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
-            - name: RABBITMQ_HOST 
-              value: {{ include "common.names.fullname" . }}-queue
-            - name: RABBITMQ_PORT
-              value: 5672
               valueFrom:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_RABBIT_MIGRATE_PWD
+            - name: RABBITMQ_HOST 
+              value: {{ include "common.names.fullname" . }}-queue
+            - name: RABBITMQ_PORT
+              value: "15672"
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:

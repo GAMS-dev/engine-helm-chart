@@ -15,6 +15,13 @@ spec:
     - from:
       - podSelector:
           matchLabels:
+            app: {{ include "common.names.fullname" . }}-queue-migrate
+      ports:
+        - protocol: TCP
+          port: 15672
+    - from:
+      - podSelector:
+          matchLabels:
             app: worker
       - podSelector:
           matchLabels:
@@ -43,9 +50,6 @@ spec:
       - podSelector:
           matchLabels:
             app: {{ include "common.names.fullname" . }}-broker
-      - podSelector:
-          matchLabels:
-            app: {{ include "common.names.fullname" . }}-queue-migrate
       ports:
         - protocol: TCP
           port: 5672

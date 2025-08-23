@@ -411,7 +411,7 @@ CREATE TABLE invitation_code_identity_tuple (
 INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', '{{ .Values.config.gmsRunnerDefaultAdminPasswordHash }}', false);
 INSERT INTO app_user_role (user_id, role) VALUES (1, 'admin');
 INSERT INTO identity_provider (name, label, is_main_identity_provider, hidden) VALUES ('gams_engine', 'Login', true, false);
-INSERT INTO schema_migrations (version, dirty) VALUES (17, false);
+INSERT INTO schema_migrations (version, dirty) VALUES (18, false);
 
 CREATE VIEW user_tree AS SELECT inviter_id, app_user_id FROM invitation_code WHERE app_user_id IS NOT NULL;
 GRANT INSERT, SELECT ON submission TO broker;

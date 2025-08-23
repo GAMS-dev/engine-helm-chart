@@ -97,7 +97,7 @@ spec:
             app: {{ include "common.names.fullname" . }}-queue
       ports:
         - protocol: TCP
-          port: 5672
+          port: 15672
     - to:
       - namespaceSelector: {}
         podSelector:
