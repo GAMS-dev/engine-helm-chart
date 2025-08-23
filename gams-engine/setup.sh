@@ -240,14 +240,31 @@ db.fs.files.createIndex(
   { filename: 1, "metadata.namespace_id": 1 },
   { unique: true }
 );
+db.fs.files.createIndex(
+  {
+    "metadata.submission_id": 1,
+    "metadata.type": 1,
+    "metadata.namespace_id": 1
+  },
+  {
+    name: "files_subid_type_ns",
+    partialFilterExpression: {
+      "metadata.submission_id": { $exists: true },
+      "metadata.type": { $exists: true }
+    }
+  }
+);
 
 db.secrets.drop();
 db.secrets.createIndex({ type: 1 }, { unique: true });
 
+db.job_labels.drop()
+db.job_labels.createIndex({ submission_id: 1 });
+
 db.schema_migrations.drop();
 db.schema_migrations.insertOne({
   dirty: false,
-  version: 9,
+  version: 11,
 });
 
 db.createUser({
@@ -310,8 +327,27 @@ db.fs.files.createIndex(
   { unique: true }
 );
 
+db.fs.files.createIndex(
+  {
+    "metadata.submission_id": 1,
+    "metadata.type": 1,
+    "metadata.namespace_id": 1
+  },
+  {
+    name: "files_subid_type_ns",
+    partialFilterExpression: {
+      "metadata.submission_id": { $exists: true },
+      "metadata.type": { $exists: true }
+    }
+  }
+);
+
 db.secrets.drop();
 db.secrets.createIndex({ type: 1 }, { unique: true });
+
+db.job_labels.drop()
+db.job_labels.createIndex({ submission_id: 1 });
+
 
 db.createRole({
   role: "dependency_handler",
