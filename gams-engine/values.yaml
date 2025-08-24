@@ -357,10 +357,6 @@ postgresql:
     initialize:
       run: true
       connectionString: ""
-    networkPolicy:
-      podSelector: {}
-      namespaceSelector: {}
-      databaseNamespace: ""
   affinity: {}
   resources:
     requests:
@@ -380,6 +376,9 @@ postgresqlMigrate:
 # RabbitMQ is used to pass messages between different components.
 # RabbitMQ pod resource definitions
 rabbitmq:
+  monitoring:
+    # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
+    podMonitorEnabled: false
   useCustomStorageClass: false
   storageClassName: ""
   affinity: {}
@@ -395,9 +394,10 @@ rabbitmq:
     # (only relevent if global.networkPolicy.enabled is true)
     extraIngress: []
 
-# For RabbitMQ migrations during Engine upgrades that require changes in RabbitMQ 
+# For RabbitMQ migrations during Engine upgrades that require changes in RabbitMQ
 rabbitmqMigrate:
   image:
     registry: docker.io/gams
     repository: engine-queue-migrate
     tag: ""
+

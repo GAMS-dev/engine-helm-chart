@@ -1,0 +1,15 @@
+{{ if .Values.rabbitmq.monitoring.podMonitorEnabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "common.names.fullname" . }}-rabbitmq-pod-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  podMetricsEndpoints:
+  - path: /metrics
+    portNumber: 15692
+    scheme: http
+  selector:
+    matchLabels:
+      app: {{ include "common.names.fullname" . }}-queue
+{{ end }}

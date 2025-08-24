@@ -18,4 +18,4 @@ spec:
   selector:
     matchLabels:
       app: {{ include "common.names.fullname" . }}-broker
-{{end}}
+{{ end }}

@@ -96,6 +96,9 @@ spec:
 {{ toYaml .Values.rabbitmq.resources | indent 12 }}
           ports:
             - containerPort: 5672
+              name: amqp
+            - containerPort: 15692
+              name: metrics
           volumeMounts:
             - name: queue-data
               mountPath: /var/lib/rabbitmq/mnesia/
