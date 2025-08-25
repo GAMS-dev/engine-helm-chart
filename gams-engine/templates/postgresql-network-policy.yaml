@@ -4,7 +4,6 @@ kind: NetworkPolicy
 metadata:
   name: {{ include "common.names.fullname" . }}-postgresql-network-policy
   namespace: {{ .Release.Namespace }}
-{{- end }}
 spec:
   podSelector:
     matchLabels:

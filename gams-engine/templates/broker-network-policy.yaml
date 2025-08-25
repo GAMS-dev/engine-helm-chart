@@ -20,6 +20,13 @@ spec:
     - to:
       - podSelector:
           matchLabels:
+            app: {{ include "common.names.fullname" . }}-forward-proxy
+      ports:
+        - protocol: TCP
+          port: 8000
+    - to:
+      - podSelector:
+          matchLabels:
             app: {{ include "common.names.fullname" . }}-queue
       ports:
         - protocol: TCP

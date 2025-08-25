@@ -32,4 +32,7 @@ spec:
       - podSelector:
           matchLabels:
             app: {{ include "common.names.fullname" . }}-broker
+      ports:
+        - protocol: TCP
+          port: 8000
 {{ end }}
