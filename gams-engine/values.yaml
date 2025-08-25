@@ -25,6 +25,8 @@ service:
   type: NodePort
 # service.nodePort of the service. If not provided, a random port within the NodePort range is used.
   nodePort: ""
+  annotations: {}
+
 ingress:
   enabled: false
   ingressClassName: alb
