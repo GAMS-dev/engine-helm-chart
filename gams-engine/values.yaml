@@ -13,11 +13,6 @@ config:
   # Job spawner will keep the new jobs in the queue if there is
   # any job pending more than 'maxPendingJobDurationSeconds' seconds.
   maxPendingJobDurationSeconds: 120
-  # TODO initialAdminPassword: "admin"     # instead of gmsRunnerDefaultAdminPasswordHash
-  # Default Admin Password Hash, this is only effective during the installation. Updating this will not change
-  # the admin password. For generating hash, see `generate_password_hash` from werkzeug.security
-  # https://werkzeug.palletsprojects.com/en/2.0.x/utils/#werkzeug.security.generate_password_hash
-  gmsRunnerDefaultAdminPasswordHash: "pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91"
 # GAMS Engine service parameters
 service:
 # service.type determines the type of the service that will be used to expose the GAMS Engine API
@@ -40,8 +35,7 @@ ingress:
   labels: {}
   path: /
   pathType: Prefix
-  hosts:
-    - chart-example.local
+  hosts: []
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -314,6 +308,13 @@ jobWatcher:
 # PG Bouncer pod resource definitions
 pgBouncer:
   affinity: {}
+  image:
+    registry: ""
+    repository: pgbouncer
+    # Tag of the image. If not specified, AppVersion is used.
+    tag: "1.19.1"
+    pullSecrets:
+      - aws-ecr-secret
   resources:
     requests:
       cpu: "100m"
@@ -352,7 +353,7 @@ postgresql:
   useCustomStorageClass: false
   storageClassName: ""
   externalDatabase:
-    enabled: false
+    enabled: true
     host: ""
     database: "gamsrest"
     port: "5432"
