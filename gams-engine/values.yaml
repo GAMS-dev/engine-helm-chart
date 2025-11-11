@@ -1,7 +1,13 @@
+# -----------------------------------------------------------------
+# Engine Helm Chart Configuration
+# -----------------------------------------------------------------
 # Common configuration settings for Engine
 config:
-  # Cleaner cleans up queues/pools etc. every 'heartbeatSeconds' seconds.
-  # Do not touch this value unless you know what you are doing!
+  # -- Cleaner Settings --
+  # Interval (in seconds) for the background cleaner to run.
+  # This process cleans up expired queues, pools, and other resources.
+  # !! Advanced Setting: Do not change this value unless you understand
+  #    the performance impact on your system
   cleanerHeartbeatSeconds: 300
   # Job spawner will subtract 'workerStartupDurationSeconds*idle_multiplier'
   # from user's volume quota for each worker spawned (e.g. any job outside of a
