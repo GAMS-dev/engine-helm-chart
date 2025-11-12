@@ -1,10 +1,37 @@
+ACCESSING YOUR GAMS ENGINE INSTALLATION
+
 Thank you for installing the GAMS Engine Helm chart.
 Your release is named {{ .Release.Name }}.
 
-Accessing your GAMS Engine application
-You can reach GAMS Engine via service `{{ include "common.names.fullname" . }}-broker`
+{{- if .Values.ingress.enabled }}
+{{- if .Values.ingress.tls }}
+The UI will be available over HTTPS at:
+  https://{{ first .Values.ingress.hosts }}
+The API will be available at:
+  https://{{ first .Values.ingress.hosts }}/api
+  {{- else }}The application will be available over HTTP at:
+  http://{{ first .Values.ingress.hosts }}
+The API will be available at:
+  http://{{ first .Values.ingress.hosts }}
+{{- end }}
 
-Please refer to the values.yaml file for more details on configuration options.
+NOTES
+- Ensure your DNS is configured correctly to resolve the ingress hostname if ingress is enabled.
+- For secure communications, configure TLS certificates when enabling ingress with `.Values.ingress.tls` set to `true`.
 
-TODO: improve here
-############################### 
+{{- else }}
+  - Service Type: `{{ .Values.service.type }}`.
+  {{- if eq .Values.service.type "NodePort" }}
+  - Engine will be accessible on:
+    http://<node-ip>:{{ .Values.service.nodePort }}
+  {{- else }}
+  - Engine will be accessible on the cluster IP within the Kubernetes network.
+  {{- end }}
+
+{{- if eq .Values.service.type "NodePort" }}
+NOTES
+- Replace `<node-ip>` with the IP address of a node in your Kubernetes cluster.
+{{- end }}
+{{- end }}
+
+Refer to the `values.yaml` file for more details on configuration options.
