@@ -1,12 +1,41 @@
 # -----------------------------------------------------------------
 # Engine Helm Chart Configuration
 # -----------------------------------------------------------------
-# Common configuration settings for Engine
+global:
+  # Global Docker image registry
+  imageRegistry: ""
+  # imagePullSecrets:
+  #   - registryKeySecretName
+  imagePullSecrets: []
+  useNetworkPolicies: true
+image:
+  tag: ""
+
+# -----------------------------------------------------------------
+# NetworkPolicies provide an extra layer of security by controlling traffic
+# flow between pods.
+# NOTE: These policies only work if your cluster's CNI plugin (e.g., Calico,
+# Cilium) supports them. If your CNI doesn't support them, this setting
+# will be safely created but ignored by Kubernetes.
+
+# If useDefaultDenyNetworkPolicy is set to true, a "default-deny-all" 
+# NetworkPolicy is created.
+# This policy blocks ALL traffic to ALL pods in the namespace
+# unless another policy explicitly allows it.
+# WARNING: We recommend 'true' ONLY IF this chart is the
+#    *only* application running in its namespace.
+#    Enabling this in a shared namespace will block traffic
+#    to your other applications.
+useDefaultDenyNetworkPolicy: false
+
+# -----------------------------------------------------------------
+# Config section includes common configuration settings for Engine
+# Default settings are suggested
 config:
   # -- Cleaner Settings --
   # Interval (in seconds) for the background cleaner to run.
   # This process cleans up expired queues, pools, and other resources.
-  # !! Advanced Setting: Do not change this value unless you understand
+  # ! Advanced Setting: We do NOT suggest changing this value unless you understand
   #    the performance impact on your system
   cleanerHeartbeatSeconds: 300
   # Job spawner will subtract 'workerStartupDurationSeconds*idle_multiplier'
@@ -19,7 +48,8 @@ config:
   # Job spawner will keep the new jobs in the queue if there is
   # any job pending more than 'maxPendingJobDurationSeconds' seconds.
   maxPendingJobDurationSeconds: 120
-# GAMS Engine service parameters
+# -----------------------------------------------------------------
+# Service parameters
 service:
 # service.type determines the type of the service that will be used to expose the GAMS Engine API
 # Possible values: NodePort and ClusterIp
@@ -28,32 +58,42 @@ service:
   nodePort: ""
   annotations: {}
 
+# -----------------------------------------------------------------
+# Ingress settings
 ingress:
+  # Enable or disable the Ingress resource.
   enabled: false
-  ingressClassName: alb
+  # ingressClassName: The IngressClass resource to use (e.g., "nginx", "alb", "gce").
+  # For Kubernetes 1.18+, this is the recommended field.
+  # Set to "" to use the cluster's default IngressClass.
+  #
+  # NOTE: If no default IngressClass exists in your cluster,
+  # you MUST set this field to the name of your Ingress controller.
+  ingressClassName: ""
   annotations: {}
+  # AWS ALB Ingress Controller Annotations
     #alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     #alb.ingress.kubernetes.io/scheme: internet-facing
     #alb.ingress.kubernetes.io/ssl-redirect: "443"
     #alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
     #alb.ingress.kubernetes.io/target-type: ip
+  # NGINX Ingress Controller Annotations:
     #nginx.ingress.kubernetes.io/rewrite-target: /
   labels: {}
+  # The default path for all hosts:
   path: /
-  pathType: Prefix
+  # The path matching type (e.g., Prefix).
+  pathType: ""
+  # A list of hostnames to route traffic for.
+  # This list MUST be provided for the Ingress to be created.
   hosts: []
+  #  - my-app.example.com
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-# Default deny network policy ensures all the communication within the namespace
-# is denied by default unless the otherwise is specified. We suggest setting this to
-# true if that namespace only contains the Engine installation.
-useDefaultDenyNetworkPolicy: false
-# Network policies provides an extra layer of protection that we suggest. However,
-# Network Policies only work if your CNI plugin implements them. We recommmend keeping this
-# true because it provides extra security. (If your CNI does not implement, they will be ignored.)
+  #  - hosts:
+  #      - my-app.example.com 
+  #    secretName: chart-example-tls
 
+# -----------------------------------------------------------------
 # Job Canceler, Job Cleaner, Job Spawner and Job Watcher requires communication via Kubernetes API.
 # Client version that is used in those pods needs to be compatible with the Kubernetes API version.
 # You can read more on https://kubernetes.io/releases/version-skew-policy/
@@ -62,17 +102,10 @@ useDefaultDenyNetworkPolicy: false
 # v30.1.0     1.30
 # v31.0.0     1.31
 # v32.0.0     1.32
-# v33.1.0     1.32
-kubernetesClientVersion: "v33.1.0"
-global:
-  # Global Docker image registry
-  imageRegistry: ""
-  # imagePullSecrets:
-  #   - registryKeySecretName
-  imagePullSecrets: []
-  useNetworkPolicies: true
-image:
-  tag: ""
+# v33.1.0     1.33
+# v34.1.0     1.34
+kubernetesClientVersion: "v34.1.0"
+
 broker:
   affinity: {}
   monitoring:
@@ -241,8 +274,7 @@ jobCanceler:
     repository: engine-job-canceler
     # Tag of the image. If not specified, AppVersion is used.
     tag: ""
-    pullSecrets:
-      - aws-ecr-secret
+    pullSecrets: []
   resources:
     requests:
       cpu: "50m"
@@ -269,8 +301,7 @@ jobSpawner:
     repository: engine-job-spawner
     # Tag of the image. If not specified, AppVersion is used.
     tag: ""
-    pullSecrets:
-      - aws-ecr-secret
+    pullSecrets: []
   resources:
     requests:
       cpu: "50m"
@@ -296,8 +327,7 @@ jobWatcher:
     repository: engine-job-watcher
     # Tag of the image. If not specified, AppVersion is used.
     tag: ""
-    pullSecrets:
-      - aws-ecr-secret
+    pullSecrets: []
   resources:
     requests:
       cpu: "50m"
@@ -319,8 +349,7 @@ pgBouncer:
     repository: pgbouncer
     # Tag of the image. If not specified, AppVersion is used.
     tag: "1.19.1"
-    pullSecrets:
-      - aws-ecr-secret
+    pullSecrets: []
   resources:
     requests:
       cpu: "100m"
@@ -409,4 +438,3 @@ rabbitmqMigrate:
     registry: docker.io/gams
     repository: engine-queue-migrate
     tag: ""
-
