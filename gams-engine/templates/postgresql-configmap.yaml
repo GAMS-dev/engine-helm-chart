@@ -4,4 +4,4 @@ metadata:
   name: {{ include "common.names.fullname" . }}-database-config
   namespace: {{ .Release.Namespace }}
 data:
-{{ tpl (.Files.Glob "init/*").AsConfig . | indent 2 }}
+{{ tpl (.Files.Glob "resources/postgresql/*").AsConfig . | indent 2 }}
