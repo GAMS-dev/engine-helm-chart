@@ -35,7 +35,7 @@ spec:
 {{ toYaml .Values.postgresql.resources | indent 12 }}
           env:
             - name: POSTGRES_DB
-              value: "gamsrest"
+              value: "{{ .Values.postgresql.database }}"
             - name: POSTGRES_USER
               value: "GMSMASTER"
             - name: POSTGRES_PASSWORD

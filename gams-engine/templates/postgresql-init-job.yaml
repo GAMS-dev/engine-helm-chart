@@ -75,6 +75,8 @@ spec:
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
             - name: CONNECTION_STRING
               value: "{{ .Values.postgresql.externalDatabase.initialize.connectionString }}"
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgresql.database }}"
       restartPolicy: OnFailure
   backoffLimit: 8
 {{- end }}

@@ -1,7 +1,7 @@
 {{- $annotations := dict }}
 
-{{- if .Values.service.annotations }}
-{{- $svc := include "common.tplvalues.render" (dict "value" .Values.service.annotations "context" $) | fromYaml }}
+{{- if .Values.broker.service.annotations }}
+{{- $svc := include "common.tplvalues.render" (dict "value" .Values.broker.service.annotations "context" $) | fromYaml }}
 {{- $annotations = merge $annotations $svc }}
 {{- end }}
 apiVersion: v1
@@ -19,5 +19,5 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      nodePort: {{ .Values.service.nodePort }}
-  type: {{ required "value 'service.type' is required" .Values.service.type }}
+      nodePort: {{ .Values.broker.service.nodePort }}
+  type: {{ required "value 'broker.service.type' is required" .Values.broker.service.type }}

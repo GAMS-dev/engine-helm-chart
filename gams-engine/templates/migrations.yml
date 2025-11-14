@@ -80,7 +80,7 @@ spec:
                   name: {{ include "common.names.fullname" . }}-gamsworker
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
-              value: "gamsrest"
+              value: "{{ .Values.postgresql.database }}"
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRES_HOST
               value: "{{ .Values.postgresql.externalDatabase.host }}"

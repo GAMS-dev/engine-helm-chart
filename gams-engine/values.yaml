@@ -49,16 +49,6 @@ config:
   # any job pending more than 'maxPendingJobDurationSeconds' seconds.
   maxPendingJobDurationSeconds: 120
 # -----------------------------------------------------------------
-# Service parameters
-service:
-# service.type determines the type of the service that will be used to expose the GAMS Engine API
-# Possible values: NodePort and ClusterIp
-  type: NodePort
-# service.nodePort of the service. If not provided, a random port within the NodePort range is used.
-  nodePort: ""
-  annotations: {}
-
-# -----------------------------------------------------------------
 # Ingress settings
 ingress:
   # Enable or disable the Ingress resource.
@@ -147,6 +137,13 @@ broker:
   networkPolicy:
     extraIngress: []
     extraEgress: []
+  service: 
+  # service.type determines the type of the service that will be used to expose the GAMS Engine API
+  # Possible values: NodePort and ClusterIp
+    type: NodePort
+  # service.nodePort of the service. If not provided, a random port within the NodePort range is used.
+    nodePort: ""
+    annotations: {}
 
 # Forward Proxy forwards the requests from the Engine API
 # Forward Proxy pod resource definitions
@@ -387,14 +384,28 @@ mongoMigrate:
 postgresql:
   useCustomStorageClass: false
   storageClassName: ""
+  database: ""
+  # if externalDatabase.enabled: false > the postgres pod is created by this chart 
   externalDatabase:
-    enabled: true
+    enabled: false
+    # if externalDatabase enabled connectionString is needed.
+    # Hostname of your postgres database:
+    # Example: "postgresql-svc-name.database-namespace.svc.cluster.local"
     host: ""
-    database: "gamsrest"
     port: "5432"
     initialize:
-      run: true
-      connectionString: ""
+      # Set to 'true' to run this one-time initialization job.
+      # This is strongly recommended for first-time setup.
+      run: true 
+      # Provide the *admin connection string* for the database.
+      # This is REQUIRED if 'initialize.run' is set to 'true'.
+      #
+      # !! IMPORTANT: The user in this string (e.g., 'postgres')
+      #    MUST have permissions (create, alter, grant usage) within the database.
+      #
+      # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
+      connectionString: "" 
+      # Example: "postgresql://postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gamsdb"
   affinity: {}
   resources:
     requests:

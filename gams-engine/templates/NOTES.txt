@@ -20,15 +20,15 @@ NOTES
 - For secure communications, configure TLS certificates when enabling ingress with `.Values.ingress.tls` set to `true`.
 
 {{- else }}
-  - Service Type: `{{ .Values.service.type }}`.
-  {{- if eq .Values.service.type "NodePort" }}
+  - Service Type: `{{ .Values.broker.service.type }}`.
+  {{- if eq .Values.broker.service.type "NodePort" }}
   - Engine will be accessible on:
-    http://<node-ip>:{{ .Values.service.nodePort }}
+    http://<node-ip>:{{ .Values.broker.service.nodePort }}
   {{- else }}
   - Engine will be accessible on the cluster IP within the Kubernetes network.
   {{- end }}
 
-{{- if eq .Values.service.type "NodePort" }}
+{{- if eq .Values.broker.service.type "NodePort" }}
 NOTES
 - Replace `<node-ip>` with the IP address of a node in your Kubernetes cluster.
 {{- end }}
