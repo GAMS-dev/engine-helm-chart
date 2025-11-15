@@ -249,8 +249,8 @@ db.fs.files.createIndex(
   {
     name: "files_subid_type_ns",
     partialFilterExpression: {
-      "metadata.submission_id": { $exists: true },
-      "metadata.type": { $exists: true }
+      "metadata.submission_id": { \$exists: true },
+      "metadata.type": { \$exists: true }
     }
   }
 );
@@ -336,8 +336,8 @@ db.fs.files.createIndex(
   {
     name: "files_subid_type_ns",
     partialFilterExpression: {
-      "metadata.submission_id": { $exists: true },
-      "metadata.type": { $exists: true }
+      "metadata.submission_id": { \$exists: true },
+      "metadata.type": { \$exists: true }
     }
   }
 );
