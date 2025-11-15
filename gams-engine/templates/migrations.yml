@@ -81,6 +81,8 @@ spec:
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
               value: "{{ .Values.postgresql.database }}"
+            - name: POSTGRES_NAME
+              value: "{{ .Values.postgresql.database }}"
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRES_HOST
               value: "{{ .Values.postgresql.externalDatabase.host }}"
