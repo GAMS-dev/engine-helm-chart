@@ -408,7 +408,7 @@ CREATE TABLE invitation_code_identity_tuple (
 	FOREIGN KEY(identity_tuple_id) REFERENCES identity_tuple (id) ON DELETE SET NULL
 );
 
-INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', '{{ .Values.config.gmsRunnerDefaultAdminPasswordHash }}', false);
+INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', 'pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91', false);
 INSERT INTO app_user_role (user_id, role) VALUES (1, 'admin');
 INSERT INTO identity_provider (name, label, is_main_identity_provider, hidden) VALUES ('gams_engine', 'Login', true, false);
 INSERT INTO schema_migrations (version, dirty) VALUES (18, false);
