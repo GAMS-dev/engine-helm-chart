@@ -53,7 +53,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_CLEANER_PWD
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "common.names.fullname" . }}-mongo
@@ -64,7 +64,7 @@ spec:
             - name: GMS_RUNNER_MONGO_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_CLEANER_PWD
             - name: GMS_RUNNER_RABBIT_HOST
               value: {{ include "common.names.fullname" . }}-queue
@@ -73,5 +73,5 @@ spec:
             - name: GMS_RUNNER_RABBIT_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_CLEANER_PWD

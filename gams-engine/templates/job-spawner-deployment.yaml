@@ -58,16 +58,16 @@ spec:
             - name: GMS_RUNNER_RABBIT_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_SPWN_PWD
             - name: GMS_RUNNER_SPWN_WORKER_CRED_SECRET_NAME
-              value: {{ include "common.names.fullname" . }}-gamsworker
+              value: {{ include "common.names.fullname" . }}-gams-secret
             - name: GMS_RUNNER_MONGO_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_MONGO_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_SPWN_PWD
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
@@ -103,7 +103,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_SPWN_PWD
 {{ if .Values.workerCustomizeJobConfigMapName }}
       volumes:

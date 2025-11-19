@@ -34,7 +34,7 @@ spec:
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "common.names.fullname" . }}-mongo
@@ -45,7 +45,7 @@ spec:
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
@@ -69,5 +69,5 @@ spec:
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gamsworker
+                  name:  {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD

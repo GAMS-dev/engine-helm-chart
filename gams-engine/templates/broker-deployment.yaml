@@ -41,17 +41,17 @@ spec:
             - name: GMS_RUNNER_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_FORWARD_PROXY_PWD
             - name: GMS_RUNNER_FORWARD_PROXY_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_FORWARD_PROXY_SECRET
             - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
             - name: GMS_RUNNER_FORWARD_PROXY_HOST
               value: http://{{ include "common.names.fullname" . }}-forward-proxy:8000
@@ -76,7 +76,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_BROKER_PWD
             - name: GMS_RUNNER_RABBIT_HOST
               value: {{ include "common.names.fullname" . }}-queue
@@ -85,14 +85,14 @@ spec:
             - name: GMS_RUNNER_RABBIT_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_BROKER_PWD
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_BROKER_PWD
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "common.names.fullname" . }}-mongo
@@ -103,12 +103,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: PROMETHEUS_AUTH_USERNAME
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
             - name: PROMETHEUS_AUTH_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: PROMETHEUS_AUTH_PASSWORD
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
 {{- end }}
         - name: nginx
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.nginx.image.registry "repository" .Values.broker.nginx.image.repository "tag" (coalesce .Values.broker.nginx.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}

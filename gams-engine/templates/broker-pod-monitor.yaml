@@ -9,10 +9,10 @@ spec:
   - basicAuth:
       password:
         key: PROMETHEUS_AUTH_PASSWORD
-        name: {{ include "common.names.fullname" . }}-gamsworker
+        name: {{ include "common.names.fullname" . }}-gams-secret
       username:
         key: PROMETHEUS_AUTH_USERNAME
-        name: {{ include "common.names.fullname" . }}-gamsworker
+        name: {{ include "common.names.fullname" . }}-gams-secret
     path: api/metrics
     portNumber: 80
   selector:

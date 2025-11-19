@@ -36,5 +36,5 @@ spec:
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD

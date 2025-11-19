@@ -32,7 +32,7 @@ spec:
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRESQL_HOST
@@ -58,5 +58,5 @@ spec:
             - name: PGBOUNCER_USERLIST
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_PGBOUNCER_USERLIST
