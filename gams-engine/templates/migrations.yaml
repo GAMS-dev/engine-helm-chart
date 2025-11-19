@@ -31,19 +31,19 @@ spec:
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_BROKER_PWD
             - name: GMS_RUNNER_MONGO_INITDB_MAIN
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
@@ -77,7 +77,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_ADMIN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
               value: "{{ .Values.postgresql.database }}"
@@ -97,7 +97,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
@@ -131,7 +131,7 @@ spec:
             - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_MIGRATE_PWD
             - name: RABBITMQ_HOST 
               value: {{ include "common.names.fullname" . }}-queue
@@ -140,7 +140,7 @@ spec:
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gamsworker
+                  name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
