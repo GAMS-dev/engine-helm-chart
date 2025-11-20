@@ -4,11 +4,12 @@ metadata:
   name: {{ include "common.names.fullname" . }}-queue-pvc
   namespace: {{ .Release.Namespace }}
 spec:
-{{- if .Values.rabbitmq.useCustomStorageClass }}
-  storageClassName: "{{ .Values.rabbitmq.storageClassName }}"
+{{- if .Values.rabbitmq.persistence.storageClassName }}
+  storageClassName: "{{ .Values.rabbitmq.persistence.storageClassName }}"
 {{- end }}
   accessModes:
-    - ReadWriteOnce
+    - {{ .Values.rabbitmq.persistence.accessMode | quote }}
   resources:
     requests:
-      storage: 4Gi
+      storage: {{ .Values.rabbitmq.persistence.size | quote }}
+

@@ -440,7 +440,13 @@ rabbitmq:
   monitoring:
     # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
     podMonitorEnabled: false
-  storageClassName: ""
+  persistence:
+    # Storage Class to use. Set to "" to use the cluster default.
+    storageClassName: ""
+    # Size of the persistent volume.
+    size: 4Gi # default size
+    # Access mode for the volume.
+    accessMode: ReadWriteOnce
   affinity: {}
   resources:
     limits:
