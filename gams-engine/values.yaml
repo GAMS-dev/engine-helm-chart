@@ -359,7 +359,7 @@ pgBouncer:
     extraEgress: []
 
 # MongoDB is used to store structured and unstructured data.
-# MongoDB pod resource definitions
+# MongoDB configurations
 mongodb:
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
@@ -387,7 +387,13 @@ mongoMigrate:
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
-  storageClassName: ""
+  persistence:
+    # Storage Class to use. Set to "" to use the cluster default.
+    storageClassName: ""
+    # Size of the persistent volume.
+    size: 4Gi # default size
+    # Access mode for the volume.
+    accessMode: ReadWriteOnce
   # The default database name to create and connect to.
   # You can change this if you need to have a different db name
   database: "gams_engine" # default database name
