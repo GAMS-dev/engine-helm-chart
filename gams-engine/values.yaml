@@ -361,8 +361,13 @@ pgBouncer:
 # MongoDB is used to store structured and unstructured data.
 # MongoDB pod resource definitions
 mongodb:
-  useCustomStorageClass: false
-  storageClassName: ""
+  persistence:
+    # Storage Class to use. Set to "" to use the cluster default.
+    storageClassName: ""
+    # Size of the persistent volume.
+    size: 8Gi # default size
+    # Access mode for the volume.
+    accessMode: ReadWriteOnce
   affinity: {}
   resources:
     requests:
@@ -382,7 +387,6 @@ mongoMigrate:
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
-  useCustomStorageClass: false
   storageClassName: ""
   # The default database name to create and connect to.
   # You can change this if you need to have a different db name
@@ -430,7 +434,6 @@ rabbitmq:
   monitoring:
     # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
     podMonitorEnabled: false
-  useCustomStorageClass: false
   storageClassName: ""
   affinity: {}
   resources:

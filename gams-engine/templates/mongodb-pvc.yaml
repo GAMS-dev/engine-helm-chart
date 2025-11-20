@@ -4,11 +4,11 @@ metadata:
   name: {{ include "common.names.fullname" . }}-mongo-pvc
   namespace: {{ .Release.Namespace }}
 spec:
-{{- if .Values.mongodb.useCustomStorageClass }}
-  storageClassName: "{{ .Values.mongodb.storageClassName }}"
+{{- if .Values.mongodb.persistence.storageClassName }}
+  storageClassName: "{{ .Values.mongodb.persistence.storageClassName }}"
 {{- end }}
   accessModes:
-    - ReadWriteOnce
+    - {{ .Values.mongodb.persistence.accessMode | quote }}
   resources:
     requests:
-      storage: 8Gi
+      storage: {{ .Values.mongodb.persistence.size | quote }}
