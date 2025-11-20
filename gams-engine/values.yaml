@@ -384,8 +384,10 @@ mongoMigrate:
 postgresql:
   useCustomStorageClass: false
   storageClassName: ""
-  database: ""
-  # if externalDatabase.enabled: false > the postgres pod is created by this chart 
+  # The default database name to create and connect to.
+  # You can change this if you need to have a different db name
+  database: "gams_engine" # default database name
+  # if externalDatabase.enabled: false > the postgres db pod is created by this chart 
   externalDatabase:
     enabled: false
     # if externalDatabase enabled connectionString is needed.
