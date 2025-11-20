@@ -17,7 +17,9 @@ spec:
   selector:
     app: {{ include "common.names.fullname" . }}-broker
   ports:
-    - port: 80
+    - port: {{ .Values.broker.service.port }}
       targetPort: 80
+{{- if and (eq .Values.broker.service.type "NodePort") .Values.broker.service.nodePort }}
       nodePort: {{ .Values.broker.service.nodePort }}
+{{- end }}
   type: {{ required "value 'broker.service.type' is required" .Values.broker.service.type }}
