@@ -1,5 +1,5 @@
 {{ if .Values.global.useNetworkPolicies }}
-{{ if .Values.useDefaultDenyNetworkPolicy }}
+{{ if .Values.global.useDefaultDenyNetworkPolicy }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

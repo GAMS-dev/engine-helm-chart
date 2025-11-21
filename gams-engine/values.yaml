@@ -136,9 +136,20 @@ broker:
     # (only relevent if global.networkPolicy.enabled is true)
   networkPolicy:
     extraIngress: []
+    # Example: adding ingress to broker network policy for prometheus monitoring  
+    #  - from:
+    #    - namespaceSelector:
+    #        matchLabels:
+    #          kubernetes.io/metadata.name: monitoring
+    #    - podSelector:
+    #        matchLabels:
+    #          app.kubernetes.io/name: prometheus
+    #    ports:
+    #    - port: 80
+    #      protocol: TCP
     extraEgress: []
+  # Broker service
   service: 
-  # The type of service to create.
     # Such as: "ClusterIP", "NodePort", "LoadBalancer"
     type: ClusterIP
     # The port that the service will expose 
@@ -167,12 +178,18 @@ forwardProxy:
   networkPolicy:
     extraIngress: []
     extraEgress: []
-    #  - ports:  # allows HTTPS access to any IP in public networks
+    # example: if you want to use an identity provider that is external: 
+    # allows HTTPS access to any IP in public networks
+    #  - ports:
     #    - protocol: TCP
     #      port: 443
     #    to:
     #    - ipBlock:
     #        cidr: 0.0.0.0/0
+    #        except:
+    #        - 10.0.0.0/8
+    #        - 172.16.0.0/12
+    #        - 192.168.0.0/16
 
 # Event manager listens to event queue and handles events.
 # For example, it can call a webhook to notify a job is finished.
@@ -194,6 +211,18 @@ eventManager:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
     extraEgress: []
+    # Example: if you want to use webhooks that are external:
+    # allows HTTPS access to any IP in public networks
+    #  - ports:
+    #    - protocol: TCP
+    #      port: 443
+    #    to:
+    #    - ipBlock:
+    #        cidr: 0.0.0.0/0
+    #        except:
+    #        - 10.0.0.0/8
+    #        - 172.16.0.0/12
+    #        - 192.168.0.0/16
 
  # Cleaner chronologically removes unused files.
  # Cleaner pod resource definitions
