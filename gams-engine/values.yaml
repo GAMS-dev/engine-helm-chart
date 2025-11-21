@@ -132,22 +132,25 @@ broker:
       limits:
         cpu: "200m"
         memory: 200Mi
-    # Add extra ingress rules to the NetworkPolicy
-    # (only relevent if global.networkPolicy.enabled is true)
+  # Broker network policy
+  # Only relevant if global.useNetworkPolicies is true
   networkPolicy:
     extraIngress: []
-    # Example: adding ingress to broker network policy for prometheus monitoring  
+    # Add extra ingress rules
+    # Example: Allow Prometheus scraper to access the metrics port
+    # if broking.monitoring configs are enabled and Prometheus Operator CRDs exist in your cluster: 
     #  - from:
     #    - namespaceSelector:
     #        matchLabels:
-    #          kubernetes.io/metadata.name: monitoring
+    #          kubernetes.io/metadata.name: monitoring # namespace of your prometheus stack
     #    - podSelector:
     #        matchLabels:
-    #          app.kubernetes.io/name: prometheus
+    #          app.kubernetes.io/name: prometheus # prometheus stack pod labels
     #    ports:
-    #    - port: 80
+    #    - port: 80 # should be always 80 for broker
     #      protocol: TCP
     extraEgress: []
+    # Add extra egress rules
   # Broker service
   service: 
     # Such as: "ClusterIP", "NodePort", "LoadBalancer"
@@ -178,7 +181,8 @@ forwardProxy:
   networkPolicy:
     extraIngress: []
     extraEgress: []
-    # example: if you want to use an identity provider that is external: 
+    # extraEgress example: if you want to use an identity provider that is external 
+    # the following is required
     # allows HTTPS access to any IP in public networks
     #  - ports:
     #    - protocol: TCP
@@ -211,7 +215,8 @@ eventManager:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
     extraEgress: []
-    # Example: if you want to use webhooks that are external:
+    # extraEgress example: if you want to use webhooks that are external
+    # the following is required
     # allows HTTPS access to any IP in public networks
     #  - ports:
     #    - protocol: TCP
