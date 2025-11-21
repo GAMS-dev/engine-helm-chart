@@ -73,7 +73,7 @@ ingress:
   # The default path for all hosts:
   path: /
   # The path matching type (e.g., Prefix).
-  pathType: ""
+  pathType: "Prefix"
   # A list of hostnames to route traffic for.
   # This list MUST be provided for the Ingress to be created.
   hosts: []
@@ -108,7 +108,7 @@ broker:
     image:
       registry: docker.io/gams
       repository: engine-broker
-      # Tag of the image. If not specified, AppVersion is used.
+      # Tag of the image. If not specified, AppVersion is used. 
       tag: ""
       pullSecrets: []
     resources:
@@ -144,7 +144,7 @@ broker:
     # The port that the service will expose 
     port: 80
     # The NodePort to assign (only used if type is "NodePort").
-    # If left empty, Kubernetes will assign a random port.
+    # If left empty, and NodePort type is chosen Kubernetes will assign a random port.
     # nodePort: ""
     annotations: {}
 
