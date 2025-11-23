@@ -74,6 +74,8 @@ spec:
           env:
             - name: GMS_RUNNER_DATABASE_ADMIN_USER
               value: "{{ .Values.postgresql.database_user }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.postgresql.database_user }}"
             - name: GMS_RUNNER_DATABASE_ADMIN_PWD
               valueFrom:
                 secretKeyRef:
