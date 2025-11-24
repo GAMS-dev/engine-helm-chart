@@ -113,11 +113,10 @@ broker:
       pullSecrets: []
     resources:
       requests:
-        cpu: "100m"
-        memory: 250Mi
+        cpu: "600m"
+        memory: 1000Mi
       limits:
-        cpu: "400m"
-        memory: 500Mi
+        memory: 1000Mi
   nginx:
     image:
       registry: docker.io/gams
@@ -130,7 +129,6 @@ broker:
         cpu: "100m"
         memory: 100Mi
       limits:
-        cpu: "200m"
         memory: 200Mi
   # Broker network policy
   # Only relevant if global.useNetworkPolicies is true
@@ -173,10 +171,9 @@ forwardProxy:
     pullSecrets: []
   resources:
     requests:
-      cpu: "100m"
+      cpu: "50m"
       memory: 100Mi
     limits:
-      cpu: "100m"
       memory: 100Mi
   networkPolicy:
     extraIngress: []
@@ -206,10 +203,9 @@ eventManager:
     pullSecrets: []
   resources:
     requests:
-      cpu: "50m"
+      cpu: "100m"
       memory: 100Mi
     limits:
-      cpu: "100m"
       memory: 100Mi
   networkPolicy:
     # Add extra egress rules to the NetworkPolicy
@@ -241,11 +237,10 @@ cleaner:
     pullSecrets: []
   resources:
     requests:
-      cpu: "50m"
-      memory: 200Mi
-    limits:
       cpu: "100m"
-      memory: 300Mi
+      memory: 1000Mi
+    limits:
+      memory: 1000Mi
 # Dependency checker spawns jobs that are dependent to other jobs
 # when the other jobs complete. Dependency checker pod resource definitions
 dependencyChecker:
@@ -259,11 +254,10 @@ dependencyChecker:
   resources:
     requests:
       cpu: "50m"
-      memory: 100Mi
+      memory: 250Mi
     limits:
-      cpu: "100m"
-      memory: 100Mi
-# Hypercube appender appends multiple results into a single result.
+      memory: 250Mi
+# Hypercube appender appends multiple results into a single result
 # Hypercube appender pod resource definitions
 hypercubeAppender:
   affinity: {}
@@ -279,7 +273,6 @@ hypercubeAppender:
       memory: 100Mi
       ephemeral-storage: 512Mi
     limits:
-      cpu: "300m"
       memory: 100Mi
       ephemeral-storage: 4Gi
 # Hypercube unpacker used while sending hypercube jobs.
@@ -297,7 +290,6 @@ hypercubeUnpacker:
       cpu: "50m"
       memory: 100Mi
     limits:
-      cpu: "200m"
       memory: 100Mi
 # Job canceler can cancel job pods that are in pending state.
 # Job canceler pod resource definitions
@@ -312,10 +304,9 @@ jobCanceler:
   resources:
     requests:
       cpu: "50m"
-      memory: 100Mi
+      memory: 400Mi
     limits:
-      cpu: "100m"
-      memory: 100Mi
+      memory: 400Mi
   networkPolicy:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
@@ -338,11 +329,10 @@ jobSpawner:
     pullSecrets: []
   resources:
     requests:
-      cpu: "50m"
-      memory: 150Mi
-    limits:
       cpu: "100m"
-      memory: 150Mi
+      memory: 500Mi
+    limits:
+      memory: 500Mi
   workerNetworkPolicy:
     # Add extra egress rules to the NetworkPolicy of worker pods
     # (only relevent if global.networkPolicy.enabled is true)
@@ -365,10 +355,9 @@ jobWatcher:
   resources:
     requests:
       cpu: "50m"
-      memory: 100Mi
+      memory: 250Mi
     limits:
-      cpu: "100m"
-      memory: 200Mi
+      memory: 250Mi
   networkPolicy:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
@@ -381,8 +370,7 @@ pgBouncer:
   image:
     registry: ""
     repository: pgbouncer
-    # Tag of the image. If not specified, AppVersion is used.
-    tag: "1.19.1"
+    tag: "1.19.1" 
     pullSecrets: []
   resources:
     requests:
@@ -408,11 +396,10 @@ mongodb:
   affinity: {}
   resources:
     requests:
-      memory: 3Gi
-      cpu: 100m
+      memory: 5Gi
+      cpu: 500m
     limits:
-      memory: 3Gi
-      cpu: 400m
+      memory: 6Gi
 
 # For MongoDB migrations during upgrades that require changes in the MongoDB
 mongoMigrate:
@@ -433,6 +420,7 @@ postgresql:
     accessMode: ReadWriteOnce
   # The default database name to create and connect to.
   # You can change this if you need to have a different db name
+  database_user: "gams_engine"
   database: "gams_engine" # default database name
   # if externalDatabase.enabled: false > the postgres db pod is created by this chart 
   externalDatabase:
@@ -441,7 +429,7 @@ postgresql:
     # Hostname of your postgres database:
     # Example: "postgresql-svc-name.database-namespace.svc.cluster.local"
     host: ""
-    port: "5432"
+    port: ""
     initialize:
       # Set to 'true' to run this one-time initialization job.
       # This is strongly recommended for first-time setup.
@@ -458,11 +446,10 @@ postgresql:
   affinity: {}
   resources:
     requests:
-      cpu: "100m"
-      memory: 1024Mi
+      cpu: "500m"
+      memory: 2Gi
     limits:
-      cpu: "400m"
-      memory: 3072Mi
+      memory: 3Gi
 
 # For PostgreSQL migrations during Engine upgrades that require changes in the PostgreSQL db.
 postgresqlMigrate:
@@ -487,11 +474,10 @@ rabbitmq:
   affinity: {}
   resources:
     limits:
-      memory: 2048Mi
-      cpu: 400m
+      memory: 6Gi
     requests:
-      memory: 2048Mi
-      cpu: 100m
+      memory: 5Gi
+      cpu: 500m
   networkPolicy:
     # Add extra ingress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
