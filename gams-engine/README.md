@@ -24,7 +24,7 @@ application
 | ---- | ------ | --- |
 | GAMS Development Corp. | <support@gams.com> | <https://gams.com> |
 
-## Introduction
+# Introduction
 
 Welcome to the official Helm chart for **gams-engine**. 
 This chart bootstraps a GAMS Engine deployment on a Kubernetes cluster using the Helm package manager.
@@ -35,13 +35,13 @@ It deploys the complete GAMS Engine stack, including:
 - **Database**: PostgreSQL and MongoDB.
 - **Queue**: RabbitMQ for message passing.
 
-## Prerequisites
+# Prerequisites
 
 - Kubernetes >= 1.29.0-0
 - Helm 3.0+
 - PV provisioner in the cluster
 
-## Installing the Chart
+# Installing the Chart
 
 To install the chart with the release name `my-engine`:
 
@@ -52,8 +52,8 @@ helm repo update
 
 # 2. Install the chart
 helm install my-engine gams/gams-engine --namespace gams --create-namespace
-
-## Configuration
+```
+# Configuration
 
 The following table lists the configurable parameters of the GAMS Engine chart and their default values.
 
@@ -193,20 +193,20 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.persistence.storageClassName | string | `""` | Storage Class to use. |
 | postgresql.persistence.size | string | `"4Gi"` | Size of the persistent volume. |
 | postgresql.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume. |
-| postgresql.database_user | string | `"gams_engine"` | The default database name to create. |
-| postgresql.database | string | `"gams_engine"` |  |
+| postgresql.database_user | string | `"gams_engine"` | The database user to create. |
+| postgresql.database | string | `"gams_engine"` | The database name to create. |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL. |
 | postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database. |
-| postgresql.externalDatabase.port | string | `""` |  |
-| postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job? |
-| postgresql.externalDatabase.initialize.connectionString | string | `""` | Admin connection string. |
+| postgresql.externalDatabase.port | string | `""` | Port number of your external postgres database. |
+| postgresql.externalDatabase.initialize.run | bool | `true` | Run the database initialization job |
+| postgresql.externalDatabase.initialize.connectionString | string | `"postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>"` | Admin connection string |
 | postgresql.affinity | object | `{}` | Affinity settings. |
 | postgresql.resources.requests | object | `{"cpu":"500m","memory":"2Gi"}` | Resource requests. |
 | postgresql.resources.limits | object | `{"memory":"3Gi"}` | Resource limits. |
 | postgresqlMigrate.image.registry | string | `"docker.io/gams"` | Image registry. |
 | postgresqlMigrate.image.repository | string | `"engine-postgres-migrate"` | Image repository. |
 | postgresqlMigrate.image.tag | string | `""` | Image tag. |
-| rabbitmq.monitoring.podMonitorEnabled | bool | `false` | Enable monitoring (Requires Prometheus Operator). |
+| rabbitmq.monitoring.podMonitorEnabled | bool | `false` | Enable monitoring (Requires Prometheus Operator and CRDs). |
 | rabbitmq.persistence.storageClassName | string | `""` | Storage Class to use. |
 | rabbitmq.persistence.size | string | `"4Gi"` | Size of the persistent volume. |
 | rabbitmq.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume. |
