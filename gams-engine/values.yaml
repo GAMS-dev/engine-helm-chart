@@ -8,35 +8,38 @@ global:
   #   - registryKeySecretName
   imagePullSecrets: []
   useNetworkPolicies: true
+
 image:
   tag: ""
 
-# -----------------------------------------------------------------
+# -- Network Policy Configuration --
+
 # NetworkPolicies provide an extra layer of security by controlling traffic
 # flow between pods.
 # NOTE: These policies only work if your cluster's CNI plugin (e.g., Calico,
 # Cilium) supports them. If your CNI doesn't support them, this setting
 # will be safely created but ignored by Kubernetes.
-
-# If useDefaultDenyNetworkPolicy is set to true, a "default-deny-all" 
-# NetworkPolicy is created.
-# This policy blocks ALL traffic to ALL pods in the namespace
-# unless another policy explicitly allows it.
 # WARNING: We recommend 'true' ONLY IF this chart is the
 #    *only* application running in its namespace.
 #    Enabling this in a shared namespace will block traffic
 #    to your other applications.
+# If useDefaultDenyNetworkPolicy is set to true, a "default-deny-all" 
+# NetworkPolicy is created.
+# This policy blocks ALL traffic to ALL pods in the namespace
+# unless another policy explicitly allows it.
 useDefaultDenyNetworkPolicy: false
 
-# -----------------------------------------------------------------
+# -- Engine General Configuration --
+
 # Config section includes common configuration settings for Engine
 # Default settings are suggested
 config:
-  # -- Cleaner Settings --
+  # -- Cleaner --
   # Interval (in seconds) for the background cleaner to run.
   # This process cleans up expired queues, pools, and other resources.
   # ! Advanced Setting: We do NOT suggest changing this value unless you understand
   #    the performance impact on your system
+  # -- Job Spawner --
   cleanerHeartbeatSeconds: 300
   # Job spawner will subtract 'workerStartupDurationSeconds*idle_multiplier'
   # from user's volume quota for each worker spawned (e.g. any job outside of a
@@ -48,8 +51,7 @@ config:
   # Job spawner will keep the new jobs in the queue if there is
   # any job pending more than 'maxPendingJobDurationSeconds' seconds.
   maxPendingJobDurationSeconds: 120
-# -----------------------------------------------------------------
-# Ingress settings
+
 ingress:
   # Enable or disable the Ingress resource.
   enabled: false
@@ -83,7 +85,6 @@ ingress:
   #      - my-app.example.com 
   #    secretName: chart-example-tls
 
-# -----------------------------------------------------------------
 # Job Canceler, Job Cleaner, Job Spawner and Job Watcher requires communication via Kubernetes API.
 # Client version that is used in those pods needs to be compatible with the Kubernetes API version.
 # You can read more on https://kubernetes.io/releases/version-skew-policy/
@@ -194,6 +195,7 @@ forwardProxy:
 
 # Event manager listens to event queue and handles events.
 # For example, it can call a webhook to notify a job is finished.
+
 eventManager:
   affinity: {}
   image:
@@ -241,6 +243,7 @@ cleaner:
       memory: 1000Mi
     limits:
       memory: 1000Mi
+
 # Dependency checker spawns jobs that are dependent to other jobs
 # when the other jobs complete. Dependency checker pod resource definitions
 dependencyChecker:
@@ -257,6 +260,7 @@ dependencyChecker:
       memory: 250Mi
     limits:
       memory: 250Mi
+
 # Hypercube appender appends multiple results into a single result
 # Hypercube appender pod resource definitions
 hypercubeAppender:
@@ -275,6 +279,7 @@ hypercubeAppender:
     limits:
       memory: 100Mi
       ephemeral-storage: 4Gi
+
 # Hypercube unpacker used while sending hypercube jobs.
 # Hypercube unpacker pod resource definitions
 hypercubeUnpacker:
@@ -291,6 +296,7 @@ hypercubeUnpacker:
       memory: 100Mi
     limits:
       memory: 100Mi
+
 # Job canceler can cancel job pods that are in pending state.
 # Job canceler pod resource definitions
 jobCanceler:
@@ -383,6 +389,7 @@ pgBouncer:
     # (only relevent if global.networkPolicy.enabled is true)
     extraEgress: []
 
+# -- Database Configurations --
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
@@ -442,7 +449,12 @@ postgresql:
       #
       # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
       connectionString: "" 
-      # Example: "postgresql://postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gamsdb"
+      # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
+    networkPolicy:
+      podSelector:
+        matchLabels: ""
+      namespaceSelector:
+        matchLabels: ""
   affinity: {}
   resources:
     requests:
