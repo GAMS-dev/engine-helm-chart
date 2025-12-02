@@ -214,5 +214,3 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | rabbitmqMigrate.image.registry | string | `"docker.io/gams"` | Image registry. |
 | rabbitmqMigrate.image.repository | string | `"engine-queue-migrate"` | Image repository. |
 | rabbitmqMigrate.image.tag | string | `""` | Image tag. |
-
-Note:
