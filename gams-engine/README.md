@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.2.2
+0.1.0
 
 ## `chart.type`
 
@@ -46,12 +46,9 @@ It deploys the complete GAMS Engine stack, including:
 To install the chart with the release name `my-engine`:
 
 ```console
-# 1. Add the GAMS Helm repository
-helm repo add gams https://charts.gams.com/repo
-helm repo update
 
-# 2. Install the chart
-helm install my-engine gams/gams-engine --namespace gams --create-namespace
+# Install the chart
+helm install my-engine . -f values.yaml --namespace gams --create-namespace
 ```
 # Configuration
 
@@ -217,3 +214,5 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | rabbitmqMigrate.image.registry | string | `"docker.io/gams"` | Image registry. |
 | rabbitmqMigrate.image.repository | string | `"engine-queue-migrate"` | Image repository. |
 | rabbitmqMigrate.image.tag | string | `""` | Image tag. |
+
+Note:
