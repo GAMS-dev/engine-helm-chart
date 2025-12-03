@@ -1,7 +1,7 @@
 ACCESSING YOUR GAMS ENGINE INSTALLATION
 
 Thank you for installing the GAMS Engine Helm chart.
-Your release is named {{ .Release.Name }}.
+Your release is called: {{ .Release.Name }} and was installed in the namespace: {{ .Release.Namespace }}.
 
 {{- if .Values.ingress.enabled }}
 {{- if .Values.ingress.tls }}
