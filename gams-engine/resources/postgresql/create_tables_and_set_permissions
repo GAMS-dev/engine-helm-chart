@@ -31,6 +31,7 @@ CREATE TABLE identity_provider_oidc (
 	web_ui_client_secret VARCHAR(1000), 
 	device_client_id VARCHAR(255), 
 	device_client_secret VARCHAR(1000), 
+	uid VARCHAR(64) NOT NULL, 
 	PRIMARY KEY (id), 
 	UNIQUE (random_text)
 );
@@ -408,10 +409,10 @@ CREATE TABLE invitation_code_identity_tuple (
 	FOREIGN KEY(identity_tuple_id) REFERENCES identity_tuple (id) ON DELETE SET NULL
 );
 
-INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', 'pbkdf2:sha256:150000$HYwkEPJH$9d727c2343bd0b327a9abdf67aae1f393c095bee835dd1f95cec060c43c08a91', false);
+INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', 'scrypt:32768:8:1$JUDxkWpsZo4mcg5T$4dd13663e53ffba55072d90fca06845d58675544cfb68e607135092863b834bcbdbc18a22277cc49131c9d480ed7880759830c7003f97de1007777bf839614e3', false);
 INSERT INTO app_user_role (user_id, role) VALUES (1, 'admin');
 INSERT INTO identity_provider (name, label, is_main_identity_provider, hidden) VALUES ('gams_engine', 'Login', true, false);
-INSERT INTO schema_migrations (version, dirty) VALUES (18, false);
+INSERT INTO schema_migrations (version, dirty) VALUES (20, false);
 
 CREATE VIEW user_tree AS SELECT inviter_id, app_user_id FROM invitation_code WHERE app_user_id IS NOT NULL;
 GRANT INSERT, SELECT ON submission TO broker;
