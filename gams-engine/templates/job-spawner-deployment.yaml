@@ -24,12 +24,6 @@ spec:
           imagePullPolicy: Always
           resources:
 {{ toYaml .Values.jobSpawner.resources | indent 12 }}
-{{ if .Values.workerCustomizeJobConfigMapName }}
-          volumeMounts:
-            - name: worker-customize-job-config-map
-              mountPath: /root/job_spawner/app/customize_job.py
-              subPath: customize_job.py
-{{ end }}
           env:
             - name: GMS_RUNNER_WORKER_DATABASE_SERVER
               value: {{ include "common.names.fullname" . }}-database-bouncer
@@ -105,12 +99,3 @@ spec:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_DATABASE_SPWN_PWD
-{{ if .Values.workerCustomizeJobConfigMapName }}
-      volumes:
-        - name: worker-customize-job-config-map
-          configMap:
-            name: {{ .Values.workerCustomizeJobConfigMapName }}
-            items:
-              - key: customize_job.py
-                path: customize_job.py
-{{ end }}

@@ -302,7 +302,7 @@ hypercubeUnpacker:
 jobCanceler:
   affinity: {}
   image:
-    registry: ""
+    registry: docker.io/gams
     repository: engine-job-canceler
     # Tag of the image. If not specified, AppVersion is used.
     tag: ""
@@ -328,7 +328,7 @@ jobSpawner:
     tag: ""
     pullSecrets: []
   image:
-    registry: ""
+    registry: "docker.io/gams"
     repository: engine-job-spawner
     # Tag of the image. If not specified, AppVersion is used.
     tag: ""
@@ -353,7 +353,7 @@ jobSpawner:
 jobWatcher:
   affinity: {}
   image:
-    registry: ""
+    registry: docker.io/gams
     repository: engine-job-watcher
     # Tag of the image. If not specified, AppVersion is used.
     tag: ""
@@ -371,12 +371,13 @@ jobWatcher:
 
 # PG Bouncer is a connection pooler for PostgreSQL
 # PG Bouncer pod resource definitions
+# We suggest using the default image registry if you are not sure: 
 pgBouncer:
   affinity: {}
   image:
-    registry: ""
+    registry: "docker.io/bitnamilegacy"
     repository: pgbouncer
-    tag: "1.19.1" 
+    tag: "1.24.1" 
     pullSecrets: []
   resources:
     requests:
