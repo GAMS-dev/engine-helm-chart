@@ -46,9 +46,12 @@ It deploys the complete GAMS Engine stack, including:
 To install the chart with the release name `my-engine`:
 
 ```console
+# 1. Add the GAMS Helm repository
+helm repo add gams https://charts.gams.com/
+helm repo update
 
-# Install the chart
-helm install my-engine . -f values.yaml --namespace gams --create-namespace
+# 2. Install the chart
+helm install my-engine gams/gams-engine --namespace gams --create-namespace
 ```
 # Configuration
 
