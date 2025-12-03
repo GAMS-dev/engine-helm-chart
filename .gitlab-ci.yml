@@ -114,11 +114,9 @@ upload-helm-chart:
     - gpg --export-secret-keys --pinentry-mode loopback --passphrase "$HELM_GPG_PASSPHRASE" > "${GNUPGHOME}/secring.gpg"
     - gpg --list-secret-keys --keyid-format LONG
   script:
-    - export VERSION="${VERSION:-staging}"
     - CHART_NAME=$(yq e '.name' "$CHART_DIR/Chart.yaml")
     - |
       echo "Updating local Chart.yaml and publishing..."
-      yq e ".appVersion = \"$VERSION\"" -i "$CHART_DIR/Chart.yaml"
       helm dependency update "$CHART_DIR" || true
       helm lint "$CHART_DIR" || true
       echo -n "$HELM_GPG_PASSPHRASE" > /tmp/helm-passphrase.txt
