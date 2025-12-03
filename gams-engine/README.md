@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-25.10.28
+25.11.13
 
 ## `chart.kubeVersion`
 
