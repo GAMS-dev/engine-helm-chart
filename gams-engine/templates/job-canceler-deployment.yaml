@@ -15,6 +15,12 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-job-canceler
     spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
     {{- if .Values.jobCanceler.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobCanceler.affinity "context" $) | nindent 8 }}
     {{- end }}

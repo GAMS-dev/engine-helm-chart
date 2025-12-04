@@ -14,6 +14,12 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-queue
     spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
     {{- if .Values.rabbitmq.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
     {{- end }}

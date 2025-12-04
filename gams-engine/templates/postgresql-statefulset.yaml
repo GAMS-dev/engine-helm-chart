@@ -15,6 +15,12 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-postgres
     spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
     {{- if .Values.postgresql.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}

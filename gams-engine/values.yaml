@@ -8,6 +8,14 @@ global:
   #   - registryKeySecretName
   imagePullSecrets: []
   useNetworkPolicies: true
+  # nodeSelector: Node labels for pod assignment
+  nodeSelector: {}
+  # tolerations: tolerations for pod assignment
+  tolerations: []
+  # nodeSelector: Node labels for pod assignment of stateful sets (database)
+  nodeSelectorSts: {}
+  # tolerationsSts: tolerations for pod assignment of stateful sets (database)
+  tolerationsSts: []
 
 image:
   tag: ""
@@ -99,6 +107,9 @@ kubernetesClientVersion: "v34.1.0"
 
 broker:
   affinity: {}
+  # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
+  # maxReplicas is 1
+  maxReplicas: 3
   monitoring:
     # When set to True exposes metric at /api/metrics
     metricsEnabled: false

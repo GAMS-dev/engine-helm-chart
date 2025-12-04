@@ -17,6 +17,12 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-broker
     spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
     {{- if .Values.broker.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.broker.affinity "context" $) | nindent 8 }}
     {{- end }}

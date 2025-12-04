@@ -17,6 +17,15 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-mongo-migrate
     spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.mongodb.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- end }}
       containers:
         - name: mongo-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongoMigrate.image.registry "repository" .Values.mongoMigrate.image.repository "tag" (coalesce .Values.mongoMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
@@ -67,6 +76,15 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-database-migrate
     spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.mongodb.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- end }}
       containers:
         - name: database-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresqlMigrate.image.registry "repository" .Values.postgresqlMigrate.image.repository "tag" (coalesce .Values.postgresqlMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
@@ -123,6 +141,15 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-queue-migrate
     spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.mongodb.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- end }}
       containers:
         - name: queue-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmqMigrate.image.registry "repository" .Values.rabbitmqMigrate.image.repository "tag" (coalesce .Values.rabbitmqMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
