@@ -108,7 +108,7 @@ kubernetesClientVersion: "v34.1.0"
 broker:
   affinity: {}
   # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
-  # maxReplicas is 1
+  # mixReplicas is 1 by default
   maxReplicas: 3
   monitoring:
     # When set to True exposes metric at /api/metrics
