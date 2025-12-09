@@ -22,8 +22,8 @@ spec:
     {{- if .Values.global.tolerations }}
       tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
     {{- end }}
-    {{- if .Values.jobWatcher.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobWatcher.affinity "context" $) | nindent 8 }}
+    {{- if .Values.jobSpawner.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobSpawner.affinity "context" $) | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "common.names.fullname" . }}-job-spawner-account
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
