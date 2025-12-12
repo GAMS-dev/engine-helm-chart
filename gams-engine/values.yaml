@@ -476,9 +476,9 @@ postgresql:
       # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
     networkPolicy:
       podSelector:
-        matchLabels: ""
+        matchLabels: {}
       namespaceSelector:
-        matchLabels: ""
+        matchLabels: {}
   # NOTE: If both 'global.nodeSelectorSts' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
   affinity: {}
