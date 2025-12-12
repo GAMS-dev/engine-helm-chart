@@ -33,8 +33,6 @@ spec:
           resources:
 {{ toYaml .Values.jobWatcher.resources | indent 12 }}
           env:
-            - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION
-              value: {{ .Values.kubernetesClientVersion }}
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER

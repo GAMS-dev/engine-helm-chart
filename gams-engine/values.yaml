@@ -93,18 +93,6 @@ ingress:
   #      - my-app.example.com 
   #    secretName: chart-example-tls
 
-# Job Canceler, Job Cleaner, Job Spawner and Job Watcher requires communication via Kubernetes API.
-# Client version that is used in those pods needs to be compatible with the Kubernetes API version.
-# You can read more on https://kubernetes.io/releases/version-skew-policy/
-# Available client versions - compatible kubernetes versions are:
-# v29.0.0     1.29
-# v30.1.0     1.30
-# v31.0.0     1.31
-# v32.0.0     1.32
-# v33.1.0     1.33
-# v34.1.0     1.34
-kubernetesClientVersion: "v34.1.0"
-
 broker:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.

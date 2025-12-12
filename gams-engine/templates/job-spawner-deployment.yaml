@@ -38,8 +38,6 @@ spec:
               value: {{ include "common.names.fullname" . }}-database-bouncer
             - name: GMS_RUNNER_WORKER_DATABASE_PORT
               value: "6432"
-            - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION
-              value: {{ .Values.kubernetesClientVersion }}
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_SPWN_WORKER_IMAGE

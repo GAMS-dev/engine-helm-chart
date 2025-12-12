@@ -33,8 +33,6 @@ spec:
           resources:
 {{ toYaml .Values.jobCanceler.resources | indent 12 }}
           env:
-            - name: GMS_RUNNER_KUBERNETES_CLIENT_VERSION
-              value: {{ .Values.kubernetesClientVersion }}
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_RABBIT_HOST
