@@ -28,7 +28,7 @@ spec:
             pathType: {{ $ingressPathType }}
             backend:
               service:
-                name: {{ include "common.names.fullname" . }}-broker
+                name: {{ include "common.names.fullname" $ }}-broker
                 port:
                   number: 80
   {{- end }}
