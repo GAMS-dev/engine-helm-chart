@@ -101,7 +101,7 @@ broker:
   # minReplicas is 1 by default
   maxReplicas: 3
   monitoring:
-    # When set to True exposes metric at /api/metrics
+    # When set to true exposes metric at /api/metrics
     metricsEnabled: false
     # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
     # Requires metricsEnabled to be true to work.
