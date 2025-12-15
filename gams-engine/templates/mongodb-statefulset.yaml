@@ -98,6 +98,36 @@ spec:
                   name: {{ include "common.names.fullname" . }}-gams-secret
                   key: GMS_RUNNER_MONGO_CLEANER_PWD
           imagePullPolicy: Always
+          readinessProbe:
+            exec:
+              command:
+                - "mongosh"
+                - "--host"
+                - "127.0.0.1"
+                - "--port"
+                - "27017"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command:
+                - "mongosh"
+                - "--host"
+                - "127.0.0.1"
+                - "--port"
+                - "27017"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
       volumes:
         - name: mongo-data
           persistentVolumeClaim:
