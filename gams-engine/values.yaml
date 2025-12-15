@@ -98,7 +98,7 @@ broker:
   # satisfy BOTH constraints. Ensure they do not contradict each other.
   affinity: {}
   # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
-  # mixReplicas is 1 by default
+  # minReplicas is 1 by default
   maxReplicas: 3
   monitoring:
     # When set to True exposes metric at /api/metrics
