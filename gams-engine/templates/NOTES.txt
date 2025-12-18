@@ -35,4 +35,4 @@ NOTES
 {{- end }}
 
 Refer to the `values.yaml` file for more details on configuration options.
-Important: PLEASE CHANGE YOUR BROKER ADMIN PASSWORD
+IMPORTANT: Please log in to the UI with the username "admin" and the password "admin," then immediately change your admin password!
