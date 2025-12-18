@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "common.names.fullname" . }}-mongo
+  name: {{ include "gams-engine.name" . }}-mongo
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
-    app: {{ include "common.names.fullname" . }}-mongo
+    app: {{ include "gams-engine.name" . }}-mongo
   ports:
     - protocol: TCP
       port: 27017

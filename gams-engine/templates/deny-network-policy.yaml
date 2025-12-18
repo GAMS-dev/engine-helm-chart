@@ -3,7 +3,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-default-deny-all
+  name: {{ include "gams-engine.name" . }}-deny-all-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}

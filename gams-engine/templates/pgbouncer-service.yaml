@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "common.names.fullname" . }}-database-bouncer
+  name: {{ include "gams-engine.name" . }}-database-bouncer
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
-    app: {{ include "common.names.fullname" . }}-pgbouncer
+    app: {{ include "gams-engine.name" . }}-pgbouncer
   ports:
     - protocol: TCP
       port: 6432

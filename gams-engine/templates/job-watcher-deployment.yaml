@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.names.fullname" . }}-job-watcher
+  name: {{ include "gams-engine.name" . }}-job-wtch
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "common.names.fullname" . }}-job-watcher
+    app: {{ include "gams-engine.name" . }}-job-wtch
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-job-watcher
+      app: {{ include "gams-engine.name" . }}-job-wtch
   template:
     metadata:
       labels:
-        app: {{ include "common.names.fullname" . }}-job-watcher
+        app: {{ include "gams-engine.name" . }}-job-wtch
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -26,7 +26,7 @@ spec:
     {{- if .Values.jobWatcher.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobWatcher.affinity "context" $) | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "common.names.fullname" . }}-job-watcher-account
+      serviceAccountName: {{ include "gams-engine.name" . }}-job-watcher-account
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobWatcher.image) "context" $) | indent 6}}
       containers:
         - name: job-watcher
@@ -42,20 +42,20 @@ spec:
             - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gams-secret
+                  name:  {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "common.names.fullname" . }}-mongo
+              value: {{ include "gams-engine.name" . }}-mongo
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "common.names.fullname" . }}-queue
+              value: {{ include "gams-engine.name" . }}-queue
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_USER
               value: "k8s_job_watcher"
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gams-secret
+                  name:  {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
@@ -64,7 +64,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: {{ include "common.names.fullname" . }}-database
+              value: {{ include "gams-engine.name" . }}-database
             - name: GMS_RUNNER_DATABASE_PORT
               value: "5432"
 {{- end }}
@@ -79,5 +79,5 @@ spec:
             - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gams-secret
+                  name:  {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD

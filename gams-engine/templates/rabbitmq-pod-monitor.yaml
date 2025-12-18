@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: {{ include "common.names.fullname" . }}-rabbitmq-pod-monitor
+  name: {{ include "gams-engine.name" . }}-rabbitmq-pod-monitor
   namespace: {{ .Release.Namespace }}
 spec:
   podMetricsEndpoints:
@@ -11,5 +11,5 @@ spec:
     scheme: http
   selector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-queue
+      app: {{ include "gams-engine.name" . }}-queue
 {{ end }}

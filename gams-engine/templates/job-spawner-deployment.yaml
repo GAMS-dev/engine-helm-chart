@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.names.fullname" . }}-job-spawner
+  name: {{ include "gams-engine.name" . }}-job-spw
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "common.names.fullname" . }}-job-spawner
+    app: {{ include "gams-engine.name" . }}-job-spw
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-job-spawner
+      app: {{ include "gams-engine.name" . }}-job-spw
   template:
     metadata:
-      name: {{ include "common.names.fullname" . }}-job-spawner
+      name: {{ include "gams-engine.name" . }}-job-spw
       labels:
-        app: {{ include "common.names.fullname" . }}-job-spawner
+        app: {{ include "gams-engine.name" . }}-job-spw
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -27,7 +27,7 @@ spec:
     {{- if .Values.jobSpawner.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobSpawner.affinity "context" $) | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "common.names.fullname" . }}-job-spawner-account
+      serviceAccountName: {{ include "gams-engine.name" . }}-job-spawner-account
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
       containers:
         - name: engine-job-spawner
@@ -37,7 +37,7 @@ spec:
 {{ toYaml .Values.jobSpawner.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_WORKER_DATABASE_SERVER
-              value: {{ include "common.names.fullname" . }}-database-bouncer
+              value: {{ include "gams-engine.name" . }}-database-bouncer
             - name: GMS_RUNNER_WORKER_DATABASE_PORT
               value: "6432"
             - name: GMS_RUNNER_LOG_SHOW_MSEC
@@ -47,35 +47,35 @@ spec:
             - name: GMS_RUNNER_SPWN_WORKER_IMAGE_PULL_SECRETS
               value: '{{ coalesce (join "," .Values.jobSpawner.workerImage.pullSecrets) (join "," .Values.global.imagePullSecrets) }}'
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "common.names.fullname" . }}-queue
+              value: {{ include "gams-engine.name" . }}-queue
             - name: GMS_RUNNER_SPWN_WORKER_QUEUE_HOST
-              value: {{ include "common.names.fullname" . }}-queue
+              value: {{ include "gams-engine.name" . }}-queue
             - name: GMS_RUNNER_SPWN_WORKER_DB_HOST
-              value: {{ include "common.names.fullname" . }}-database-bouncer
+              value: {{ include "gams-engine.name" . }}-database-bouncer
             - name: GMS_RUNNER_SPWN_WORKER_DB_PORT
               value: "6432"
             - name: GMS_RUNNER_SPWN_WORKER_MONGO_HOST
-              value: {{ include "common.names.fullname" . }}-mongo
+              value: {{ include "gams-engine.name" . }}-mongo
             - name: GMS_RUNNER_RABBIT_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_RABBIT_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_SPWN_PWD
             - name: GMS_RUNNER_SPWN_WORKER_CRED_SECRET_NAME
-              value: {{ include "common.names.fullname" . }}-gams-secret
+              value: {{ include "gams-engine.name" . }}-secret
             - name: GMS_RUNNER_MONGO_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_MONGO_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_MONGO_SPWN_PWD
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "common.names.fullname" . }}-mongo
+              value: {{ include "gams-engine.name" . }}-mongo
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: "{{ .Values.postgresql.externalDatabase.host }}"
@@ -83,7 +83,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: {{ include "common.names.fullname" . }}-database
+              value: {{ include "gams-engine.name" . }}-database
             - name: GMS_RUNNER_DATABASE_PORT
               value: "5432"
 {{- end }}
@@ -106,5 +106,5 @@ spec:
             - name: GMS_RUNNER_DATABASE_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_DATABASE_SPWN_PWD

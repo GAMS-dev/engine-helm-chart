@@ -2,20 +2,20 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: {{ include "common.names.fullname" . }}-broker-pod-monitor
+  name: {{ include "gams-engine.name" . }}-broker-pod-monitor
   namespace: {{ .Release.Namespace }}
 spec:
   podMetricsEndpoints:
   - basicAuth:
       password:
         key: PROMETHEUS_AUTH_PASSWORD
-        name: {{ include "common.names.fullname" . }}-gams-secret
+        name: {{ include "gams-engine.name" . }}-secret
       username:
         key: PROMETHEUS_AUTH_USERNAME
-        name: {{ include "common.names.fullname" . }}-gams-secret
+        name: {{ include "gams-engine.name" . }}-secret
     path: api/metrics
     portNumber: 80
   selector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-broker
+      app: {{ include "gams-engine.name" . }}-broker
 {{ end }}

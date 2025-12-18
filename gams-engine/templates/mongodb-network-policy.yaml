@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-mongodb
+  name: {{ include "gams-engine.name" . }}-mongodb-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-mongo
+      app: {{ include "gams-engine.name" . }}-mongo
   policyTypes:
     - Egress
     - Ingress
@@ -20,34 +20,37 @@ spec:
             app: worker
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-job-watcher
+            app: {{ include "gams-engine.name" . }}-job-wtch
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-job-spawner
+            app: {{ include "gams-engine.name" . }}-job-spw
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-job-canceler
+            app: {{ include "gams-engine.name" . }}-job-cncl
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-hypercube-appender
+            app: {{ include "gams-engine.name" . }}-hc-app
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-event-manager
+            app: {{ include "gams-engine.name" . }}-hc-unp
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-dependency-checker
+            app: {{ include "gams-engine.name" . }}-ev-mng
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-cleaner
+            app: {{ include "gams-engine.name" . }}-dep-checker
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-forward-proxy
+            app: {{ include "gams-engine.name" . }}-cleaner
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-broker
+            app: {{ include "gams-engine.name" . }}-fwd-prxy
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-mongo-migrate
+            app: {{ include "gams-engine.name" . }}-broker
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.name" . }}-mongo-migrate
       ports:
         - protocol: TCP
           port: 27017

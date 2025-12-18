@@ -56,7 +56,7 @@ Create the name of the service account to use
 */}}
 {{- define "gams-engine.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "gams-engine.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "gams-engine.name" . ) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

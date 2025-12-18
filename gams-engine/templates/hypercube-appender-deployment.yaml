@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.names.fullname" . }}-hypercube-appender
+  name: {{ include "gams-engine.name" . }}-hc-app
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "common.names.fullname" . }}-hypercube-appender
+    app: {{ include "gams-engine.name" . }}-hc-app
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-hypercube-appender
+      app: {{ include "gams-engine.name" . }}-hc-app
   template:
     metadata:
       labels:
-        app: {{ include "common.names.fullname" . }}-hypercube-appender
+        app: {{ include "gams-engine.name" . }}-hc-app
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -38,22 +38,22 @@ spec:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "common.names.fullname" . }}-queue
+              value: {{ include "gams-engine.name" . }}-queue
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_USER
               value: "hypercube_appender"
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gams-secret
+                  name:  {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
             - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_USER
               value: "stein"
             - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "common.names.fullname" . }}-gams-secret
+                  name:  {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "common.names.fullname" . }}-mongo
+              value: {{ include "gams-engine.name" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"

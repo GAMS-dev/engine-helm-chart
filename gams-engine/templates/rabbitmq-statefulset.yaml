@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "common.names.fullname" . }}-rabbitmq
+  name: {{ include "gams-engine.name" . }}-rabbitmq
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-queue
-  serviceName: {{ include "common.names.fullname" . }}-queue
+      app: {{ include "gams-engine.name" . }}-queue
+  serviceName: {{ include "gams-engine.name" . }}-queue
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ include "common.names.fullname" . }}-queue
+        app: {{ include "gams-engine.name" . }}-queue
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelectorSts }}
@@ -46,57 +46,57 @@ spec:
             - name: GMS_RUNNER_RABBIT_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_BROKER_PWD
             - name: GMS_RUNNER_RABBIT_WORKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_WORKER_PWD
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
             - name: GMS_RUNNER_RABBIT_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_CLEANER_PWD
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
             - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_MIGRATE_PWD
             - name: GMS_RUNNER_RABBIT_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_SPWN_PWD
             - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  name: {{ include "gams-engine.name" . }}-secret
                   key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
       containers:
         - name: gamswebqueue
@@ -146,22 +146,22 @@ spec:
       volumes:
         - name: queue-config
           configMap:
-            name: {{ include "common.names.fullname" . }}-queue-config
+            name: {{ include "gams-engine.name" . }}-queue-conf
             items:
             - key: rabbitmq.conf
               path: rabbitmq.conf
         - name: advanced-queue-config
           configMap:
-            name: {{ include "common.names.fullname" . }}-queue-advanced-config
+            name: {{ include "gams-engine.name" . }}-queue-adv-conf
             items:
             - key: advanced.config
               path: advanced.config
         - name: queue-data
           persistentVolumeClaim:
-            claimName: {{ include "common.names.fullname" . }}-queue-pvc
+            claimName: {{ include "gams-engine.name" . }}-queue-pvc
         - name: queue-definition-data
           configMap:
-            name: {{ include "common.names.fullname" . }}-queue-definition
+            name: {{ include "gams-engine.name" . }}-queue-def
             items:
               - key: definitions.json
                 path: definitions.json
@@ -169,7 +169,7 @@ spec:
           emptyDir: {}
         - name: queue-generate-hashes-code
           configMap:
-            name: {{ include "common.names.fullname" . }}-queue-generate-hashes
+            name: {{ include "gams-engine.name" . }}-queue-gen-hash
             items:
               - key: generate_hashes.py
                 path: generate_hashes.py

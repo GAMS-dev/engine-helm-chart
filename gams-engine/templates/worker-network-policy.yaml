@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-worker
+  name: {{ include "gams-engine.name" . }}-worker
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
@@ -22,21 +22,21 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-queue
+            app: {{ include "gams-engine.name" . }}-queue
       ports:
         - protocol: TCP
           port: 5672
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-pgbouncer
+            app: {{ include "gams-engine.name" . }}-pgbouncer
       ports:
         - protocol: TCP
           port: 6432
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-mongo
+            app: {{ include "gams-engine.name" . }}-mongo
       ports:
         - protocol: TCP
           port: 27017

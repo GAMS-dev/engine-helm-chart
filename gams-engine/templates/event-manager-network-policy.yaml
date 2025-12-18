@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-event-manager
+  name: {{ include "gams-engine.name" . }}-ev-mng-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-event-manager
+      app: {{ include "gams-engine.name" . }}
   policyTypes:
     - Egress
     - Ingress
@@ -18,7 +18,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-queue
+            app: {{ include "gams-engine.name" . }}-queue
       ports:
         - protocol: TCP
           port: 5672
@@ -35,7 +35,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-postgres
+            app: {{ include "gams-engine.name" . }}-postgres
       ports:
         - protocol: TCP
           port: 5432
@@ -43,7 +43,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-mongo
+            app: {{ include "gams-engine.name" . }}-mongo
       ports:
         - protocol: TCP
           port: 27017

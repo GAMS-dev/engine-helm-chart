@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-external-database-initialize
+  name: {{ include "gams-engine.name" . }}-external-db-init-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-external-database-initialize
+      app: {{ include "gams-engine.name" . }}-external-db-init
   policyTypes:
     - Egress
   egress:
@@ -26,7 +26,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-postgres
+            app: {{ include "gams-engine.name" . }}-postgres
       ports:
         - protocol: TCP
           port: 5432

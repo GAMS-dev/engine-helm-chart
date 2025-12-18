@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "common.names.fullname" . }}-queue-generate-hashes
+  name: {{ include "gams-engine.name" . }}-queue-gen-hash
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}

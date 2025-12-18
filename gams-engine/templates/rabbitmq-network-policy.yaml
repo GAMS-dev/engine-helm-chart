@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "common.names.fullname" . }}-rabbitmq
+  name: {{ include "gams-engine.name" . }}-rabbitmq-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "common.names.fullname" . }}-queue
+      app: {{ include "gams-engine.name" . }}-queue
   policyTypes:
     - Egress
     - Ingress
@@ -17,7 +17,7 @@ spec:
     - from:
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-queue-migrate
+            app: {{ include "gams-engine.name" . }}-queue-migrate
       ports:
         - protocol: TCP
           port: 15672
@@ -27,31 +27,31 @@ spec:
             app: worker
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-job-watcher
+            app: {{ include "gams-engine.name" . }}-job-wtch
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-job-spawner
+            app: {{ include "gams-engine.name" . }}-job-spw
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-job-canceler
+            app: {{ include "gams-engine.name" . }}-job-cncl
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-hypercube-unpacker
+            app: {{ include "gams-engine.name" . }}-hc-unp
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-hypercube-appender
+            app: {{ include "gams-engine.name" . }}-hc-app
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-event-manager
+            app: {{ include "gams-engine.name" . }}-ev-mng
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-dependency-checker
+            app: {{ include "gams-engine.name" . }}-dep-check
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-cleaner
+            app: {{ include "gams-engine.name" . }}-cleaner
       - podSelector:
           matchLabels:
-            app: {{ include "common.names.fullname" . }}-broker
+            app: {{ include "gams-engine.name" . }}-broker
       ports:
         - protocol: TCP
           port: 5672
