@@ -181,20 +181,22 @@ forwardProxy:
       memory: 100Mi
   networkPolicy:
     extraIngress: []
-    extraEgress: []
     # extraEgress example: if you want to use an identity provider that is external 
     # the following is required
     # allows HTTPS access to any IP in public networks
-    #  - ports:
-    #    - protocol: TCP
-    #      port: 443
-    #    to:
-    #    - ipBlock:
-    #        cidr: 0.0.0.0/0
-    #        except:
-    #        - 10.0.0.0/8
-    #        - 172.16.0.0/12
-    #        - 192.168.0.0/16
+    # by default access to public networks enabled for forwardProxy, if you prefer not to
+    # provide extraEgress: [] on your values 
+    extraEgress:
+       - ports:
+         - protocol: TCP
+           port: 443
+         to:
+         - ipBlock:
+             cidr: 0.0.0.0/0
+             except:
+             - 10.0.0.0/8
+             - 172.16.0.0/12
+             - 192.168.0.0/16
 
 # Event manager listens to event queue and handles events.
 # For example, it can call a webhook to notify a job is finished.
@@ -217,20 +219,22 @@ eventManager:
   networkPolicy:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
-    extraEgress: []
     # extraEgress example: if you want to use webhooks that are external
     # the following is required
     # allows HTTPS access to any IP in public networks
-    #  - ports:
-    #    - protocol: TCP
-    #      port: 443
-    #    to:
-    #    - ipBlock:
-    #        cidr: 0.0.0.0/0
-    #        except:
-    #        - 10.0.0.0/8
-    #        - 172.16.0.0/12
-    #        - 192.168.0.0/16
+    # by default access to public networks enabled for eventManager, if you prefer not to
+    # provide extraEgress: [] on your values
+    extraEgress:
+       - ports:
+         - protocol: TCP
+           port: 443
+         to:
+         - ipBlock:
+             cidr: 0.0.0.0/0
+             except:
+             - 10.0.0.0/8
+             - 172.16.0.0/12
+             - 192.168.0.0/16
 
  # Cleaner chronologically removes unused files.
  # Cleaner pod resource definitions
