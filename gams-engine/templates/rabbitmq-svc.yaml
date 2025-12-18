@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: {{ include "common.names.fullname" . }}-queue
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
     app: {{ include "common.names.fullname" . }}-queue

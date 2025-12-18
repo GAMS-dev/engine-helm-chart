@@ -4,6 +4,7 @@ metadata:
   name: {{ include "common.names.fullname" . }}-job-canceler
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
     app: {{ include "common.names.fullname" . }}-job-canceler
 spec:
   replicas: 1
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ include "common.names.fullname" . }}-job-canceler
+        {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}

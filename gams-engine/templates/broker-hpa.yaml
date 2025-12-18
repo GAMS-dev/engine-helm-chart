@@ -3,6 +3,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "common.names.fullname" . }}-broker-scaler
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

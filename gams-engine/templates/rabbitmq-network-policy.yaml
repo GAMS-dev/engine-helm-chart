@@ -4,6 +4,8 @@ kind: NetworkPolicy
 metadata:
   name: {{ include "common.names.fullname" . }}-rabbitmq
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:

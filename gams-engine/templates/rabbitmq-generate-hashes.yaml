@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: {{ include "common.names.fullname" . }}-queue-generate-hashes
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 data:
   generate_hashes.py: |-
 {{ (tpl (.Files.Get "generate_hashes.py") .) | indent 4 }}

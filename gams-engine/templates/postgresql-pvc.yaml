@@ -4,6 +4,8 @@ apiVersion: v1
 metadata:
   name: {{ include "common.names.fullname" . }}-database-pvc
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
 {{- if .Values.postgresql.persistence.storageClassName }}
   storageClassName: "{{ .Values.postgresql.persistence.storageClassName }}"

@@ -4,6 +4,7 @@ metadata:
   name: {{ include "common.names.fullname" . }}-job-spawner
   namespace: {{ .Release.Namespace }}
   labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
     app: {{ include "common.names.fullname" . }}-job-spawner
 spec:
   replicas: 1
@@ -15,6 +16,7 @@ spec:
       name: {{ include "common.names.fullname" . }}-job-spawner
       labels:
         app: {{ include "common.names.fullname" . }}-job-spawner
+        {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}

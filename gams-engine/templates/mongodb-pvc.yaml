@@ -3,6 +3,8 @@ apiVersion: v1
 metadata:
   name: {{ include "common.names.fullname" . }}-mongo-pvc
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
 {{- if .Values.mongodb.persistence.storageClassName }}
   storageClassName: "{{ .Values.mongodb.persistence.storageClassName }}"

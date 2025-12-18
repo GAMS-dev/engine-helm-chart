@@ -5,6 +5,7 @@ kind: Deployment
 metadata:
   name: {{ include "common.names.fullname" . }}-broker
   labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
     app: {{ include "common.names.fullname" . }}-broker
   namespace: {{ .Release.Namespace }}
 spec:
@@ -16,6 +17,7 @@ spec:
     metadata:
       labels:
         app: {{ include "common.names.fullname" . }}-broker
+        {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}

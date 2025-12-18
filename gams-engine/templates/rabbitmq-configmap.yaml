@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: {{ include "common.names.fullname" . }}-queue-definition
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 data:
   definitions.json: |-
 {{ (tpl (.Files.Get "resources/rabbitmq/definitions.json") .) | indent 4 }}
@@ -12,6 +14,8 @@ kind: ConfigMap
 metadata:
   name: {{ include "common.names.fullname" . }}-queue-advanced-config
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 data:
   advanced.config: |-
 {{ (tpl (.Files.Get "resources/rabbitmq/advanced.config") .) | indent 4 }}
@@ -21,6 +25,8 @@ kind: ConfigMap
 metadata:
   name: {{ include "common.names.fullname" . }}-queue-config
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
 data:
   rabbitmq.conf: |-
 {{ (tpl (.Files.Get "resources/rabbitmq/rabbitmq.conf") .) | indent 4 }}

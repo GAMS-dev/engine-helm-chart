@@ -14,7 +14,8 @@ metadata:
     {{- with .Values.ingress.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    app.kubernetes.io/name: gams-engine-server
+    app.kubernetes.io/name: {{ include "common.names.fullname" . }}-server
+    {{- include "gams-engine.labels" . | nindent 4 }}
   name: {{ include "common.names.fullname" . }}-broker
   namespace: {{ .Release.Namespace }}
 spec:
