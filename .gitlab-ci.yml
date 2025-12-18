@@ -55,40 +55,6 @@ build-ci-image:
     - when: manual
 
 # ==============================================================================
-#  BUILD STAGE
-# ==============================================================================
-
-# This job builds the Helm chart.
-build-chart:
-  stage: build
-  image: $CI_REGISTRY_IMAGE/ci-image:latest
-  script:
-    - '[[ "$CI_PIPELINE_SOURCE" == "push" ]] && exit 0'
-    - git clone "https://engine_ci:${GITLAB_ENGINE_PULL_TOKEN}@git.gams.com/engine/engine.git"
-    - python gamsrest prepare_k8s --root-dir gams-engine/resources
-    - |
-      yq -i '
-        .appVersion = env(ENGINE_VERSION) | 
-        .version |= (split(".") | .[1] += 1 | .[2] = 0 | join("."))
-      ' gams-engine/Chart.yaml
-    - git status
-    - git commit -am "[CI skip] Update Db schemas"
-    - git remote rm origin && git remote add origin "https://engine_ci:${GITLAB_ENGINE_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
-    - git push origin HEAD:master
-  needs: []
-  dependencies: []
-  artifacts:
-    paths:
-      - 'gams-engine/resources/**'
-      - 'gams-engine/Chart.yaml'
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "pipeline"
-    - if: '$CI_PIPELINE_SOURCE != "push"'
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: manual
-
-# ==============================================================================
 #  DEPLOY STAGE
 # ==============================================================================
 
@@ -142,12 +108,7 @@ upload-helm-chart:
       - '*.tgz.prov'
       - index.yaml
     expire_in: 1 week
-  dependencies: [build-chart]
-  needs: [build-chart]
   rules:
-    - if: $CI_PIPELINE_SOURCE == "pipeline"
-    - if: '$CI_PIPELINE_SOURCE != "push"'
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+    - if: '$CI_COMMIT_REF_NAME == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: on_success
     - when: never
