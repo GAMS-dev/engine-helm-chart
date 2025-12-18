@@ -12,7 +12,7 @@ The API will be available at:
   {{- else }}The application will be available over HTTP at:
   http://{{ first .Values.ingress.hosts }}
 The API will be available at:
-  http://{{ first .Values.ingress.hosts }}
+  http://{{ first .Values.ingress.hosts }}/api
 {{- end }}
 
 NOTES
