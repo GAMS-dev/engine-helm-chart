@@ -399,11 +399,6 @@ pgBouncer:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
   affinity: {}
-  image:
-    registry: "docker.io/bitnamilegacy"
-    repository: pgbouncer
-    tag: "1.24.1" 
-    pullSecrets: []
   resources:
     requests:
       cpu: "100m"
