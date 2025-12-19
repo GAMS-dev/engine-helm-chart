@@ -14,6 +14,11 @@ spec:
     - Egress
     - Ingress
   ingress:
+    {{- if eq .Values.broker.service.type "NodePort" }}
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.broker.service.ports | default 80 }}
+    {{- end }}
     {{- if .Values.broker.networkPolicy.extraIngress }}
     # Optional extra ingress rules
     {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.extraIngress "context" $) | nindent 4 }}
