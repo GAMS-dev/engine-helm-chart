@@ -36,7 +36,7 @@ spec:
             name: {{ include "gams-engine.prefixname" . }}-database-config
       containers:
         - name: external-db-initialize
-          image: alpine/psql:17.5
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.image.registry "repository" .Values.jobSpawner.image.repository "tag" (coalesce .Values.jobSpawner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           command: ['sh', '/docker-entrypoint-initdb.d/setup.sh']
           imagePullPolicy: Always
           volumeMounts:
