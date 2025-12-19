@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-pgbouncer-np
+  name: {{ include "gams-engine.prefixname" . }}-pgbouncer-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-pgbouncer
+      app: {{ include "gams-engine.prefixname" . }}-pgbouncer
   policyTypes:
     - Egress
     - Ingress
@@ -20,28 +20,28 @@ spec:
             app: worker
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-job-wtch
+            app: {{ include "gams-engine.prefixname" . }}-job-wtch
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-job-spw
+            app: {{ include "gams-engine.prefixname" . }}-job-spw
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-job-cncl
+            app: {{ include "gams-engine.prefixname" . }}-job-cncl
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-hc-app
+            app: {{ include "gams-engine.prefixname" . }}-hc-app
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-ev-mng
+            app: {{ include "gams-engine.prefixname" . }}-ev-mng
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-dep-check
+            app: {{ include "gams-engine.prefixname" . }}-dep-check
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-cleaner
+            app: {{ include "gams-engine.prefixname" . }}-cleaner
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-broker
+            app: {{ include "gams-engine.prefixname" . }}-broker
       ports:
         - protocol: TCP
           port: 6432
@@ -63,7 +63,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-postgres
+            app: {{ include "gams-engine.prefixname" . }}-postgres
       ports:
         - protocol: TCP
           port: 5432

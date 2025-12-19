@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gams-engine.name" . }}-cleaner
+  name: {{ include "gams-engine.prefixname" . }}-cleaner
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app:  {{ include "gams-engine.name" . }}-cleaner
+    app:  {{ include "gams-engine.prefixname" . }}-cleaner
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-cleaner
+      app: {{ include "gams-engine.prefixname" . }}-cleaner
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-cleaner
+        app: {{ include "gams-engine.prefixname" . }}-cleaner
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -46,7 +46,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: {{ include "gams-engine.name" . }}-database
+              value:  {{ include "gams-engine.prefixname" . }}-database
             - name: GMS_RUNNER_DATABASE_PORT
               value: "5432"
 {{- end }}
@@ -61,10 +61,10 @@ spec:
             - name: GMS_RUNNER_DATABASE_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_CLEANER_PWD
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "gams-engine.name" . }}-mongo
+              value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_CLEANER_USER
@@ -72,14 +72,14 @@ spec:
             - name: GMS_RUNNER_MONGO_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_CLEANER_PWD
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "gams-engine.name" . }}-queue
+              value: {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_CLEANER_USER
               value: "cleaner"
             - name: GMS_RUNNER_RABBIT_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_CLEANER_PWD

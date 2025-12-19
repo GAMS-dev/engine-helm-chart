@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gams-engine.name" . }}-hc-unp
+  name: {{ include "gams-engine.prefixname" . }}-hc-unp
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "gams-engine.name" . }}-hc-unp
+    app: {{ include "gams-engine.prefixname" . }}-hc-unp
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-hc-unp
+      app: {{ include "gams-engine.prefixname" . }}-hc-unp
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-hc-unp
+        app: {{ include "gams-engine.prefixname" . }}-hc-unp
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -38,11 +38,11 @@ spec:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "gams-engine.name" . }}-queue
+              value: {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_USER
               value: "hypercube_unpacker"
             - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD

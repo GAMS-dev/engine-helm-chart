@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gams-engine.name" . }}-dep-check
+  name: {{ include "gams-engine.prefixname" . }}-dep-check
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "gams-engine.name" . }}-dep-check
+    app: {{ include "gams-engine.prefixname" . }}-dep-check
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-dep-check
+      app: {{ include "gams-engine.prefixname" . }}-dep-check
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-dep-check
+        app: {{ include "gams-engine.prefixname" . }}-dep-check
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -38,16 +38,16 @@ spec:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "gams-engine.name" . }}-queue
+              value: {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_USER
               value: "dep_check"
             - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "gams-engine.name" . }}-mongo
+              value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_USER
@@ -55,7 +55,7 @@ spec:
             - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
@@ -64,7 +64,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: {{ include "gams-engine.name" . }}-database
+              value: {{ include "gams-engine.prefixname" . }}-database
             - name: GMS_RUNNER_DATABASE_PORT
               value: "5432"
 {{- end }}
@@ -79,5 +79,5 @@ spec:
             - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD

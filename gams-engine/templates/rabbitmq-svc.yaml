@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "gams-engine.name" . }}-queue
+  name: {{ include "gams-engine.prefixname" . }}-queue
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
-    app: {{ include "gams-engine.name" . }}-queue
+    app: {{ include "gams-engine.prefixname" . }}-queue
   ports:
     - protocol: TCP
       port: 5672

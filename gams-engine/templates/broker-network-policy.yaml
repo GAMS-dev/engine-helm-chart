@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-broker-np
+  name: {{ include "gams-engine.prefixname" . }}-broker-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-broker
+      app: {{ include "gams-engine.prefixname" . }}-broker
   policyTypes:
     - Egress
     - Ingress
@@ -22,28 +22,28 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-fwd-prxy
+            app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
       ports:
         - protocol: TCP
           port: 8000
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-queue
+            app: {{ include "gams-engine.prefixname" . }}-queue
       ports:
         - protocol: TCP
           port: 5672
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-pgbouncer
+            app: {{ include "gams-engine.prefixname" . }}-pgbouncer
       ports:
         - protocol: TCP
           port: 6432
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-mongo
+            app: {{ include "gams-engine.prefixname" . }}-mongo
       ports:
         - protocol: TCP
           port: 27017

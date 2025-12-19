@@ -14,9 +14,9 @@ metadata:
     {{- with .Values.ingress.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    app.kubernetes.io/name: {{ include "gams-engine.name" . }}-server
+    app.kubernetes.io/name: {{ include "gams-engine.prefixname" . }}-server
     {{- include "gams-engine.labels" . | nindent 4 }}
-  name: {{ include "gams-engine.name" . }}-broker
+  name: {{ include "gams-engine.prefixname" . }}-broker
   namespace: {{ .Release.Namespace }}
 spec:
   ingressClassName:  {{ .Values.ingress.ingressClassName }}
@@ -29,7 +29,7 @@ spec:
             pathType: {{ $ingressPathType }}
             backend:
               service:
-                name: {{ include "gams-engine.name" $ }}-broker
+                name: {{ include "gams-engine.prefixname" $ }}-broker
                 port:
                   number: 80
   {{- end }}

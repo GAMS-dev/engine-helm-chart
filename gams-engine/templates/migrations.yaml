@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.name" . }}-mongo-migrate
+  name: {{ include "gams-engine.prefixname" . }}-mongo-migrate
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-mongo-migrate
+        app: {{ include "gams-engine.prefixname" . }}-mongo-migrate
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
@@ -35,25 +35,25 @@ spec:
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"
             - name: MONGODB_HOST
-              value: {{ include "gams-engine.name" . }}-mongo
+              value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: MONGODB_PORT
               value: "27017"
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_BROKER_PWD
             - name: GMS_RUNNER_MONGO_INITDB_MAIN
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
@@ -61,7 +61,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.name" . }}-database-migrate
+  name: {{ include "gams-engine.prefixname" . }}-database-migrate
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -76,7 +76,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-database-migrate
+        app: {{ include "gams-engine.prefixname" . }}-database-migrate
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
@@ -99,7 +99,7 @@ spec:
             - name: GMS_RUNNER_DATABASE_ADMIN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
               value: "{{ .Values.postgresql.database }}"
@@ -112,14 +112,14 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: POSTGRES_HOST
-              value: {{ include "gams-engine.name" . }}-database
+              value: {{ include "gams-engine.prefixname" . }}-database
             - name: POSTGRES_PORT
               value: "5432"
 {{- end }}
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
       restartPolicy: OnFailure
   backoffLimit: 8
@@ -127,7 +127,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.name" . }}-queue-migrate
+  name: {{ include "gams-engine.prefixname" . }}-queue-migrate
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -142,7 +142,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-queue-migrate
+        app: {{ include "gams-engine.prefixname" . }}-queue-migrate
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
@@ -163,16 +163,16 @@ spec:
             - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_MIGRATE_PWD
             - name: RABBITMQ_HOST 
-              value: {{ include "gams-engine.name" . }}-queue
+              value: {{ include "gams-engine.prefixname" . }}-queue
             - name: RABBITMQ_PORT
               value: "15672"
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
       restartPolicy: OnFailure
   backoffLimit: 8

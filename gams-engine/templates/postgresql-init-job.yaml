@@ -3,9 +3,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.name" . }}-external-db-init
+  name: {{ include "gams-engine.prefixname" . }}-external-db-init
   labels:
-    app: {{ include "gams-engine.name" . }}-external-db-init
+    app: {{ include "gams-engine.prefixname" . }}-external-db-init
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-external-db-init
+        app: {{ include "gams-engine.prefixname" . }}-external-db-init
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
@@ -33,7 +33,7 @@ spec:
       volumes:
         - name: db-config-data
           configMap:
-            name: {{ include "gams-engine.name" . }}-database-config
+            name: {{ include "gams-engine.prefixname" . }}-database-config
       containers:
         - name: external-db-initialize
           image: alpine/psql:17.5
@@ -46,42 +46,42 @@ spec:
             - name: GMS_RUNNER_DATABASE_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_BROKER_PWD
             - name: GMS_RUNNER_DATABASE_WORKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
             - name: GMS_RUNNER_DATABASE_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_CLEANER_PWD
             - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
             - name: GMS_RUNNER_DATABASE_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_SPWN_PWD
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
             - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
             - name: CONNECTION_STRING
               value: "{{ .Values.postgresql.externalDatabase.initialize.connectionString }}"

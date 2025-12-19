@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-mongo-migrate-np
+  name: {{ include "gams-engine.prefixname" . }}-mongo-migrate-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-mongo-migrate
+      app: {{ include "gams-engine.prefixname" . }}-mongo-migrate
   policyTypes:
     - Ingress
     - Egress
@@ -18,7 +18,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-mongo
+            app: {{ include "gams-engine.prefixname" . }}-mongo
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
@@ -39,14 +39,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-database-migrate
+  name: {{ include "gams-engine.prefixname" . }}-database-migrate
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-database-migrate
+      app: {{ include "gams-engine.prefixname" . }}-database-migrate
   policyTypes:
     - Ingress
     - Egress
@@ -65,7 +65,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-postgres
+            app: {{ include "gams-engine.prefixname" . }}-postgres
       ports:
         - protocol: TCP
           port: 5432
@@ -84,14 +84,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-queue-migrate
+  name: {{ include "gams-engine.prefixname" . }}-queue-migrate
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-queue-migrate
+      app: {{ include "gams-engine.prefixname" . }}-queue-migrate
   policyTypes:
     - Ingress
     - Egress
@@ -100,7 +100,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-queue
+            app: {{ include "gams-engine.prefixname" . }}-queue
       ports:
         - protocol: TCP
           port: 15672

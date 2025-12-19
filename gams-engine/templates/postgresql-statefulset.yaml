@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "gams-engine.name" . }}-postgres
+  name: {{ include "gams-engine.prefixname" . }}-postgres
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-postgres
-  serviceName: {{ include "gams-engine.name" . }}-database
+      app: {{ include "gams-engine.prefixname" . }}-postgres
+  serviceName: {{ include "gams-engine.prefixname" . }}-database
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-postgres
+        app: {{ include "gams-engine.prefixname" . }}-postgres
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelectorSts }}
@@ -50,47 +50,47 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
             - name: GMS_RUNNER_DATABASE_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_BROKER_PWD
             - name: GMS_RUNNER_DATABASE_WORKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
             - name: GMS_RUNNER_DATABASE_CLEANER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_CLEANER_PWD
             - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
             - name: GMS_RUNNER_DATABASE_SPWN_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_SPWN_PWD
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
             - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
           imagePullPolicy: Always
           livenessProbe:
@@ -128,8 +128,8 @@ spec:
       volumes:
         - name: db-data
           persistentVolumeClaim:
-            claimName: {{ include "gams-engine.name" . }}-database-pvc
+            claimName: {{ include "gams-engine.prefixname" . }}-database-pvc
         - name: db-config-data
           configMap:
-            name: {{ include "gams-engine.name" . }}-database-config
+            name: {{ include "gams-engine.prefixname" . }}-database-config
 {{- end }}

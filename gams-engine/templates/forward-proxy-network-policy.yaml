@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-fwd-prxy-np
+  name: {{ include "gams-engine.prefixname" . }}-fwd-prxy-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-fwd-prxy
+      app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
   policyTypes:
     - Ingress
     - Egress
@@ -33,7 +33,7 @@ spec:
     - from:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-broker
+            app: {{ include "gams-engine.prefixname" . }}-broker
       ports:
         - protocol: TCP
           port: 8000

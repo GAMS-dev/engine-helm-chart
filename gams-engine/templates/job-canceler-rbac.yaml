@@ -2,7 +2,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "gams-engine.name" . }}-cancel-jobs-role
+  name: {{ include "gams-engine.prefixname" . }}-cancel-jobs-role
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 rules:
@@ -16,19 +16,19 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "gams-engine.name" . }}-canceler-account
+  name: {{ include "gams-engine.prefixname" . }}-canceler-account
   namespace: {{ .Release.Namespace }}
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ include "gams-engine.name" . }}-canceler-account-rb
+  name: {{ include "gams-engine.prefixname" . }}-canceler-account-rb
   namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "gams-engine.name" . }}-canceler-account
+    name: {{ include "gams-engine.prefixname" . }}-canceler-account
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: {{ include "gams-engine.name" . }}-cancel-jobs-role
+  name: {{ include "gams-engine.prefixname" . }}-cancel-jobs-role
   apiGroup: rbac.authorization.k8s.io

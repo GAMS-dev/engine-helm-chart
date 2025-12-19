@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "gams-engine.name" . }}-database
+  name: {{ include "gams-engine.prefixname" . }}-database
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   selector:
-    app: {{ include "gams-engine.name" . }}-postgres
+    app: {{ include "gams-engine.prefixname" . }}-postgres
   ports:
     - protocol: TCP
       port: 5432

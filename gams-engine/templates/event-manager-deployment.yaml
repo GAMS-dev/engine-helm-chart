@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gams-engine.name" . }}-ev-mng
+  name: {{ include "gams-engine.prefixname" . }}-ev-mng
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "gams-engine.name" . }}-ev-mng
+    app: {{ include "gams-engine.prefixname" . }}-ev-mng
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-ev-mng
+      app: {{ include "gams-engine.prefixname" . }}-ev-mng
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-ev-mng
+        app: {{ include "gams-engine.prefixname" . }}-ev-mng
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -36,16 +36,16 @@ spec:
 {{ toYaml .Values.eventManager.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_RABBIT_HOST
-              value: {{ include "gams-engine.name" . }}-queue
+              value: {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_USER
               value: "event_manager"
             - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "gams-engine.name" . }}-mongo
+              value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_USER
@@ -53,7 +53,7 @@ spec:
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
@@ -62,7 +62,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: {{ include "gams-engine.name" . }}-database
+              value: {{ include "gams-engine.prefixname" . }}-database
             - name: GMS_RUNNER_DATABASE_PORT
               value: "5432"
 {{- end }}
@@ -77,5 +77,5 @@ spec:
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
-                  name:  {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD

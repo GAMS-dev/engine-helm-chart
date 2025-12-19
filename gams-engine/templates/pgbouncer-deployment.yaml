@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gams-engine.name" . }}-pgbouncer
+  name: {{ include "gams-engine.prefixname" . }}-pgbouncer
   labels:
-    app: {{ include "gams-engine.name" . }}-pgbouncer
+    app: {{ include "gams-engine.prefixname" . }}-pgbouncer
     {{- include "gams-engine.labels" . | nindent 4 }}
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-pgbouncer
+      app: {{ include "gams-engine.prefixname" . }}-pgbouncer
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-pgbouncer
+        app: {{ include "gams-engine.prefixname" . }}-pgbouncer
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -39,7 +39,7 @@ spec:
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRESQL_HOST
@@ -48,7 +48,7 @@ spec:
               value: "{{ .Values.postgresql.externalDatabase.port }}"
 {{- else }}
             - name: POSTGRESQL_HOST
-              value: {{ include "gams-engine.name" . }}-database
+              value: {{ include "gams-engine.prefixname" . }}-database
             - name: POSTGRESQL_PORT
               value: "5432"
 {{- end }}
@@ -65,5 +65,5 @@ spec:
             - name: PGBOUNCER_USERLIST
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_PGBOUNCER_USERLIST

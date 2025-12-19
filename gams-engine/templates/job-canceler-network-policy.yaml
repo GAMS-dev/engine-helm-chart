@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.name" . }}-job-cncl-np
+  name: {{ include "gams-engine.prefixname" . }}-job-cncl-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-job-cncl
+      app: {{ include "gams-engine.prefixname" . }}-job-cncl
   policyTypes:
     - Egress
     - Ingress
@@ -22,7 +22,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-queue
+            app: {{ include "gams-engine.prefixname" . }}-queue
       ports:
         - protocol: TCP
           port: 5672
@@ -39,7 +39,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-postgres
+            app: {{ include "gams-engine.prefixname" . }}-postgres
       ports:
         - protocol: TCP
           port: 5432
@@ -47,7 +47,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.name" . }}-mongo
+            app: {{ include "gams-engine.prefixname" . }}-mongo
       ports:
         - protocol: TCP
           port: 27017

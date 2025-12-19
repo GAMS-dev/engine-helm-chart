@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "gams-engine.name" . }}-queue-def
+  name: {{ include "gams-engine.prefixname" . }}-queue-def
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
@@ -12,7 +12,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "gams-engine.name" . }}-queue-adv-conf
+  name: {{ include "gams-engine.prefixname" . }}-queue-adv-conf
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
@@ -23,7 +23,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "gams-engine.name" . }}-queue-conf
+  name: {{ include "gams-engine.prefixname" . }}-queue-conf
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}

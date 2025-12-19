@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gams-engine.name" . }}-fwd-prxy
+  name: {{ include "gams-engine.prefixname" . }}-fwd-prxy
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
-    app: {{ include "gams-engine.name" . }}-fwd-prxy
+    app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "gams-engine.name" . }}-fwd-prxy
+      app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.name" . }}-fwd-prxy
+        app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
         {{- include "gams-engine.labels" . | nindent 8 }} 
     spec:
     {{- if .Values.global.nodeSelector }}
@@ -36,7 +36,7 @@ spec:
 {{ toYaml .Values.forwardProxy.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "gams-engine.name" . }}-mongo
+              value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
               value: "gams_worker"
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_USER
@@ -44,22 +44,22 @@ spec:
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_FORWARD_PROXY_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_FORWARD_PROXY_PWD
             - name: GMS_RUNNER_FORWARD_PROXY_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_FORWARD_PROXY_SECRET
             - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "gams-engine.name" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
