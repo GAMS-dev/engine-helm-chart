@@ -2,14 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-mongo-migrate-np
+  name: {{ include "gams-engine.prefixname" . }}-mongo-mgr-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.prefixname" . }}-mongo-migrate
+      app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
   policyTypes:
     - Ingress
     - Egress
@@ -39,14 +39,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-database-migrate
+  name: {{ include "gams-engine.prefixname" . }}-db-mgr
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.prefixname" . }}-database-migrate
+      app: {{ include "gams-engine.prefixname" . }}-db-mgr
   policyTypes:
     - Ingress
     - Egress
@@ -84,14 +84,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-queue-migrate
+  name: {{ include "gams-engine.prefixname" . }}-queue-mgr
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.prefixname" . }}-queue-migrate
+      app: {{ include "gams-engine.prefixname" . }}-queue-mgr
   policyTypes:
     - Ingress
     - Egress

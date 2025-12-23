@@ -47,7 +47,7 @@ spec:
             app: {{ include "gams-engine.prefixname" . }}-broker
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.prefixname" . }}-mongo-migrate
+            app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
       ports:
         - protocol: TCP
           port: 27017

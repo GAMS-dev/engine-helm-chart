@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-postgresql-np
+  name: {{ include "gams-engine.prefixname" . }}-postgres-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
@@ -76,7 +76,7 @@ spec:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.prefixname" . }}-database-migrate
+            app: {{ include "gams-engine.prefixname" . }}-db-mgr
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-mongo-migrate
+  name: {{ include "gams-engine.prefixname" . }}-mongo-mgr
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.prefixname" . }}-mongo-migrate
+        app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
@@ -61,7 +61,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-database-migrate
+  name: {{ include "gams-engine.prefixname" . }}-db-mgr
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -76,7 +76,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.prefixname" . }}-database-migrate
+        app: {{ include "gams-engine.prefixname" . }}-db-mgr
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
@@ -127,7 +127,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-queue-migrate
+  name: {{ include "gams-engine.prefixname" . }}-queue-mgr
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
@@ -142,7 +142,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "gams-engine.prefixname" . }}-queue-migrate
+        app: {{ include "gams-engine.prefixname" . }}-queue-mgr
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
