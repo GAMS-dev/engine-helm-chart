@@ -35,7 +35,7 @@ spec:
             app: {{ include "gams-engine.prefixname" . }}-ev-mng
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.prefixname" . }}-dep-checker
+            app: {{ include "gams-engine.prefixname" . }}-dep-check
       - podSelector:
           matchLabels:
             app: {{ include "gams-engine.prefixname" . }}-cleaner
