@@ -17,12 +17,12 @@ spec:
     {{- if eq .Values.broker.service.type "NodePort" }}
     - ports:
         - protocol: TCP
-          port: {{ .Values.broker.service.ports | default 80 }}
+          port: 80
     {{- end }}
     {{- if .Values.ingress.enabled }}
     - ports:
         - protocol: TCP
-          port: {{ .Values.broker.service.ports | default 80 }}
+          port: 80
       {{- if .Values.broker.networkPolicy.ingressProxyCIDRs }}
       from:
         {{- range .Values.broker.networkPolicy.ingressProxyCIDRs }}
