@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
-        {{- include "gams-engine.labels" . | nindent 8 }} 
+        {{- include "gams-engine.labels" . | nindent 8 }}
     spec:
     {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}

@@ -31,7 +31,7 @@ image:
 #    *only* application running in its namespace.
 #    Enabling this in a shared namespace will block traffic
 #    to your other applications.
-# If useDefaultDenyNetworkPolicy is set to true, a "default-deny-all" 
+# If useDefaultDenyNetworkPolicy is set to true, a "default-deny-all"
 # NetworkPolicy is created.
 # This policy blocks ALL traffic to ALL pods in the namespace
 # unless another policy explicitly allows it.
@@ -90,7 +90,7 @@ ingress:
   #  - my-app.example.com
   tls: []
   #  - hosts:
-  #      - my-app.example.com 
+  #      - my-app.example.com
   #    secretName: chart-example-tls
 
 broker:
@@ -110,7 +110,7 @@ broker:
     image:
       registry: docker.io/gams
       repository: engine-broker
-      # Tag of the image. If not specified, AppVersion is used. 
+      # Tag of the image. If not specified, AppVersion is used.
       tag: ""
       pullSecrets: []
     resources:
@@ -134,22 +134,18 @@ broker:
         memory: 200Mi
   # Broker network policy
   # Only relevant if global.useNetworkPolicies is true
-  # If 'broker.service.type' is NOT NodePort, the default policy is deny all ingress.
-    # Incoming traffic will be BLOCKED unless you:
-    # A) Define rules here in 'broker.networkPolicy.extraIngress', OR
-    # B) Have a separate NetworkPolicy 
-    #    that targets the broker pod.
   networkPolicy:
-    # ingressProxyCIDRs is only relevant if ingress.enabled is true
-    # If you leave this empty [], it allows traffic from Anywhere (0.0.0.0/0).
-    ingressProxyCIDRs: [] 
-    #    - 10.0.0.0/20
-    #    - 10.0.16.0/20
-    #    - 10.0.32.0/20
+    # Incoming traffic to broker
+    # Set to [] to disable default access to broker (restrictive mode).
+    # Currently containerPort is 80
+    ingress:
+      - ports:
+        - port: 80 # should be always 80 for broker
+          protocol: TCP
     extraIngress: []
     # Add extra ingress rules
     # Example: Allow Prometheus scraper to access the metrics port
-    # if broking.monitoring configs are enabled and Prometheus Operator CRDs exist in your cluster: 
+    # if broking.monitoring configs are enabled and Prometheus Operator CRDs exist in your cluster:
     #  - from:
     #    - namespaceSelector:
     #        matchLabels:
@@ -163,10 +159,10 @@ broker:
     extraEgress: []
     # Add extra egress rules
   # Broker service
-  service: 
+  service:
     # Such as: "ClusterIP", "NodePort", "LoadBalancer"
     type: ClusterIP
-    # The port that the service will expose 
+    # The port that the service will expose
     port: 80
     # The NodePort to assign (only used if type is "NodePort").
     # If left empty, and NodePort type is chosen Kubernetes will assign a random port.
@@ -192,12 +188,13 @@ forwardProxy:
       memory: 100Mi
   networkPolicy:
     extraIngress: []
-    # extraEgress example: if you want to use an identity provider that is external 
-    # the following is required
-    # allows HTTPS access to any IP in public networks
+    # extraEgress example: if you want to use an identity provider that is external
+    # the following extraEgress rule is required.
+    # It allows HTTPS access to any IP in public networks
     # by default access to public networks enabled for forwardProxy, if you prefer not to
-    # provide extraEgress: [] on your values 
+    # provide extraEgress: [] on your values.
     extraEgress:
+    # Allow External HTTPS, Block Internal IPs
        - ports:
          - protocol: TCP
            port: 443
@@ -208,6 +205,15 @@ forwardProxy:
              - 10.0.0.0/8
              - 172.16.0.0/12
              - 192.168.0.0/16
+    # How to whitelist an Internal IDP (e.g. Keycloak)
+       # Allow your internal IDP IP here if it is inside the cluster.
+       # - ports:
+       #   - protocol: TCP
+       #     port: 443 <-- Example
+       #   to:
+       #   - ipBlock:
+       #       cidr: 10.20.30.40/32  <-- Your Internal IP to allow
+
 
 # Event manager listens to event queue and handles events.
 # For example, it can call a webhook to notify a job is finished.
@@ -405,7 +411,7 @@ jobWatcher:
 
 # PG Bouncer is a connection pooler for PostgreSQL
 # PG Bouncer pod resource definitions
-# We suggest using the default image registry if you are not sure: 
+# We suggest using the default image registry if you are not sure:
 pgBouncer:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
@@ -463,7 +469,7 @@ postgresql:
   # You can change this if you need to have a different db name
   database_user: "gams_engine"
   database: "gams_engine" # default database name
-  # if externalDatabase.enabled: false > the postgres db pod is created by this chart 
+  # if externalDatabase.enabled: false > the postgres db pod is created by this chart
   externalDatabase:
     enabled: false
     # if externalDatabase enabled connectionString is needed.
@@ -474,7 +480,7 @@ postgresql:
     initialize:
       # Set to 'true' to run this one-time initialization job.
       # This is strongly recommended for first-time setup.
-      run: true 
+      run: true
       # Provide the *admin connection string* for the database.
       # This is REQUIRED if 'initialize.run' is set to 'true'.
       #
@@ -482,7 +488,7 @@ postgresql:
       #    MUST have permissions (create, alter, grant usage) within the database.
       #
       # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
-      connectionString: "" 
+      connectionString: ""
       # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
     networkPolicy:
       podSelector:

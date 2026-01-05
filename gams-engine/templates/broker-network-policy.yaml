@@ -14,22 +14,9 @@ spec:
     - Egress
     - Ingress
   ingress:
-    {{- if eq .Values.broker.service.type "NodePort" }}
-    - ports:
-        - protocol: TCP
-          port: 80
-    {{- end }}
-    {{- if .Values.ingress.enabled }}
-    - ports:
-        - protocol: TCP
-          port: 80
-      {{- if .Values.broker.networkPolicy.ingressProxyCIDRs }}
-      from:
-        {{- range .Values.broker.networkPolicy.ingressProxyCIDRs }}
-        - ipBlock:
-            cidr: {{ . }}
-        {{- end }}
-      {{- end }}
+    {{- if .Values.broker.networkPolicy.ingress }}
+    # Ingress rules
+    {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.ingress "context" $) | nindent 4 }}
     {{- end }}
     {{- if .Values.broker.networkPolicy.extraIngress }}
     # Optional extra ingress rules

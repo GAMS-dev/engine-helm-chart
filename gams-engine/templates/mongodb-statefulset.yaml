@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ include "gams-engine.prefixname" . }}-mongo
-        {{- include "gams-engine.labels" . | nindent 8 }} 
+        {{- include "gams-engine.labels" . | nindent 8 }}
     spec:
     {{- if .Values.global.nodeSelectorSts }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}

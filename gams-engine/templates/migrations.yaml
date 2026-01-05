@@ -165,7 +165,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_MIGRATE_PWD
-            - name: RABBITMQ_HOST 
+            - name: RABBITMQ_HOST
               value: {{ include "gams-engine.prefixname" . }}-queue
             - name: RABBITMQ_PORT
               value: "15672"

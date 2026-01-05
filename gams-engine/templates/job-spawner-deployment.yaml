@@ -16,7 +16,7 @@ spec:
       name: {{ include "gams-engine.prefixname" . }}-job-spw
       labels:
         app: {{ include "gams-engine.prefixname" . }}-job-spw
-        {{- include "gams-engine.labels" . | nindent 8 }} 
+        {{- include "gams-engine.labels" . | nindent 8 }}
     spec:
     {{- if .Values.global.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}

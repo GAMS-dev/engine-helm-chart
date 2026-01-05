@@ -30,4 +30,3 @@ metadata:
 data:
   rabbitmq.conf: |-
 {{ (tpl (.Files.Get "resources/rabbitmq/rabbitmq.conf") .) | indent 4 }}
-

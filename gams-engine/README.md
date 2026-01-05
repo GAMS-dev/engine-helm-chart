@@ -26,7 +26,7 @@ application
 
 # Introduction
 
-Welcome to the official Helm chart for **gams-engine**. 
+Welcome to the official Helm chart for **gams-engine**.
 This chart bootstraps a GAMS Engine deployment on a Kubernetes cluster using the Helm package manager.
 
 It deploys the complete GAMS Engine stack, including:

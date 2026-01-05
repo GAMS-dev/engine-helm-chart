@@ -55,7 +55,7 @@ if __name__ == '__main__':
         else:
             print('Error while generating hash for', key)
             sys.exit(1)
-    
+
     with open("/data_in/definitions.json", "r") as f:
         template_content = f.read()
 
