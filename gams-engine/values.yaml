@@ -134,7 +134,18 @@ broker:
         memory: 200Mi
   # Broker network policy
   # Only relevant if global.useNetworkPolicies is true
+  # If 'broker.service.type' is NOT NodePort, the default policy is deny all ingress.
+    # Incoming traffic will be BLOCKED unless you:
+    # A) Define rules here in 'broker.networkPolicy.extraIngress', OR
+    # B) Have a separate NetworkPolicy 
+    #    that targets the broker pod.
   networkPolicy:
+    # ingressProxyCIDRs is only relevant if ingress.enabled is true
+    # If you leave this empty [], it allows traffic from Anywhere (0.0.0.0/0).
+    ingressProxyCIDRs: [] 
+    #    - 10.0.0.0/20
+    #    - 10.0.16.0/20
+    #    - 10.0.32.0/20
     extraIngress: []
     # Add extra ingress rules
     # Example: Allow Prometheus scraper to access the metrics port
