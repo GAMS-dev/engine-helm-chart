@@ -221,3 +221,18 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | rabbitmqMigrate.image.repository | string | `"engine-queue-migrate"` | Image repository. |
 | rabbitmqMigrate.image.tag | string | `""` | Image tag. |
 | useDefaultDenyNetworkPolicy | bool | `false` | If true, blocks all traffic in the namespace unless explicitly allowed. |
+
+# Legal Notice
+
+### End User License Agreement (EULA)
+By installing and using GAMS Engine, you agree to the terms and conditions outlined in the **GAMS Engine EULA**.
+A copy of the EULA is included in this chart: [GAMS_Engine_EULA.pdf](./GAMS_Engine_EULA.pdf).
+
+### Third-Party Licenses
+GAMS Engine bundles several third-party open-source components. For a comprehensive list of these components and their respective licenses, please refer to the [LICENSE](./LICENSE) file included in the root of this chart.
+
+# Next Steps
+Once the installation is complete, please refer to the output of `helm install` for instructions on how to access the UI and API.
+
+---
+*Copyright © 2026 GAMS Development Corp.*
