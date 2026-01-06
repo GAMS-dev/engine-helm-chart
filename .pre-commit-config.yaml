@@ -1,7 +1,7 @@
 repos:
   # 1. Standard YAML and whitespace linting
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
         exclude: gams-engine/resources/.*
@@ -10,14 +10,22 @@ repos:
         args: [--allow-multiple-documents]
         exclude: gams-engine/templates/ # Helm templates use Go templating which breaks standard YAML parsers
 
-  # 2. Helm Specific Linting (Built-in)
+  # 2. Helm Documentation Generation
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: v1.14.2
+    hooks:
+      - id: helm-docs
+        args:
+          - --template-files=./README.md.gotmpl
+
+  # 3. Helm Specific Linting (Built-in)
   - repo: https://github.com/gruntwork-io/pre-commit
-    rev: v0.1.23
+    rev: v0.1.30
     hooks:
       - id: helmlint
 
-  # 3. Security & Best Practices (Kube-linter)
+  # 4. Security & Best Practices (Kube-linter)
   - repo: https://github.com/stackrox/kube-linter
-    rev: v0.6.8
+    rev: v0.8.2
     hooks:
       - id: kube-linter

@@ -7,7 +7,7 @@ spec:
 ---
 stages:
   - .pre
-  - build
+  - test
   - deploy
 
 default:
@@ -55,6 +55,24 @@ build-ci-image:
     - when: manual
 
 # ==============================================================================
+#  TEST STAGE
+# ==============================================================================
+
+pre-commit-check:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/ci-image:latest
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  cache:
+    paths:
+      - ${PRE_COMMIT_HOME}
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master" || $CI_PIPELINE_SOURCE != "push"'
+      when: never
+
+# ==============================================================================
 #  DEPLOY STAGE
 # ==============================================================================
 
@@ -81,6 +99,7 @@ upload-helm-chart:
     - gpg --list-secret-keys --keyid-format LONG
   script:
     - CHART_NAME=$(yq e '.name' "$CHART_DIR/Chart.yaml")
+    - helm-docs --template-files=./README.md.gotmpl
     - |
       echo "Updating local Chart.yaml and publishing..."
       helm dependency update "$CHART_DIR" || true
