@@ -66,6 +66,8 @@ pre-commit-check:
   cache:
     paths:
       - ${PRE_COMMIT_HOME}
+  before_script:
+    - helm dep up gams-engine
   script:
     - pre-commit run --all-files --show-diff-on-failure
   rules:
