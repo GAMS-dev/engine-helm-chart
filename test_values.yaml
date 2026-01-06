@@ -1,13 +1,44 @@
 global:
   useNetworkPolicies: true
-useDefaultDenyNetworkPolicy: true
+  # nodeSelector: Node labels for pod assignment
+  nodeSelector:
+    gams.com/node-type: private-worker
+  # tolerations: tolerations for pod assignment
+  tolerations: []
+  # nodeSelector: Node labels for pod assignment of stateful sets (database)
+  nodeSelectorSts:
+      gams.com/node-type: stateful-private-worker
+  # tolerationsSts: tolerations for pod assignment of stateful sets (database)
 
-
+useDefaultDenyNetworkPolicy: false
+ingress:
+  enabled: true
+  ingressClassName: "nginx-ingress"
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+    alb.ingress.kubernetes.io/target-type: ip
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  path: /
+  # The path matching type (e.g., Prefix).
+  pathType: "Prefix"
+  # A list of hostnames to route traffic for.
+  # This list MUST be provided for the Ingress to be created.
+  hosts:
+    - my-app.example.com
+  tls:
+    - hosts:
+        - my-app.example.com
 broker:
   monitoring:
     metricsEnabled: true
     podMonitorEnabled: true
+  service:
+    type: ClusterIP
   networkPolicy:
+    ingress: []
     extraIngress:
       - from:
         - namespaceSelector:
@@ -20,58 +51,14 @@ broker:
         - port: 80
           protocol: TCP
 
-eventManager:
-  networkPolicy:
-    extraEgress:
-    - ports:
-      - port: 443
-        protocol: TCP
-      to:
-      - ipBlock:
-          cidr: 0.0.0.0/0
-          except:
-          - 10.0.0.0/8
-          - 172.16.0.0/12
-          - 192.168.0.0/16
-forwardProxy:
-  networkPolicy:
-    extraEgress:
-    - ports:
-      - port: 443
-        protocol: TCP
-      to:
-      - ipBlock:
-          cidr: 0.0.0.0/0
-          except:
-          - 10.0.0.0/8
-          - 172.16.0.0/12
-          - 192.168.0.0/16
 jobSpawner:
   workerNetworkPolicy:
-    extraEgress:
-    - ports:
-      - port: 443
-        protocol: TCP
-      to:
-      - ipBlock:
-          cidr: 0.0.0.0/0
-          except:
-          - 10.0.0.0/8
-          - 172.16.0.0/12
-          - 192.168.0.0/16
+    extraEgress: []
 
 mongodb:
   persistence:
     storageClassName: gp2
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: gams.com/node-type
-            operator: In
-            values:
-            - stateful-private-worker
+
 postgresql:
   persistence:
     storageClassName: gp2
@@ -87,30 +74,12 @@ postgresql:
         matchLabels:
           kubernetes.io/metadata.name: database
     initialize:
-      run: true 
-      connectionString: "" 
+      run: true
+      connectionString: ""
       # Example: "postgresql://postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/test-db"
   database: "test-db"
   database_user: "postgres"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: gams.com/node-type
-            operator: In
-            values:
-            - stateful-private-worker
 
 rabbitmq:
   persistence:
     storageClassName: gp2
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: gams.com/node-type
-            operator: In
-            values:
-            - stateful-private-worker
