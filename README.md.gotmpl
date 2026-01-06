@@ -1,0 +1,55 @@
+{{ template "chart.header" . }}
+{{ template "chart.description" . }}
+
+## `chart.version`
+
+{{ template "chart.version" . }}
+
+## `chart.type`
+
+{{ template "chart.type" . }}
+
+## `chart.appVersion`
+
+{{ template "chart.appVersion" . }}
+
+## `chart.kubeVersion`
+
+{{ template "chart.kubeVersion" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+# Introduction
+
+Welcome to the official Helm chart for **{{ template "chart.name" . }}**.
+This chart bootstraps a GAMS Engine deployment on a Kubernetes cluster using the Helm package manager.
+
+It deploys the complete GAMS Engine stack, including:
+- **Broker**: The core API and job manager.
+- **Job Spawner**: Manages Kubernetes Jobs for optimization models.
+- **Database**: PostgreSQL and MongoDB.
+- **Queue**: RabbitMQ for message passing.
+
+# Prerequisites
+
+- Kubernetes {{ template "chart.kubeVersion" . }}
+- Helm 3.0+
+- PV provisioner in the cluster
+
+# Installing the Chart
+
+To install the chart with the release name `my-engine`:
+
+```console
+# 1. Add the GAMS Helm repository
+helm repo add gams https://charts.gams.com/
+helm repo update
+
+# 2. Install the chart
+helm install my-engine gams/gams-engine --namespace gams --create-namespace
+```
+# Configuration
+
+The following table lists the configurable parameters of the GAMS Engine chart and their default values.
+
+{{ template "chart.valuesSection" . }}
