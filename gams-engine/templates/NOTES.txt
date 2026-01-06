@@ -1,38 +1,44 @@
-ACCESSING YOUR GAMS ENGINE INSTALLATION
+===============================================================================
+     GAMS ENGINE HAS BEEN DEPLOYED SUCCESSFULLY
+===============================================================================
 
-Thank you for installing the GAMS Engine Helm chart.
-Your release is called: {{ .Release.Name }} and was installed in the namespace: {{ .Release.Namespace }}.
+CHART INFO:
+  Release Name: {{ .Release.Name }}
+  Namespace:    {{ .Release.Namespace }}
 
 {{- if .Values.ingress.enabled }}
-{{- if .Values.ingress.tls }}
-The UI will be available over HTTPS at:
-  https://{{ first .Values.ingress.hosts }}
-The API will be available at:
-  https://{{ first .Values.ingress.hosts }}/api
-  {{- else }}The UI will be available over HTTP at:
-  http://{{ first .Values.ingress.hosts }}
-The API will be available at:
-  http://{{ first .Values.ingress.hosts }}/api
-{{- end }}
-
-NOTES
-- Ensure your DNS is configured correctly to resolve the ingress hostname if ingress is enabled.
-- For secure communications, configure TLS certificates when enabling ingress with `.Values.ingress.tls` set to `true`.
+ACCESS COORDINATES:
+{{- $host := (index .Values.ingress.hosts 0) }}
+{{- $protocol := (.Values.ingress.tls | ternary "https" "http") }}
+  UI:  {{ $protocol }}://{{ $host }}
+  API: {{ $protocol }}://{{ $host }}/api
 
 {{- else }}
-  - Service Type: `{{ .Values.broker.service.type }}`.
+ACCESS COORDINATES:
+  - Service Type: {{ .Values.broker.service.type }}
   {{- if eq .Values.broker.service.type "NodePort" }}
-  - Engine will be accessible on:
-    http://<node-ip>:{{ .Values.broker.service.nodePort }}
+  - URL: http://<NODE_IP>:{{ .Values.broker.service.nodePort }}
+  (Note: Replace <NODE_IP> with the external IP of any cluster node)
   {{- else }}
-  - Engine will be accessible on the cluster IP within the Kubernetes network.
+  - Engine is accessible via ClusterIP internal to the network.
   {{- end }}
-
-{{- if eq .Values.broker.service.type "NodePort" }}
-NOTES
-- Replace `<node-ip>` with the IP address of a node in your Kubernetes cluster.
-{{- end }}
 {{- end }}
 
-Refer to the `values.yaml` file for more details on configuration options.
-IMPORTANT: Please log in to the UI with the username "admin" and the password "admin," then immediately change your admin password!
+VERIFICATION:
+  To check the status of your deployment, run:
+  kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/instance={{ .Release.Name }}"
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! SECURITY WARNING:                                                           !
+! Use username "admin" and password "admin" for initial login.                !
+! YOU MUST CHANGE THE ADMIN PASSWORD IMMEDIATELY AFTER LOGGING IN.            !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+LEGAL NOTICE:
+  By using this software, you agree to the GAMS End User License Agreement:
+  https://www.gams.com/GAMS_EULA.pdf
+
+  Third-party license information is available in the LICENSE file provided
+  in the root of this Helm chart.
+
+===============================================================================
