@@ -9,7 +9,7 @@ CHART INFO:
 {{- if .Values.ingress.enabled }}
 ACCESS COORDINATES:
 {{- $host := (index .Values.ingress.hosts 0) }}
-{{- $protocol := (.Values.ingress.tls | ternary "https" "http") }}
+{{- $protocol := (empty .Values.ingress.tls | ternary "http" "https") }}
   UI:  {{ $protocol }}://{{ $host }}
   API: {{ $protocol }}://{{ $host }}/api
 
