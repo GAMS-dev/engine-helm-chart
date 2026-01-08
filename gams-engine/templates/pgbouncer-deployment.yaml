@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-pgbouncer
+  labels:
+    app: {{ include "gams-engine.prefixname" . }}-pgbouncer
+    {{- include "gams-engine.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-pgbouncer
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-pgbouncer
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.pgBouncer.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.pgBouncer.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      containers:
+        - name: engine-pgbouncer
+          image: "docker.io/bitnamilegacy/pgbouncer:1.24.1"
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.pgBouncer.resources | indent 12 }}
+          env:
+            - name: POSTGRESQL_USERNAME
+              value: worker
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_WORKER_PWD
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: POSTGRESQL_HOST
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: POSTGRESQL_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
+{{- else }}
+            - name: POSTGRESQL_HOST
+              value: {{ include "gams-engine.prefixname" . }}-database
+            - name: POSTGRESQL_PORT
+              value: "5432"
+{{- end }}
+            - name: PGBOUNCER_DATABASE
+              value: "{{ .Values.postgresql.database }}"
+            - name: POSTGRESQL_DATABASE
+              value: "{{ .Values.postgresql.database }}"
+            - name: PGBOUNCER_POOL_MODE
+              value: transaction
+            - name: PGBOUNCER_MAX_CLIENT_CONN
+              value: "5000"
+            - name: PGBOUNCER_DEFAULT_POOL_SIZE
+              value: "50"
+            - name: PGBOUNCER_USERLIST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_PGBOUNCER_USERLIST

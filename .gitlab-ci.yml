@@ -1,0 +1,154 @@
+spec:
+  inputs:
+    force-build-buildimage:
+      default: false
+      description: 'Force re-build of build image'
+      type: boolean
+---
+stages:
+  - .pre
+  - test
+  - deploy
+
+default:
+  tags:
+    - linux
+
+.assume_role_s3_helm: &assume_role_s3_helm
+  - >
+    STS=($(aws sts assume-role-with-web-identity
+    --role-arn ${AWS_S3_HELM_ROLE_ARN}
+    --role-session-name "GitLabRunner-${CI_PROJECT_ID}-${CI_PIPELINE_ID}"
+    --web-identity-token "$ID_TOKEN"
+    --duration-seconds 3600
+    --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]'
+    --output text))
+  - export AWS_ACCESS_KEY_ID="${STS[0]}"
+  - export AWS_SECRET_ACCESS_KEY="${STS[1]}"
+  - export AWS_SESSION_TOKEN="${STS[2]}"
+
+# ==============================================================================
+#  .PRE STAGE
+# ==============================================================================
+
+# This job builds the custom CI image that contains all necessary tools (aws-cli, etc.)
+build-ci-image:
+  stage: .pre
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+  script:
+    - echo "Building CI image..."
+    - docker build -f .ci/Dockerfile -t $CI_REGISTRY_IMAGE/ci-image:latest .
+    - echo "Pushing CI image to GitLab registry..."
+    - docker push $CI_REGISTRY_IMAGE/ci-image:latest
+  rules:
+    - if: '"$[[ inputs.force-build-buildimage ]]" == "true"'
+    - if: '$CI_PIPELINE_SOURCE != "push"'
+      when: never
+    - changes:
+        paths:
+          - .ci/Dockerfile
+        compare_to: main
+    - when: manual
+
+# ==============================================================================
+#  TEST STAGE
+# ==============================================================================
+
+pre-commit-check:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/ci-image:latest
+  variables:
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  cache:
+    paths:
+      - ${PRE_COMMIT_HOME}
+  before_script:
+    - helm dep up gams-engine
+  script:
+    - pre-commit run --all-files --show-diff-on-failure
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main" || $CI_PIPELINE_SOURCE != "merge_request_event"'
+      when: never
+    - when: on_success
+
+check-version-bump:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/ci-image:latest
+  script:
+    - |
+      git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+      NEW_VERSION=$(yq eval '.version' gams-engine/Chart.yaml)
+      OLD_VERSION=$(git show origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME:gams-engine/Chart.yaml | yq eval '.version' -)
+      echo "Target branch version: $OLD_VERSION"
+      echo "New branch version: $NEW_VERSION"
+      if [ "$NEW_VERSION" == "$OLD_VERSION" ]; then
+        echo "Error: The Helm chart version in Chart.yaml must be updated before merging to main."
+        exit 1
+      fi
+    - echo "Version bump detected. Proceeding..."
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+
+# ==============================================================================
+#  DEPLOY STAGE
+# ==============================================================================
+
+upload-helm-chart:
+  tags:
+    - linux
+  image: $CI_REGISTRY_IMAGE/ci-image:latest
+  id_tokens:
+    ID_TOKEN:
+      aud: https://git.gams.com
+  stage: deploy
+  variables:
+    CHART_DIR: 'gams-engine'
+  before_script:
+    - aws configure set default.region us-east-1
+    - *assume_role_s3_helm
+    - echo "$HELM_GPG_PRIVATE_KEY_ARMOR" > /tmp/priv.asc
+    - export GNUPGHOME="${CI_PROJECT_DIR}/.gnupg"
+    - mkdir -p "$GNUPGHOME" && chmod 700 "$GNUPGHOME"
+    - gpg --batch --import /tmp/priv.asc
+    - echo -e "5\ny\n" | gpg --command-fd 0 --expert --batch --edit-key "$HELM_GPG_KEY_FPR" trust quit
+    - gpg --export > "${GNUPGHOME}/pubring.gpg"
+    - gpg --export-secret-keys --pinentry-mode loopback --passphrase "$HELM_GPG_PASSPHRASE" > "${GNUPGHOME}/secring.gpg"
+    - gpg --list-secret-keys --keyid-format LONG
+  script:
+    - CHART_NAME=$(yq e '.name' "$CHART_DIR/Chart.yaml")
+    - helm-docs --template-files=./README.md.gotmpl
+    - |
+      echo "Updating local Chart.yaml and publishing..."
+      helm dependency update "$CHART_DIR" || true
+      helm lint "$CHART_DIR" || true
+      echo -n "$HELM_GPG_PASSPHRASE" > /tmp/helm-passphrase.txt
+      chmod 600 /tmp/helm-passphrase.txt
+
+      helm package --sign "$CHART_DIR" \
+        --key "${HELM_GPG_KEY_NAME}" \
+        --keyring "${GNUPGHOME}/secring.gpg" \
+        --passphrase-file /tmp/helm-passphrase.txt
+
+      for f in ./*.tgz ./*.tgz.prov; do
+        [ -f "$f" ] || continue;
+        echo "Uploading $f";
+        aws s3 cp "$f" "s3://${HELM_REPO_S3_BUCKET}/" \
+          --cache-control "public, max-age=31536000, immutable" \
+          --only-show-errors;
+      done
+
+      ./.ci/update-helm-index.sh
+  artifacts:
+    paths:
+      - '*.tgz'
+      - '*.tgz.prov'
+      - index.yaml
+    expire_in: 1 week
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE == "push"'
+      when: on_success
+    - when: never

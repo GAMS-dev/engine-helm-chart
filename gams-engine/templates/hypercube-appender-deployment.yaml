@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-hc-app
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-hc-app
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-hc-app
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-hc-app
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.hypercubeAppender.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.hypercubeAppender.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.hypercubeAppender.image) "context" $) | indent 6}}
+      containers:
+        - name: hypercube-appender
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.hypercubeAppender.image.registry "repository" .Values.hypercubeAppender.image.repository "tag" (coalesce .Values.hypercubeAppender.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.hypercubeAppender.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: {{ include "gams-engine.prefixname" . }}-queue
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_USER
+              value: "hypercube_appender"
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_USER
+              value: "stein"
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value:  {{ include "gams-engine.prefixname" . }}-mongo
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"

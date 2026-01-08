@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-mongodb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-mongo
+  serviceName: {{ include "gams-engine.prefixname" . }}-mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-mongo
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.mongodb.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: engine-mongo
+          image: mongo:8.2-noble
+          resources:
+{{ toYaml .Values.mongodb.resources | indent 12 }}
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+            - name: mongo-config-data
+              mountPath: /docker-entrypoint-initdb.d/
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "mongo_broker"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: MONGO_INITDB_DATABASE
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+            - name: GMS_RUNNER_MONGO_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_SPWN_PWD
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_MONGO_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_WORKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_WORKER_PWD
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_CLEANER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_CLEANER_PWD
+          imagePullPolicy: Always
+          readinessProbe:
+            exec:
+              command:
+                - "mongosh"
+                - "--host"
+                - "127.0.0.1"
+                - "--port"
+                - "27017"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command:
+                - "mongosh"
+                - "--host"
+                - "127.0.0.1"
+                - "--port"
+                - "27017"
+                - "--eval"
+                - "db.runCommand('ping').ok"
+                - "--quiet"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: {{ include "gams-engine.prefixname" . }}-mongo-pvc
+        - name: mongo-config-data
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-mongo-config
+            items:
+              - key: setup.sh
+                path: setup.sh

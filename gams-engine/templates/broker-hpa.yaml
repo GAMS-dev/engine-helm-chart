@@ -1,0 +1,15 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-broker-scaler
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "gams-engine.prefixname" . }}-broker
+  minReplicas: 1
+  maxReplicas: {{ .Values.broker.maxReplicas }}
+  targetCPUUtilizationPercentage: 90

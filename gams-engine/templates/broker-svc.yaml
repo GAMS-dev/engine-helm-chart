@@ -1,0 +1,27 @@
+{{- $annotations := dict }}
+
+{{- if .Values.broker.service.annotations }}
+{{- $svc := include "common.tplvalues.render" (dict "value" .Values.broker.service.annotations "context" $) | fromYaml }}
+{{- $annotations = merge $annotations $svc }}
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-broker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+  {{- if $annotations }}
+  annotations:
+    {{- toYaml $annotations | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    app: {{ include "gams-engine.prefixname" . }}-broker
+  ports:
+    - port: {{ .Values.broker.service.port }}
+      targetPort: 80
+      {{- if and (eq .Values.broker.service.type "NodePort") .Values.broker.service.nodePort }}
+      nodePort: {{ .Values.broker.service.nodePort }}
+      {{- end }}
+  type: {{ required "value 'broker.service.type' is required" .Values.broker.service.type }}

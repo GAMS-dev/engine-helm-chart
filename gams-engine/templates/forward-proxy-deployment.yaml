@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-fwd-prxy
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.forwardProxy.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.forwardProxy.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.forwardProxy.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-forward-proxy
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.forwardProxy.image.registry "repository" .Values.forwardProxy.image.repository "tag" (coalesce .Values.forwardProxy.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.forwardProxy.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_MONGO_HOST
+              value: {{ include "gams-engine.prefixname" . }}-mongo
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_USER
+              value: "forward_proxy"
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_FORWARD_PROXY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_FORWARD_PROXY_SECRET
+            - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY

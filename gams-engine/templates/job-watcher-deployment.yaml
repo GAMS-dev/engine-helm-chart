@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-job-wtch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-job-wtch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-job-wtch
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-job-wtch
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.jobWatcher.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobWatcher.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "gams-engine.prefixname" . }}-job-watcher-account
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobWatcher.image) "context" $) | indent 6}}
+      containers:
+        - name: job-watcher
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobWatcher.image.registry "repository" .Values.jobWatcher.image.repository "tag" (coalesce .Values.jobWatcher.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.jobWatcher.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_HOST
+              value: {{ include "gams-engine.prefixname" . }}-mongo
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: {{ include "gams-engine.prefixname" . }}-queue
+            - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
+            - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
+{{- else }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: {{ include "gams-engine.prefixname" . }}-database
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+{{- end }}
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.database }}"
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD

@@ -1,0 +1,93 @@
+{{- if .Values.postgresql.externalDatabase.enabled }}
+{{- if .Values.postgresql.externalDatabase.initialize.run }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-external-db-init
+  labels:
+    app: {{ include "gams-engine.prefixname" . }}-external-db-init
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    {{- include "gams-engine.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-external-db-init
+    spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.mongodb.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      volumes:
+        - name: db-config-data
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-database-config
+      containers:
+        - name: external-db-initialize
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.image.registry "repository" .Values.jobSpawner.image.repository "tag" (coalesce .Values.jobSpawner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          command: ['sh', '/docker-entrypoint-initdb.d/setup.sh']
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: db-config-data
+              mountPath: /docker-entrypoint-initdb.d/
+          env:
+            - name: GMS_RUNNER_DATABASE_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_BROKER_PWD
+            - name: GMS_RUNNER_DATABASE_WORKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_WORKER_PWD
+            - name: GMS_RUNNER_DATABASE_CLEANER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_CLEANER_PWD
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_DATABASE_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_SPWN_PWD
+            - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
+            - name: CONNECTION_STRING
+              value: "{{ .Values.postgresql.externalDatabase.initialize.connectionString }}"
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgresql.database }}"
+      restartPolicy: OnFailure
+  backoffLimit: 8
+{{- end }}
+{{- end }}

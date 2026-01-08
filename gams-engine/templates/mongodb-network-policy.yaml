@@ -1,0 +1,55 @@
+{{ if .Values.global.useNetworkPolicies }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-mongodb-np
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-mongo
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: worker
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-job-wtch
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-job-spw
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-job-cncl
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-hc-app
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-ev-mng
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-dep-check
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-cleaner
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-fwd-prxy
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-broker
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
+      ports:
+        - protocol: TCP
+          port: 27017
+  egress: []
+{{ end }}

@@ -1,0 +1,86 @@
+{{ if and .Values.global.useNetworkPolicies (not .Values.postgresql.externalDatabase.enabled) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-postgres-np
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-postgres
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: worker
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-job-wtch
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-job-spw
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-job-cncl
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-hc-app
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-ev-mng
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-dep-check
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-cleaner
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-broker
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-pgbouncer
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-db-mgr
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      ports:
+        - protocol: TCP
+          port: 5432
+{{ end }}

@@ -1,0 +1,17 @@
+{{- if not .Values.postgresql.externalDatabase.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-database
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ include "gams-engine.prefixname" . }}-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  clusterIP: None
+{{- end }}

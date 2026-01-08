@@ -1,0 +1,15 @@
+{{ if .Values.rabbitmq.monitoring.podMonitorEnabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-rabbitmq-pod-monitor
+  namespace: {{ .Release.Namespace }}
+spec:
+  podMetricsEndpoints:
+  - path: /metrics
+    portNumber: 15692
+    scheme: http
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-queue
+{{ end }}

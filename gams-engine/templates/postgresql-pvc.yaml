@@ -1,0 +1,18 @@
+{{- if not .Values.postgresql.externalDatabase.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-database-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+{{- if .Values.postgresql.persistence.storageClassName }}
+  storageClassName: "{{ .Values.postgresql.persistence.storageClassName }}"
+{{- end }}
+  accessModes:
+    - {{ .Values.postgresql.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.persistence.size | quote }}
+{{- end }}

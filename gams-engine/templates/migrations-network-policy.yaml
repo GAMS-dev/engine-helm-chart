@@ -1,0 +1,117 @@
+{{ if .Values.global.useNetworkPolicies }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-mongo-mgr-np
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-mongo
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      ports:
+        - protocol: TCP
+          port: 27017
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-db-mgr
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-db-mgr
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+{{- if .Values.postgresql.externalDatabase.enabled }}
+    - to:
+      - podSelector:
+{{ toYaml .Values.postgresql.externalDatabase.networkPolicy.podSelector | indent 10 }}
+        namespaceSelector:
+{{ toYaml .Values.postgresql.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.postgresql.externalDatabase.port }}
+{{- else }}
+    - to:
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-postgres
+      ports:
+        - protocol: TCP
+          port: 5432
+{{- end }}
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-queue-mgr
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-queue-mgr
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-queue
+      ports:
+        - protocol: TCP
+          port: 15672
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+{{ end }}

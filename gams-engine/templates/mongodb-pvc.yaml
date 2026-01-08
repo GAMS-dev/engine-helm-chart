@@ -1,0 +1,16 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-mongo-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+{{- if .Values.mongodb.persistence.storageClassName }}
+  storageClassName: "{{ .Values.mongodb.persistence.storageClassName }}"
+{{- end }}
+  accessModes:
+    - {{ .Values.mongodb.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.persistence.size | quote }}

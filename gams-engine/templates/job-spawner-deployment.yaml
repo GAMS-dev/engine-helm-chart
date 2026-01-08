@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-job-spw
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-job-spw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-job-spw
+  template:
+    metadata:
+      name: {{ include "gams-engine.prefixname" . }}-job-spw
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-job-spw
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.jobSpawner.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.jobSpawner.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "gams-engine.prefixname" . }}-job-spawner-account
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.jobSpawner.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-job-spawner
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.image.registry "repository" .Values.jobSpawner.image.repository "tag" (coalesce .Values.jobSpawner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.jobSpawner.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_WORKER_DATABASE_SERVER
+              value:  {{ include "gams-engine.prefixname" . }}-database-bouncer
+            - name: GMS_RUNNER_WORKER_DATABASE_PORT
+              value: "6432"
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_SPWN_WORKER_IMAGE
+              value: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.workerImage.registry "repository" .Values.jobSpawner.workerImage.repository "tag" (coalesce .Values.jobSpawner.workerImage.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+            - name: GMS_RUNNER_SPWN_WORKER_IMAGE_PULL_SECRETS
+              value: '{{ coalesce (join "," .Values.jobSpawner.workerImage.pullSecrets) (join "," .Values.global.imagePullSecrets) }}'
+            - name: GMS_RUNNER_RABBIT_HOST
+              value:  {{ include "gams-engine.prefixname" . }}-queue
+            - name: GMS_RUNNER_SPWN_WORKER_QUEUE_HOST
+              value:  {{ include "gams-engine.prefixname" . }}-queue
+            - name: GMS_RUNNER_SPWN_WORKER_DB_HOST
+              value:  {{ include "gams-engine.prefixname" . }}-database-bouncer
+            - name: GMS_RUNNER_SPWN_WORKER_DB_PORT
+              value: "6432"
+            - name: GMS_RUNNER_SPWN_WORKER_MONGO_HOST
+              value:  {{ include "gams-engine.prefixname" . }}-mongo
+            - name: GMS_RUNNER_RABBIT_SPWN_USER
+              value: "job_spawner"
+            - name: GMS_RUNNER_RABBIT_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_SPWN_PWD
+            - name: GMS_RUNNER_SPWN_WORKER_CRED_SECRET_NAME
+              value:  {{ include "gams-engine.prefixname" . }}-secret
+            - name: GMS_RUNNER_MONGO_SPWN_USER
+              value: "job_spawner"
+            - name: GMS_RUNNER_MONGO_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_SPWN_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_HOST
+              value: {{ include "gams-engine.prefixname" . }}-mongo
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
+{{- else }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: {{ include "gams-engine.prefixname" . }}-database
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+{{- end }}
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.database }}"
+            - name: GMS_RUNNER_SPWN_WORKER_DB_NAME
+              value: "{{ .Values.postgresql.database }}"
+            - name: GMS_RUNNER_DATABASE_SPWN_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_SPWN_USER
+              value: "job_spawner"
+            - name: GMS_RUNNER_SPWN_MAX_PENDING_JOBS
+              value: "{{ .Values.config.maxPendingJobs }}"
+            - name: GMS_RUNNER_SPWN_MAX_PENDING_SECONDS_JOB
+              value: "{{ .Values.config.maxPendingJobDurationSeconds }}"
+            - name: GMS_RUNNER_SPWN_WORKER_STARTUP_SECONDS
+              value: "{{ .Values.config.workerStartupDurationSeconds }}"
+            - name: GMS_RUNNER_DATABASE_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_SPWN_PWD

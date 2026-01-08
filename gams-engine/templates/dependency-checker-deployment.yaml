@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-dep-check
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-dep-check
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-dep-check
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-dep-check
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.dependencyChecker.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.dependencyChecker.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.dependencyChecker.image) "context" $) | indent 6}}
+      containers:
+        - name: engine-dependency-checker
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.dependencyChecker.image.registry "repository" .Values.dependencyChecker.image.repository "tag" (coalesce .Values.dependencyChecker.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.dependencyChecker.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: {{ include "gams-engine.prefixname" . }}-queue
+            - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_USER
+              value: "dep_check"
+            - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: {{ include "gams-engine.prefixname" . }}-mongo
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_USER
+              value: "dep_check"
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
+{{- else }}
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: {{ include "gams-engine.prefixname" . }}-database
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+{{- end }}
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.database }}"
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_DRIVER
+              value: "pg8000"
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_USER
+              value: "dep_check"
+            - name: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD

@@ -1,0 +1,44 @@
+===============================================================================
+     GAMS ENGINE HAS BEEN DEPLOYED SUCCESSFULLY
+===============================================================================
+
+CHART INFO:
+  Release Name: {{ .Release.Name }}
+  Namespace:    {{ .Release.Namespace }}
+
+{{- if .Values.ingress.enabled }}
+ACCESS COORDINATES:
+{{- $host := (index .Values.ingress.hosts 0) }}
+{{- $protocol := (empty .Values.ingress.tls | ternary "http" "https") }}
+  UI:  {{ $protocol }}://{{ $host }}
+  API: {{ $protocol }}://{{ $host }}/api
+
+{{- else }}
+ACCESS COORDINATES:
+  - Service Type: {{ .Values.broker.service.type }}
+  {{- if eq .Values.broker.service.type "NodePort" }}
+  - URL: http://<NODE_IP>:{{ .Values.broker.service.nodePort }}
+  (Note: Replace <NODE_IP> with the external IP of any cluster node)
+  {{- else }}
+  - Engine is accessible via ClusterIP internal to the network.
+  {{- end }}
+{{- end }}
+
+VERIFICATION:
+  To check the status of your deployment, run:
+  kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/instance={{ .Release.Name }}"
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! SECURITY WARNING:                                                           !
+! Use username "admin" and password "admin" for initial login.                !
+! YOU MUST CHANGE THE ADMIN PASSWORD IMMEDIATELY AFTER LOGGING IN.            !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+LEGAL NOTICE:
+  By using this software, you agree to the GAMS End User License Agreement:
+  https://www.gams.com/GAMS_EULA.pdf
+
+  Third-party license information is available in the LICENSE file provided
+  in the root of this Helm chart.
+
+===============================================================================

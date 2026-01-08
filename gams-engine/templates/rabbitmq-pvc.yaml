@@ -1,0 +1,16 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-queue-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+{{- if .Values.rabbitmq.persistence.storageClassName }}
+  storageClassName: "{{ .Values.rabbitmq.persistence.storageClassName }}"
+{{- end }}
+  accessModes:
+    - {{ .Values.rabbitmq.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.rabbitmq.persistence.size | quote }}

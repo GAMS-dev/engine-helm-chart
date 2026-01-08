@@ -1,0 +1,175 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-rabbitmq
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-queue
+  serviceName: {{ include "gams-engine.prefixname" . }}-queue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-queue
+        {{- include "gams-engine.labels" . | nindent 8 }}
+    spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.rabbitmq.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      initContainers:
+        - name: init-queue-definition-data
+          image: python:3.13-alpine
+          command: ["python3", "/tmp/generate_hashes.py"]
+          volumeMounts:
+            - name: queue-definition-data
+              mountPath: /data_in/definitions.json
+              subPath: definitions.json
+              readOnly: true
+            - name: queue-generate-hashes-code
+              mountPath: /tmp/generate_hashes.py
+              subPath: generate_hashes.py
+            - name: queue-definition-data-templated
+              mountPath: /data_out
+          env:
+            - name: GMS_RUNNER_RABBIT_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_BROKER_PWD
+            - name: GMS_RUNNER_RABBIT_WORKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_WORKER_PWD
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_RABBIT_CLEANER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_CLEANER_PWD
+            - name: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
+            - name: GMS_RUNNER_RABBIT_MIGRATE_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_MIGRATE_PWD
+            - name: GMS_RUNNER_RABBIT_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_SPWN_PWD
+            - name: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
+      containers:
+        - name: gamswebqueue
+          image: rabbitmq:4.2-management-alpine
+          resources:
+{{ toYaml .Values.rabbitmq.resources | indent 12 }}
+          ports:
+            - containerPort: 5672
+              name: amqp
+            - containerPort: 15692
+              name: metrics
+          volumeMounts:
+            - name: queue-data
+              mountPath: /var/lib/rabbitmq/mnesia/
+            - name: queue-definition-data-templated
+              mountPath: /etc/rabbitmq/definitions.json
+              subPath: definitions.json
+              readOnly: true
+            - name: advanced-queue-config
+              mountPath: /etc/rabbitmq/advanced.config
+              subPath: advanced.config
+              readOnly: true
+            - name: queue-config
+              mountPath: /etc/rabbitmq/rabbitmq.conf
+              subPath: rabbitmq.conf
+              readOnly: true
+          readinessProbe:
+            exec:
+              command:
+                - "rabbitmq-diagnostics"
+                - "-q"
+                - "ping"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command:
+                - "rabbitmq-diagnostics"
+                - "-q"
+                - "ping"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+      volumes:
+        - name: queue-config
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-queue-conf
+            items:
+            - key: rabbitmq.conf
+              path: rabbitmq.conf
+        - name: advanced-queue-config
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-queue-adv-conf
+            items:
+            - key: advanced.config
+              path: advanced.config
+        - name: queue-data
+          persistentVolumeClaim:
+            claimName: {{ include "gams-engine.prefixname" . }}-queue-pvc
+        - name: queue-definition-data
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-queue-def
+            items:
+              - key: definitions.json
+                path: definitions.json
+        - name: queue-definition-data-templated
+          emptyDir: {}
+        - name: queue-generate-hashes-code
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-queue-gen-hash
+            items:
+              - key: generate_hashes.py
+                path: generate_hashes.py
