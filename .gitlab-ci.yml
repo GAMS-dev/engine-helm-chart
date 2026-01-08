@@ -75,6 +75,24 @@ pre-commit-check:
       when: never
     - when: on_success
 
+check-version-bump:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/ci-image:latest
+  script:
+    - |
+      git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+      NEW_VERSION=$(yq eval '.version' gams-engine/Chart.yaml)
+      OLD_VERSION=$(git show origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME:gams-engine/Chart.yaml | yq eval '.version' -)
+      echo "Target branch version: $OLD_VERSION"
+      echo "New branch version: $NEW_VERSION"
+      if [ "$NEW_VERSION" == "$OLD_VERSION" ]; then
+        echo "Error: The Helm chart version in Chart.yaml must be updated before merging to main."
+        exit 1
+      fi
+    - echo "Version bump detected. Proceeding..."
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+
 # ==============================================================================
 #  DEPLOY STAGE
 # ==============================================================================
