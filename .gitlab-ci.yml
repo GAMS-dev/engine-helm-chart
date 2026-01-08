@@ -71,7 +71,7 @@ pre-commit-check:
   script:
     - pre-commit run --all-files --show-diff-on-failure
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "main" || $CI_PIPELINE_SOURCE != "push"'
+    - if: '$CI_COMMIT_REF_NAME == "main" || $CI_PIPELINE_SOURCE != "merge_request_event"'
       when: never
     - when: on_success
 
