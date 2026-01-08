@@ -148,6 +148,7 @@ upload-helm-chart:
       - '*.tgz.prov'
       - index.yaml
     expire_in: 1 week
+  needs: []
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE == "push"'
       when: always
