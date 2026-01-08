@@ -150,5 +150,5 @@ upload-helm-chart:
     expire_in: 1 week
   rules:
     - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE == "push"'
-      when: on_success
+      when: always
     - when: never
