@@ -6,8 +6,8 @@ type: application
 license: Apache-2.0
 source: 'https://github.com/gams-dev/engine-helm-chart'
 home: 'https://gams.com/engine'
-version: 0.1.3
-appVersion: '25.11.13'
+version: 0.2.0
+appVersion: '26.01.08'
 maintainers:
   - name: GAMS Development Corp.
     url: https://gams.com
