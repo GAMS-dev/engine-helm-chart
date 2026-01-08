@@ -57,4 +57,10 @@ The release process for this chart is fully automated:
 
 ---
 
+## ⚖️ License
+
+This Helm chart is released under the **Apache License 2.0**. See the `LICENSE` file for details. Note that using this chart to deploy GAMS Engine does not grant a license to the GAMS Engine software itself; a valid GAMS Engine license is required for its operation.
+
+---
+
 *For issues or feature requests, please open an issue in this project.*
