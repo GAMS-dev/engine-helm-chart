@@ -17,7 +17,7 @@ spec:
     - from:
       - podSelector:
           matchLabels:
-            app: {{ include "gams-engine.prefixname" . }}-queue-migrate
+            app: {{ include "gams-engine.prefixname" . }}-queue-mgr
       ports:
         - protocol: TCP
           port: 15672
