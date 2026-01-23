@@ -14,6 +14,23 @@ spec:
     - Ingress
     - Egress
   egress:
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-mongo
+      ports:
+        - protocol: TCP
+          port: 27017
     {{- if .Values.forwardProxy.networkPolicy.extraEgress }}
     # Optional extra egress rules
     {{- include "common.tplvalues.render" (dict "value" .Values.forwardProxy.networkPolicy.extraEgress "context" $) | nindent 4 }}
