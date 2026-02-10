@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.1.3
+0.2.1
 
 ## `chart.type`
 
@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-25.11.13
+26.01.08
 
 ## `chart.kubeVersion`
 
