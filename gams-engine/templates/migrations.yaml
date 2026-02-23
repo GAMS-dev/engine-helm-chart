@@ -3,11 +3,8 @@ kind: Job
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-mongo-mgr
   labels:
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
@@ -64,13 +61,9 @@ kind: Job
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-db-mgr
   labels:
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
-  annotations:
     app: {{ include "gams-engine.prefixname" . }}-db-mgr
+  annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -132,10 +125,6 @@ kind: Job
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-queue-mgr
   labels:
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
     app: {{ include "gams-engine.prefixname" . }}-queue-mgr
   annotations:
