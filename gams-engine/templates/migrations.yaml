@@ -24,6 +24,7 @@ spec:
     {{- if .Values.mongodb.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
     {{- end }}
+      automountServiceAccountToken: false
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.mongoMigrate.image) "context" $) | indent 6}}
       containers:
         - name: mongo-migrate
@@ -82,6 +83,7 @@ spec:
     {{- if .Values.postgresql.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}
+      automountServiceAccountToken: false
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresqlMigrate.image) "context" $) | indent 6}}
       containers:
         - name: database-migrate
@@ -146,6 +148,7 @@ spec:
     {{- if .Values.rabbitmq.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
     {{- end }}
+      automountServiceAccountToken: false
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.rabbitmqMigrate.image) "context" $) | indent 6}}
       containers:
         - name: queue-migrate
