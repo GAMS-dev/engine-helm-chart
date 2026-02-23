@@ -88,7 +88,7 @@ spec:
     {{- if .Values.postgresql.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}
-{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresqlMigrate.image) "context" $) | indent 6}}
       containers:
         - name: database-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresqlMigrate.image.registry "repository" .Values.postgresqlMigrate.image.repository "tag" (coalesce .Values.postgresqlMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
@@ -155,7 +155,7 @@ spec:
     {{- if .Values.rabbitmq.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
     {{- end }}
-{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.rabbitmqMigrate.image) "context" $) | indent 6}}
       containers:
         - name: queue-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmqMigrate.image.registry "repository" .Values.rabbitmqMigrate.image.repository "tag" (coalesce .Values.rabbitmqMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
