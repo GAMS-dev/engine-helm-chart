@@ -70,6 +70,7 @@ metadata:
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
   annotations:
+    app: {{ include "gams-engine.prefixname" . }}-db-mgr
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
     "helm.sh/hook-delete-policy": hook-succeeded
@@ -136,6 +137,7 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-queue-mgr
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
