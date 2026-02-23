@@ -85,8 +85,8 @@ spec:
     {{- if .Values.global.tolerationsSts }}
       tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
     {{- end }}
-    {{- if .Values.mongodb.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- if .Values.postgresql.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
       containers:
@@ -152,8 +152,8 @@ spec:
     {{- if .Values.global.tolerationsSts }}
       tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
     {{- end }}
-    {{- if .Values.mongodb.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- if .Values.rabbitmq.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
     {{- end }}
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.uwsgi.image .Values.broker.nginx.image) "context" $) | indent 6}}
       containers:
