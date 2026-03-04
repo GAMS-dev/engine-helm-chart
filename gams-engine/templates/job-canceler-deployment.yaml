@@ -41,6 +41,8 @@ spec:
               value:  {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_K8S_CANCEL_USER
               value: "k8s_job_canceler"
+            - name: GMS_RUNNER_CNCL_DISABLE_X509_STRICT_VALIDATION
+              value: {{ default "false" .Values.config.disable_x509_strict_validation_k8s_client | quote }}
             - name: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
               valueFrom:
                 secretKeyRef:
