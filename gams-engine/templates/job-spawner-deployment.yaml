@@ -42,6 +42,8 @@ spec:
               value: "6432"
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
+            - name: GMS_RUNNER_SPWN_DISABLE_X509_STRICT_VALIDATION
+              value: {{ default "false" .Values.config.disable_x509_strict_validation | quote }}
             - name: GMS_RUNNER_SPWN_WORKER_IMAGE
               value: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.workerImage.registry "repository" .Values.jobSpawner.workerImage.repository "tag" (coalesce .Values.jobSpawner.workerImage.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
             - name: GMS_RUNNER_SPWN_WORKER_IMAGE_PULL_SECRETS
