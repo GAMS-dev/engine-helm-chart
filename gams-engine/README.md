@@ -91,7 +91,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | cleaner.resources.limits | object | `{"memory":"1000Mi"}` | Resource limits. |
 | cleaner.resources.requests | object | `{"cpu":"100m","memory":"1000Mi"}` | Resource requests. |
 | config.cleanerHeartbeatSeconds | int | `300` | Interval (seconds) for the background cleaner process. |
-| config.disable_x509_strict_validation | string | `"false"` | Disables strict X509 certificate validation for the K8s client. |
+| config.disable_x509_strict_validation_k8s_client | string | `"false"` | Disables strict X509 certificate validation for the K8s client. |
 | config.maxPendingJobDurationSeconds | int | `120` | Max duration (seconds) a job can remain pending. |
 | config.maxPendingJobs | int | `5` | Max pending jobs in the queue before new ones are held. |
 | config.workerStartupDurationSeconds | int | `0` | Volume quota deduction per worker spawned. |

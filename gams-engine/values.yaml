@@ -94,7 +94,7 @@ config:
   # Required for clusters created with K8s <= 1.16 (e.g., older EKS):
 
   # -- Disables strict X509 certificate validation for the K8s client.
-  disable_x509_strict_validation: "false"
+  disable_x509_strict_validation_k8s_client: "false"
 
 ingress:
   # -- Enable or disable the Ingress resource.
