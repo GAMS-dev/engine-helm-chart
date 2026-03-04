@@ -91,6 +91,11 @@ config:
   # -- Max duration (seconds) a job can remain pending.
   maxPendingJobDurationSeconds: 120
 
+  # Required for clusters created with K8s <= 1.16 (e.g., older EKS):
+
+  # -- Disables strict X509 certificate validation for the K8s client.
+  disable_x509_strict_validation_k8s_client: "false"
+
 ingress:
   # -- Enable or disable the Ingress resource.
   enabled: false

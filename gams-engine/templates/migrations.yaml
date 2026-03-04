@@ -3,11 +3,8 @@ kind: Job
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-mongo-mgr
   labels:
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-mongo-mgr
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
@@ -27,6 +24,8 @@ spec:
     {{- if .Values.mongodb.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
     {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.mongoMigrate.image) "context" $) | indent 6}}
       containers:
         - name: mongo-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongoMigrate.image.registry "repository" .Values.mongoMigrate.image.repository "tag" (coalesce .Values.mongoMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
@@ -63,11 +62,8 @@ kind: Job
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-db-mgr
   labels:
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-db-mgr
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
@@ -84,9 +80,11 @@ spec:
     {{- if .Values.global.tolerationsSts }}
       tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
     {{- end }}
-    {{- if .Values.mongodb.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- if .Values.postgresql.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresqlMigrate.image) "context" $) | indent 6}}
       containers:
         - name: database-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresqlMigrate.image.registry "repository" .Values.postgresqlMigrate.image.repository "tag" (coalesce .Values.postgresqlMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
@@ -129,11 +127,8 @@ kind: Job
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-queue-mgr
   labels:
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-queue-mgr
   annotations:
     "helm.sh/hook": pre-upgrade
     "helm.sh/hook-weight": "5"
@@ -150,9 +145,11 @@ spec:
     {{- if .Values.global.tolerationsSts }}
       tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
     {{- end }}
-    {{- if .Values.mongodb.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- if .Values.rabbitmq.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.rabbitmq.affinity "context" $) | nindent 8 }}
     {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.rabbitmqMigrate.image) "context" $) | indent 6}}
       containers:
         - name: queue-migrate
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmqMigrate.image.registry "repository" .Values.rabbitmqMigrate.image.repository "tag" (coalesce .Values.rabbitmqMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
