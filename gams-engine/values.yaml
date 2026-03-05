@@ -267,22 +267,22 @@ broker:
     annotations: {}
 
     version2:
-    # -- Enable the V2 version of the Broker API.
-    enabled: false
+      # -- Enable the V2 version of the Broker API.
+      enabled: false
 
-    # -- IMPORTANT: This is currrently an Alpha feature.
+      # -- IMPORTANT: This is currrently an Alpha feature.
 
-    # -- Affinity settings for V2 pod assignment.
-    affinity: {}
+      # -- Affinity settings for V2 pod assignment.
+      affinity: {}
 
-    # -- Max replicas for Broker V2 HPA.
-    maxReplicas: 3
+      # -- Max replicas for Broker V2 HPA.
+      maxReplicas: 3
 
-    monitoring:
-      # -- Expose V2 metrics at /api/metrics.
-      metricsEnabled: false
-      # -- Create a Prometheus Operator PodMonitor for V2.
-      podMonitorEnabled: false
+      monitoring:
+        # -- Expose V2 metrics at /api/metrics.
+        metricsEnabled: false
+        # -- Create a Prometheus Operator PodMonitor for V2.
+        podMonitorEnabled: false
 
 # Forward Proxy forwards the requests from the Engine API
 # Forward Proxy pod resource definitions
