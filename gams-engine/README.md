@@ -74,9 +74,15 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.nginx.image.tag | string | `""` | Image tag. |
 | broker.nginx.resources.limits | object | `{"memory":"200Mi"}` | Resource limits. |
 | broker.nginx.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests. |
+| broker.service.affinity | object | `{}` | Affinity settings for V2 pod assignment. |
 | broker.service.annotations | object | `{}` | NodePort (only if type is NodePort). |
+| broker.service.enabled | bool | `false` | Enable the V2 version of the Broker API. |
+| broker.service.maxReplicas | int | `3` | Max replicas for Broker V2 HPA. |
+| broker.service.monitoring.metricsEnabled | bool | `false` | Expose V2 metrics at /api/metrics. |
+| broker.service.monitoring.podMonitorEnabled | bool | `false` | Create a Prometheus Operator PodMonitor for V2. |
 | broker.service.port | int | `80` | Service Port. |
 | broker.service.type | string | `"ClusterIP"` | Service Type (ClusterIP, NodePort, LoadBalancer). |
+| broker.service.version2 | string | `nil` |  |
 | broker.uwsgi.image.pullSecrets | list | `[]` | Image pull secrets. |
 | broker.uwsgi.image.registry | string | `"docker.io/gams"` | Image registry. |
 | broker.uwsgi.image.repository | string | `"engine-broker"` | Image repository. |
