@@ -96,6 +96,20 @@ config:
   # -- Disables strict X509 certificate validation for the K8s client.
   disable_x509_strict_validation_k8s_client: "false"
 
+  licenseCheck:
+    # -- Should job spawner check license and get reservation before creating the pod
+    enabled: true
+
+    # -- If reservation fails, when blockingMode is true it will not try
+    # next job but it will keep on trying to get reservation for current one
+    blockingMode: true
+
+    # -- How much time to wait before retrying in the blocking mode
+    retryBackoffSeconds: 5
+
+    # -- How much time to wait for the license server to reply
+    licenseServerTimeoutSeconds: 10
+
 ingress:
   # -- Enable or disable the Ingress resource.
   enabled: false
