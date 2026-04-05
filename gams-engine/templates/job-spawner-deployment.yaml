@@ -110,3 +110,11 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_SPWN_PWD
+            - name: GMS_RUNNER_SPWN_ENABLE_LICENSE_CHECK
+              value: {{ .Values.config.licenseCheck.enabled | quote }}
+            - name: GMS_RUNNER_SPWN_LICENSE_BLOCKING_MODE
+              value: {{ .Values.config.licenseCheck.blockingMode | quote }}
+            - name: GMS_RUNNER_SPWN_LICENSE_RETRY_BACKOFF_SECONDS
+              value: {{ .Values.config.licenseCheck.retryBackoffSeconds | quote }}
+            - name: GMS_RUNNER_SPWN_LICENSE_SERVER_TIMEOUT_SECONDS
+              value: {{ .Values.config.licenseCheck.licenseServerTimeoutSeconds | quote }}
