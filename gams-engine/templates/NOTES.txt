@@ -5,8 +5,11 @@
 CHART INFO:
   Release Name: {{ .Release.Name }}
   Namespace:    {{ .Release.Namespace }}
+  Chart Version: {{ .Chart.Version }}
+  App Version: {{ .Chart.AppVersion }}
 
 {{- if .Values.ingress.enabled }}
+
 ACCESS COORDINATES:
 {{- $host := (index .Values.ingress.hosts 0) }}
 {{- $protocol := (empty .Values.ingress.tls | ternary "http" "https") }}
@@ -14,6 +17,7 @@ ACCESS COORDINATES:
   API: {{ $protocol }}://{{ $host }}/api
 
 {{- else }}
+
 ACCESS COORDINATES:
   - Service Type: {{ .Values.broker.service.type }}
   {{- if eq .Values.broker.service.type "NodePort" }}
