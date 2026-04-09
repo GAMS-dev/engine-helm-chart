@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.4.1
+0.7.1
 
 ## `chart.type`
 
@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-26.03.04
+26.04.03
 
 ## `chart.kubeVersion`
 
@@ -97,6 +97,10 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | cleaner.resources.requests | object | `{"cpu":"100m","memory":"1000Mi"}` | Resource requests. |
 | config.cleanerHeartbeatSeconds | int | `300` | Interval (seconds) for the background cleaner process. |
 | config.disable_x509_strict_validation_k8s_client | string | `"false"` | Disables strict X509 certificate validation for the K8s client. |
+| config.licenseCheck.blockingMode | bool | `true` | If reservation fails, when blockingMode is true it will not try next job but it will keep on trying to get reservation for current one |
+| config.licenseCheck.enabled | bool | `true` | Should job spawner check license and get reservation before creating the pod |
+| config.licenseCheck.licenseServerTimeoutSeconds | int | `10` | How much time to wait for the license server to reply |
+| config.licenseCheck.retryBackoffSeconds | int | `5` | How much time to wait before retrying in the blocking mode |
 | config.maxPendingJobDurationSeconds | int | `120` | Max duration (seconds) a job can remain pending. |
 | config.maxPendingJobs | int | `5` | Max pending jobs in the queue before new ones are held. |
 | config.workerStartupDurationSeconds | int | `0` | Volume quota deduction per worker spawned. |
