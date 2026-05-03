@@ -6,6 +6,7 @@ metadata:
   name: {{ include "common.names.fullname" . }}-brokerv2
   labels:
     app: {{ include "common.names.fullname" . }}-brokerv2
+    {{- include "gams-engine.labels" . | nindent 8 }}
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
@@ -17,6 +18,12 @@ spec:
       labels:
         app: {{ include "common.names.fullname" . }}-brokerv2
     spec:
+    {{- if .Values.global.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelector "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerations "context" $) | nindent 8 }}
+    {{- end }}
     {{- if .Values.broker.apiVersion2.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.broker.apiVersion2.affinity "context" $) | nindent 8 }}
     {{- end }}
