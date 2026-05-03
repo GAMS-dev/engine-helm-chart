@@ -1,4 +1,3 @@
-
 {{- if .Values.broker.apiVersion2.enabled }}
 apiVersion: apps/v1
 kind: Deployment
