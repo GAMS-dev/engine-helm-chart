@@ -760,7 +760,7 @@ postgresql:
 
     initialize:
       # Set to 'true' to run this one-time initialization job
-      # This is required for first-time setup.
+      # This is required for first-time setup when an external PostgreSQL db is used
 
       # -- Run the one-time initialization job
       run: true
