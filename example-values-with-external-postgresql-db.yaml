@@ -1,0 +1,27 @@
+postgresql:
+  persistence:
+    storageClassName: gp2
+  externalDatabase:
+    enabled: true
+    host: "postgresql-ha-cnpg-rw.database.svc.cluster.local"
+    port: "5432"
+    networkPolicy:
+      # If network policies are enabled, to allow engine components to connect 
+      #with your external PostgreSQL db, network configuration is needed.
+      #If your PostgreSQL also has network policies, you should allow ingress from engine components.
+      podSelector:
+        matchLabels:
+          cnpg.io/cluster: postgresql-ha-cnpg
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: database
+    initialize:
+      run: true
+      # Provide the *admin connection string* for the database.
+      # This is REQUIRED if 'initialize.run' is set to 'true'.
+      #
+      # !! IMPORTANT: The user in this string (e.g., 'postgres')
+      #    MUST have permissions (create, alter, grant usage) within the database.
+      connectionString: "postgresql://postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/test-db"
+  database: "test-db"
+  database_user: "postgres"
