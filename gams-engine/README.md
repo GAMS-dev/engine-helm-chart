@@ -62,6 +62,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | broker.affinity | object | `{}` | Affinity settings for pod assignment |
+| broker.apiVersion2.affinity | object | `{}` | Affinity settings for pod assignment |
 | broker.apiVersion2.enabled | bool | `false` |  |
 | broker.apiVersion2.image.pullSecrets | list | `[]` | Image pull secrets |
 | broker.apiVersion2.image.registry | string | `"docker.io/gams"` | Image registry |
