@@ -296,7 +296,11 @@ broker:
       # -- Resource limits
       limits:
         memory: 200Mi
+    # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
+    # satisfy BOTH constraints. Ensure they do not contradict each other
 
+    # -- Affinity settings for pod assignment
+    affinity: {}
 
 
 # Forward Proxy forwards the requests from the Engine API

@@ -1,0 +1,109 @@
+
+{{- if .Values.broker.apiVersion2.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.names.fullname" . }}-brokerv2
+  labels:
+    app: {{ include "common.names.fullname" . }}-brokerv2
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "common.names.fullname" . }}-brokerv2
+  template:
+    metadata:
+      labels:
+        app: {{ include "common.names.fullname" . }}-brokerv2
+    spec:
+    {{- if .Values.broker.apiVersion2.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.broker.apiVersion2.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.broker.apiVersion2.image .Values.broker.apiVersion2.image) "context" $) | indent 6}}
+      containers:
+        - name: brokerv2
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.apiVersion2.image.registry "repository" .Values.broker.apiVersion2.image.repository "tag" (coalesce .Values.broker.apiVersion2.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          imagePullPolicy: Always
+          resources:
+{{ toYaml .Values.broker.apiVersion2.resources | indent 12 }}
+          env:
+            - name: GMS_RUNNER_SPWN_MAX_CPU
+              value: "129"
+            - name: GMS_RUNNER_SPWN_MAX_RAM_MiB
+              value: "4200000"
+            - name: GMS_RUNNER_LOG_SHOW_MSEC
+              value: "true"
+            - name: GMS_RUNNER_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  key: GMS_RUNNER_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_FORWARD_PROXY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  key: GMS_RUNNER_FORWARD_PROXY_SECRET
+            - name: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+            - name: GMS_RUNNER_FORWARD_PROXY_HOST
+              value: http://{{ include "common.names.fullname" . }}-forward-proxy:8000
+            - name: GMS_RUNNER_DATABASE_SERVER
+              value: {{ include "common.names.fullname" . }}-database
+            - name: GMS_RUNNER_DATABASE_PORT
+              value: "5432"
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.externalDatabase.database }}"
+{{- else }}
+            - name: GMS_RUNNER_DATABASE_NAME
+              value: "{{ .Values.postgresql.database }}"
+{{- end }}
+            - name: GMS_RUNNER_DATABASE_DIALECT
+              value: "postgresql"
+            - name: GMS_RUNNER_DATABASE_BROKER_DRIVER
+              value: "asyncpg"
+            - name: GMS_RUNNER_DATABASE_BROKER_USER
+              value: "broker"
+            - name: GMS_RUNNER_DATABASE_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  key: GMS_RUNNER_DATABASE_BROKER_PWD
+            - name: GMS_RUNNER_RABBIT_HOST
+              value: {{ include "common.names.fullname" . }}-queue
+            - name: GMS_RUNNER_RABBIT_BROKER_USER
+              value: "broker"
+            - name: GMS_RUNNER_RABBIT_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  key: GMS_RUNNER_RABBIT_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_BROKER_USER
+              value: "mongo_broker"
+            - name: GMS_RUNNER_MONGO_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: {{ include "common.names.fullname" . }}-mongo
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+{{- if .Values.broker.monitoring.metricsEnabled }}
+            - name: PROMETHEUS_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: PROMETHEUS_AUTH_USERNAME
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+            - name: PROMETHEUS_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PROMETHEUS_AUTH_PASSWORD
+                  name: {{ include "common.names.fullname" . }}-gams-secret
+{{- end }}
+{{- end }}
