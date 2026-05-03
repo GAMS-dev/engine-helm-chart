@@ -70,6 +70,9 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.apiVersion2.image.tag | string | `""` | Image tag |
 | broker.apiVersion2.resources.limits | object | `{"memory":"200Mi"}` | Resource limits |
 | broker.apiVersion2.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
+| broker.apiVersion2.service.annotations | object | `{}` |  |
+| broker.apiVersion2.service.port | int | `80` | Service Port |
+| broker.apiVersion2.service.type | string | `"ClusterIP"` | Service Type (ClusterIP, NodePort, LoadBalancer) |
 | broker.maxReplicas | int | `3` | Max replicas for Broker HPA |
 | broker.monitoring.metricsEnabled | bool | `false` | Expose metrics at /api/metrics |
 | broker.monitoring.podMonitorEnabled | bool | `false` | Create a Prometheus Operator PodMonitor |

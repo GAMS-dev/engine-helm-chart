@@ -301,7 +301,22 @@ broker:
 
     # -- Affinity settings for pod assignment
     affinity: {}
+    # Service of broker API version 2
+    service:
+      # Such as: "ClusterIP", "NodePort", "LoadBalancer"
 
+      # -- Service Type (ClusterIP, NodePort, LoadBalancer)
+      type: ClusterIP
+
+      # The port that the service will expose
+
+      # -- Service Port
+      port: 80
+
+      # The NodePort to assign (only used if type is "NodePort")
+      # nodePort: ""
+
+      annotations: {}
 
 # Forward Proxy forwards the requests from the Engine API
 # Forward Proxy pod resource definitions
