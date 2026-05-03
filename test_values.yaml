@@ -41,21 +41,6 @@ mongodb:
 postgresql:
   persistence:
     storageClassName: gp2
-  externalDatabase:
-    enabled: true
-    host: "postgresql-ha-cnpg-rw.database.svc.cluster.local"
-    port: "5432"
-    networkPolicy:
-      podSelector:
-        matchLabels:
-          cnpg.io/cluster: postgresql-ha-cnpg
-      namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: database
-    initialize:
-      run: true
-      connectionString: ""
-      # Example: "postgresql://postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/test-db"
   database: "test-db"
   database_user: "postgres"
 

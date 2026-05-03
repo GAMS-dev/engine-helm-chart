@@ -6,7 +6,7 @@ postgresql:
     host: "postgresql-ha-cnpg-rw.database.svc.cluster.local"
     port: "5432"
     networkPolicy:
-      # If network policies are enabled, to allow engine components to connect 
+      # If network policies are enabled, to allow engine components to connect
       #with your external PostgreSQL db, network configuration is needed.
       #If your PostgreSQL also has network policies, you should allow ingress from engine components.
       podSelector:

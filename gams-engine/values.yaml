@@ -273,11 +273,11 @@ broker:
     # nodePort: ""
 
     annotations: {}
-    
+
   # Broker API Version 2
   apiVersion2:
     # IMPORTANT: New API version is in the beta
-    # Currently images might not be available publicly 
+    # Currently images might not be available publicly
     enabled: false
     image:
       # -- Image registry
@@ -815,7 +815,7 @@ postgresqlMigrate:
 # RabbitMQ pod resource definitions
 rabbitmq:
   monitoring:
-    # Specifies whether the monitoring should be enabled 
+    # Specifies whether the monitoring should be enabled
     # Requires Prometheus Operator CRDs
 
     # -- Enable monitoring (Requires Prometheus Operator)
