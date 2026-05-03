@@ -8,42 +8,38 @@ global:
   nodeSelectorSts: []
   # tolerationsSts: tolerations for pod assignment of stateful sets (database)
 
-useDefaultDenyNetworkPolicy: false
+
+# reduced resources for lower demand env or for testing purposes:
 
 broker:
-  monitoring:
-    metricsEnabled: true
-    podMonitorEnabled: true
-  service:
-    type: ClusterIP
-  networkPolicy:
-    ingress: []
-    extraIngress:
-      - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: monitoring
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: prometheus
-        ports:
-        - port: 80
-          protocol: TCP
-
-jobSpawner:
-  workerNetworkPolicy:
-    extraEgress: []
-
-mongodb:
-  persistence:
-    storageClassName: gp2
+  uwsgi:
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 300m
+        memory: 512Mi
 
 postgresql:
-  persistence:
-    storageClassName: gp2
-  database: "test-db"
-  database_user: "postgres"
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+mongodb:
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
 
 rabbitmq:
-  persistence:
-    storageClassName: gp2
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
