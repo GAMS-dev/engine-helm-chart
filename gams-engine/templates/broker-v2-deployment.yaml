@@ -33,9 +33,27 @@ spec:
         - name: brokerv2
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.apiVersion2.image.registry "repository" .Values.broker.apiVersion2.image.repository "tag" (coalesce .Values.broker.apiVersion2.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sleep
+                - "30"
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/v2/system/info
+              port: 5000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           resources:
 {{ toYaml .Values.broker.apiVersion2.resources | indent 12 }}
           env:
+            - name: GMS_RUNNER_RABBIT_VHOST
+              value: "worker_vhost"
             - name: GMS_RUNNER_SPWN_MAX_CPU
               value: "129"
             - name: GMS_RUNNER_SPWN_MAX_RAM_MiB
