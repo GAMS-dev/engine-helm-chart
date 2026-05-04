@@ -25,12 +25,12 @@ spec:
     - host: {{ tpl . $ | quote }}
       http:
         paths:
-         {{- if .Values.broker.apiVersion2.enabled }}
+         {{- if $.Values.broker.apiVersion2.enabled }}
           - backend:
               service:
-                name: {{ include "gams-engine.prefixname" . }}-brokerv2
+                name: {{ include "gams-engine.prefixname" $ }}-brokerv2
                 port:
-                  number: {{ .Values.broker.apiVersion2.service.port }}
+                  number: {{ $.Values.broker.apiVersion2.service.port }}
             path: /api/v2
             pathType: Prefix
           {{- end }}
@@ -40,7 +40,7 @@ spec:
               service:
                 name: {{ include "gams-engine.prefixname" $ }}-broker
                 port:
-                  number: {{ .Values.broker.service.port }}
+                  number: {{ $.Values.broker.service.port }}
   {{- end }}
   {{- with .Values.ingress.tls }}
   tls:
