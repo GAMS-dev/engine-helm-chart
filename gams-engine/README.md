@@ -68,6 +68,9 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.apiVersion2.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.apiVersion2.image.repository | string | `"engine-brokerv2"` | Image repository |
 | broker.apiVersion2.image.tag | string | `""` | Image tag |
+| broker.apiVersion2.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
+| broker.apiVersion2.networkPolicy.extraIngress | list | `[]` |  |
+| broker.apiVersion2.networkPolicy.ingress | list | `[{"ports":[{"port":5000,"protocol":"TCP"}]}]` | Ingress rules for the Broker V2 |
 | broker.apiVersion2.resources.limits | object | `{"memory":"200Mi"}` | Resource limits |
 | broker.apiVersion2.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
 | broker.apiVersion2.service.annotations | object | `{}` |  |

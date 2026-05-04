@@ -301,6 +301,26 @@ broker:
 
     # -- Affinity settings for pod assignment
     affinity: {}
+
+  # Broker V2 network policy
+  # Only relevant if global.useNetworkPolicies is true
+    networkPolicy:
+      # Incoming traffic to broker
+      # Set to [] to disable default access to broker V2 (restrictive mode)
+      # Currently containerPort is 5000
+
+      # -- Ingress rules for the Broker V2
+      ingress:
+        - ports:
+          - port: 5000 # should be always 5000 for broker V2
+            protocol: TCP
+
+    # -- Extra ingress rules
+      extraIngress: []
+
+    # -- Extra egress rules
+      extraEgress: []
+
     # Service of broker API version 2
     service:
       # Such as: "ClusterIP", "NodePort", "LoadBalancer"
