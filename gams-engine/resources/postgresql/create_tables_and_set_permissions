@@ -409,7 +409,7 @@ CREATE TABLE invitation_code_identity_tuple (
 	FOREIGN KEY(identity_tuple_id) REFERENCES identity_tuple (id) ON DELETE SET NULL
 );
 
-INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', 'scrypt:32768:8:1$JcvfyAdTgoudKyfo$de8db809c572f5eeff6e78d9c64172184bf123ce10998f92a72ef4539b5b2d7413067dff82a5684d4597beed315e054b82a59742154602b6ca8d9ad693802dfb', false);
+INSERT INTO app_user (username, password_hash, deleted) VALUES ('admin', 'scrypt:32768:8:1$6YxI5o2XbapEBK5t$18b6c2a157f971a6ebaec29598ff1b9dc970c62a619ed98f2d1da0da7b6d6fc6313801eece6f5e0e0834316f8d404675e43bb67573cf4ef54ed535800d91c970', false);
 INSERT INTO app_user_role (user_id, role) VALUES (1, 'admin');
 INSERT INTO identity_provider (name, label, is_main_identity_provider, hidden) VALUES ('gams_engine', 'Login', true, false);
 INSERT INTO schema_migrations (version, dirty) VALUES (20, false);
