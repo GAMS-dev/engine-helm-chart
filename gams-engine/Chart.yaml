@@ -1,5 +1,5 @@
 apiVersion: v2
-version: 0.9.0
+version: 0.10.0
 name: gams-engine
 description: Official Helm chart for GAMS Engine. A scalable job and user management system for GAMS optimization models in Kubernetes.
 kubeVersion: '>= 1.29.0-0'
@@ -7,7 +7,7 @@ type: application
 license: Apache-2.0
 source: 'https://github.com/gams-dev/engine-helm-chart'
 home: 'https://gams.com/engine'
-appVersion: '26.05.06'
+appVersion: '26.05.08'
 maintainers:
   - name: GAMS Development Corp.
     url: https://gams.com
