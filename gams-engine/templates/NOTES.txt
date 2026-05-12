@@ -9,12 +9,16 @@ CHART INFO:
   App Version: {{ .Chart.AppVersion }}
 
 {{- if .Values.ingress.enabled }}
-
-ACCESS COORDINATES:
-{{- $host := (index .Values.ingress.hosts 0) }}
+{{- /* Declare the protocol ONCE outside the loop */}}
 {{- $protocol := (empty .Values.ingress.tls | ternary "http" "https") }}
-  UI:  {{ $protocol }}://{{ $host }}
-  API: {{ $protocol }}://{{ $host }}/api
+
+Access the application via the following URLs:
+  {{- range $host := .Values.ingress.hosts }}
+    {{- range .paths }}
+  UI:  {{ $protocol }}://{{ $host.host }}{{ .path }}
+  API: {{ $protocol }}://{{ $host.host }}{{ .path }}api
+    {{- end }}
+  {{- end }}
 
 {{- else }}
 
