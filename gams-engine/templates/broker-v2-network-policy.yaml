@@ -1,26 +1,27 @@
-{{ if .Values.global.useNetworkPolicies }}
+{{- if .Values.global.useNetworkPolicies }}
+{{- if .Values.broker.apiVersion2.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-broker-np
+  name: {{ include "gams-engine.prefixname" . }}-brokerv2-np
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: {{ include "gams-engine.prefixname" . }}-broker
+      app: {{ include "gams-engine.prefixname" . }}-brokerv2
   policyTypes:
     - Egress
     - Ingress
   ingress:
-    {{- if .Values.broker.networkPolicy.ingress }}
+    {{- if .Values.broker.apiVersion2.networkPolicy.ingress }}
     # Ingress rules
-    {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.ingress "context" $) | nindent 4 }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.broker.apiVersion2.networkPolicy.ingress "context" $) | nindent 4 }}
     {{- end }}
-    {{- if .Values.broker.networkPolicy.extraIngress }}
+    {{- if .Values.broker.apiVersion2.networkPolicy.extraIngress }}
     # Optional extra ingress rules
-    {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.extraIngress "context" $) | nindent 4 }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.broker.apiVersion2.networkPolicy.extraIngress "context" $) | nindent 4 }}
     {{- end }}
   egress:
     - to:
@@ -61,8 +62,9 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
-    {{- if .Values.broker.networkPolicy.extraEgress }}
+    {{- if .Values.broker.apiVersion2.networkPolicy.extraEgress }}
     # Optional extra egress rules
-    {{- include "common.tplvalues.render" (dict "value" .Values.broker.networkPolicy.extraEgress "context" $) | nindent 4 }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.broker.apiVersion2.networkPolicy.extraEgress "context" $) | nindent 4 }}
     {{- end }}
-{{ end }}
+{{- end }}
+{{- end }}

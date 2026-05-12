@@ -2,40 +2,40 @@
 # Engine Helm Chart Configuration
 # -----------------------------------------------------------------
 global:
-  # -- Global Docker image registry.
+  # -- Global Docker image registry
   imageRegistry: ""
 
   # imagePullSecrets:
   #   - registryKeySecretName
 
-  # -- List of image pull secrets.
+  # -- List of image pull secrets
   imagePullSecrets: []
 
-  # -- Enable/Disable NetworkPolicies globally.
+  # -- Enable/Disable NetworkPolicies globally
   useNetworkPolicies: true
 
   # nodeSelector: Node labels for pod assignment
 
-  # -- Node labels for pod assignment.
+  # -- Node labels for pod assignment
   nodeSelector: {}
 
   # tolerations: tolerations for pod assignment
 
-  # -- Tolerations for pod assignment.
+  # -- Tolerations for pod assignment
   tolerations: []
 
   # nodeSelector: Node labels for pod assignment of stateful sets (database)
 
-  # -- Node labels for StatefulSets (Databases).
+  # -- Node labels for StatefulSets (Databases)
   nodeSelectorSts: {}
 
   # tolerationsSts: tolerations for pod assignment of stateful sets (database)
 
-  # -- Tolerations for StatefulSets (Databases).
+  # -- Tolerations for StatefulSets (Databases)
   tolerationsSts: []
 
 image:
-  # -- Default image tag for all components.
+  # -- Default image tag for all components
   tag: ""
 
 # -- Network Policy Configuration --
@@ -63,12 +63,12 @@ useDefaultDenyNetworkPolicy: false
 # Default settings are suggested
 config:
   # -- Cleaner --
-  # Interval (in seconds) for the background cleaner to run.
-  # This process cleans up expired queues, pools, and other resources.
+  # Interval (in seconds) for the background cleaner to run
+  # This process cleans up expired queues, pools, and other resources
   # ! Advanced Setting: We do NOT suggest changing this value unless you understand
   #    the performance impact on your system
 
-  # -- Interval (seconds) for the background cleaner process.
+  # -- Interval (seconds) for the background cleaner process
   cleanerHeartbeatSeconds: 300
 
   # -- Job Spawner --
@@ -76,24 +76,24 @@ config:
   # from user's volume quota for each worker spawned (e.g. any job outside of a
   # worker pool or each worker of a pool).
 
-  # -- Volume quota deduction per worker spawned.
+  # -- Volume quota deduction per worker spawned
   workerStartupDurationSeconds: 0
 
   # Job spawner will keep the new jobs in the queue if there are
   # more than 'maxPendingJobs' pending jobs.
 
-  # -- Max pending jobs in the queue before new ones are held.
+  # -- Max pending jobs in the queue before new ones are held
   maxPendingJobs: 5
 
   # Job spawner will keep the new jobs in the queue if there is
   # any job pending more than 'maxPendingJobDurationSeconds' seconds.
 
-  # -- Max duration (seconds) a job can remain pending.
+  # -- Max duration (seconds) a job can remain pending
   maxPendingJobDurationSeconds: 120
 
   # Required for clusters created with K8s <= 1.16 (e.g., older EKS):
 
-  # -- Disables strict X509 certificate validation for the K8s client.
+  # -- Disables strict X509 certificate validation for the K8s client
   disable_x509_strict_validation_k8s_client: "false"
 
   licenseCheck:
@@ -111,20 +111,20 @@ config:
     licenseServerTimeoutSeconds: 10
 
 ingress:
-  # -- Enable or disable the Ingress resource.
+  # -- Enable or disable the Ingress resource
   enabled: false
 
-  # ingressClassName: The IngressClass resource to use (e.g., "nginx", "alb", "gce").
-  # For Kubernetes 1.18+, this is the recommended field.
-  # Set to "" to use the cluster's default IngressClass.
+  # ingressClassName: The IngressClass resource to use (e.g., "nginx", "alb", "gce")
+  # For Kubernetes 1.18+, this is the recommended field
+  # Set to "" to use the cluster's default IngressClass
   #
   # NOTE: If no default IngressClass exists in your cluster,
   # you MUST set this field to the name of your Ingress controller.
 
-  # -- The IngressClass to use (e.g. "nginx", "alb").
+  # -- The IngressClass to use (e.g. "nginx", "alb")
   ingressClassName: ""
 
-  # -- Annotations for the Ingress resource.
+  # -- Annotations for the Ingress resource
   annotations: {}
   # AWS ALB Ingress Controller Annotations
     #alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
@@ -135,27 +135,27 @@ ingress:
   # NGINX Ingress Controller Annotations:
     #nginx.ingress.kubernetes.io/rewrite-target: /
 
-  # -- Labels for the Ingress resource.
+  # -- Labels for the Ingress resource
   labels: {}
 
   # The default path for all hosts:
 
-  # -- The default path for all hosts.
+  # -- The default path for all hosts
   path: /
 
-  # The path matching type (e.g., Prefix).
+  # The path matching type (e.g., Prefix)
 
-  # -- The path matching type (e.g. Prefix).
+  # -- The path matching type (e.g. Prefix)
   pathType: "Prefix"
 
-  # A list of hostnames to route traffic for.
-  # This list MUST be provided for the Ingress to be created.
+  # A list of hostnames to route traffic for
+  # This list MUST be provided for the Ingress to be created
 
-  # -- Hostnames to route traffic for.
+  # -- Hostnames to route traffic for
   hosts: []
   #  - my-app.example.com
 
-  # -- TLS configuration.
+  # -- TLS configuration
   tls: []
   #  - hosts:
   #      - my-app.example.com
@@ -163,68 +163,64 @@ ingress:
 
 broker:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
-  # satisfy BOTH constraints. Ensure they do not contradict each other.
+  # satisfy BOTH constraints. Ensure they do not contradict each other
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
   # minReplicas is 1 by default
 
-  # -- Max replicas for Broker HPA.
+  # -- Max replicas for Broker HPA
   maxReplicas: 3
 
   monitoring:
     # When set to true exposes metric at /api/metrics
 
-    # -- Expose metrics at /api/metrics.
+    # -- Expose metrics at /api/metrics
     metricsEnabled: false
 
-    # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
-    # Requires metricsEnabled to be true to work.
+    # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs
+    # Requires metricsEnabled to be true to work
 
-    # -- Create a Prometheus Operator PodMonitor.
+    # -- Create a Prometheus Operator PodMonitor
     podMonitorEnabled: false
 
   uwsgi:
     image:
-      # -- Image registry.
+      # -- Image registry
       registry: docker.io/gams
-      # -- Image repository.
+      # -- Image repository
       repository: engine-broker
-      # Tag of the image. If not specified, AppVersion is used.
-
-      # -- Image tag.
+      # -- Image tag
       tag: ""
-      # -- Image pull secrets.
+      # -- Image pull secrets
       pullSecrets: []
     resources:
-      # -- Resource requests.
+      # -- Resource requests
       requests:
         cpu: "600m"
         memory: 1000Mi
-      # -- Resource limits.
+      # -- Resource limits
       limits:
         memory: 1000Mi
 
   nginx:
     image:
-      # -- Image registry.
+      # -- Image registry
       registry: docker.io/gams
-      # -- Image repository.
+      # -- Image repository
       repository: engine-nginx
-      # Tag of the image. If not specified, AppVersion is used.
-
-      # -- Image tag.
+      # -- Image tag
       tag: ""
-      # -- Image pull secrets.
+      # -- Image pull secrets
       pullSecrets: []
     resources:
-      # -- Resource requests.
+      # -- Resource requests
       requests:
         cpu: "100m"
         memory: 100Mi
-      # -- Resource limits.
+      # -- Resource limits
       limits:
         memory: 200Mi
 
@@ -232,16 +228,16 @@ broker:
   # Only relevant if global.useNetworkPolicies is true
   networkPolicy:
     # Incoming traffic to broker
-    # Set to [] to disable default access to broker (restrictive mode).
+    # Set to [] to disable default access to broker (restrictive mode)
     # Currently containerPort is 80
 
-    # -- Ingress rules for the Broker.
+    # -- Ingress rules for the Broker
     ingress:
       - ports:
         - port: 80 # should be always 80 for broker
           protocol: TCP
 
-    # -- Extra ingress rules.
+    # -- Extra ingress rules
     extraIngress: []
     # Add extra ingress rules
     # Example: Allow Prometheus scraper to access the metrics port
@@ -257,7 +253,7 @@ broker:
     #    - port: 80 # should be always 80 for broker
     #      protocol: TCP
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress: []
     # Add extra egress rules
 
@@ -265,20 +261,85 @@ broker:
   service:
     # Such as: "ClusterIP", "NodePort", "LoadBalancer"
 
-    # -- Service Type (ClusterIP, NodePort, LoadBalancer).
+    # -- Service Type (ClusterIP, NodePort, LoadBalancer)
     type: ClusterIP
 
     # The port that the service will expose
 
-    # -- Service Port.
+    # -- Service Port
     port: 80
 
-    # The NodePort to assign (only used if type is "NodePort").
-    # If left empty, and NodePort type is chosen Kubernetes will assign a random port.
+    # The NodePort to assign (only used if type is "NodePort")
     # nodePort: ""
 
-    # -- NodePort (only if type is NodePort).
     annotations: {}
+
+  # Broker API Version 2
+  apiVersion2:
+    # IMPORTANT: New API version is in the beta
+    # Currently images might not be available publicly
+    enabled: false
+    image:
+      # -- Image registry
+      registry: docker.io/gams
+      # -- Image repository
+      repository: engine-brokerv2
+      # -- Image tag
+      tag: ""
+      # -- Image pull secrets
+      pullSecrets: []
+    resources:
+      # -- Resource requests
+      requests:
+        cpu: "100m"
+        memory: 100Mi
+      # -- Resource limits
+      limits:
+        memory: 200Mi
+    # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
+    # satisfy BOTH constraints. Ensure they do not contradict each other
+
+    # -- Affinity settings for pod assignment
+    affinity: {}
+
+    # -- Max replicas for Broker API Version 2
+    maxReplicas: 3
+
+  # Broker V2 network policy
+  # Only relevant if global.useNetworkPolicies is true
+    networkPolicy:
+      # Incoming traffic to broker
+      # Set to [] to disable default access to broker V2 (restrictive mode)
+      # Currently containerPort is 5000
+
+      # -- Ingress rules for the Broker V2
+      ingress:
+        - ports:
+          - port: 5000 # should be always 5000 for broker V2
+            protocol: TCP
+
+    # -- Extra ingress rules
+      extraIngress: []
+
+    # -- Extra egress rules
+      extraEgress: []
+
+    # Service of broker API version 2
+    service:
+      # Such as: "ClusterIP", "NodePort", "LoadBalancer"
+
+      # -- Service Type (ClusterIP, NodePort, LoadBalancer)
+      type: ClusterIP
+
+      # The port that the service will expose
+
+      # -- Service Port
+      port: 80
+
+      # The NodePort to assign (only used if type is "NodePort")
+      # nodePort: ""
+
+      annotations: {}
 
 # Forward Proxy forwards the requests from the Engine API
 # Forward Proxy pod resource definitions
@@ -286,31 +347,30 @@ forwardProxy:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-forward-proxy
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "50m"
       memory: 100Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 100Mi
 
   networkPolicy:
-    # -- Extra ingress rules.
+    # -- Extra ingress rules
     extraIngress: []
     # extraEgress example: if you want to use an identity provider that is external
     # the following extraEgress rule is required.
@@ -318,7 +378,7 @@ forwardProxy:
     # by default access to public networks enabled for forwardProxy, if you prefer not to
     # provide extraEgress: [] on your values.
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress:
     # Allow External HTTPS, Block Internal IPs
         - ports:
@@ -332,7 +392,7 @@ forwardProxy:
               - 172.16.0.0/12
               - 192.168.0.0/16
     # How to whitelist an Internal IDP (e.g. Keycloak)
-        # Allow your internal IDP IP here if it is inside the cluster.
+        # Allow your internal IDP IP here if it is inside the cluster
         # - ports:
         #   - protocol: TCP
         #     port: 443 <-- Example
@@ -348,26 +408,25 @@ eventManager:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-event-manager
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "100m"
       memory: 100Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 100Mi
 
@@ -380,7 +439,7 @@ eventManager:
     # by default access to public networks enabled for eventManager, if you prefer not to
     # provide extraEgress: [] on your values
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress:
         - ports:
           - protocol: TCP
@@ -399,119 +458,111 @@ cleaner:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-cleaner
-    # Tag of the image. If not specified, AppVersion is used.
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "100m"
       memory: 1000Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 1000Mi
 
-# Dependency checker spawns jobs that are dependent to other jobs
-# when the other jobs complete. Dependency checker pod resource definitions
+# Dependency checker spawns jobs that are dependent on other jobs once those prior jobs complete.
+# Dependency checker pod resource definitions
 dependencyChecker:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-dependency-checker
-    # Tag of the image. If not specified, AppVersion is used.
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "50m"
       memory: 250Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 250Mi
 
-# Hypercube appender appends multiple results into a single result
+# Hypercube appender appends multiple results into a single result.
 # Hypercube appender pod resource definitions
 hypercubeAppender:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-hypercube-appender
-    # Tag of the image. If not specified, AppVersion is used.
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "50m"
       memory: 100Mi
       ephemeral-storage: 512Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 100Mi
       ephemeral-storage: 4Gi
 
-# Hypercube unpacker used while sending hypercube jobs.
+# Hypercube unpacker is used while sending hypercube jobs.
 # Hypercube unpacker pod resource definitions
 hypercubeUnpacker:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-hypercube-unpacker
-    # Tag of the image. If not specified, AppVersion is used.
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "50m"
       memory: 100Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 100Mi
 
@@ -521,27 +572,25 @@ jobCanceler:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-job-canceler
-    # Tag of the image. If not specified, AppVersion is used.
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "50m"
       memory: 400Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 400Mi
 
@@ -549,46 +598,44 @@ jobCanceler:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress: []
 
 # Job spawner takes a Engine job and creates a Kubernetes Job.
-# Job spawner pod resource definitions.
+# Job spawner pod resource definitions
 jobSpawner:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   workerImage:
-    # -- Worker Image registry.
+    # -- Worker Image registry
     registry: docker.io/gams
-    # -- Worker Image repository.
+    # -- Worker Image repository
     repository: engine-worker
-    # -- Worker Image tag.
+    # -- Worker Image tag
     tag: ""
-    # -- Worker Image pull secrets.
+    # -- Worker Image pull secrets
     pullSecrets: []
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: "docker.io/gams"
-    # -- Image repository.
+    # -- Image repository
     repository: engine-job-spawner
-    # Tag of the image. If not specified, AppVersion is used.
-
-    # -- Image tag.
+    # -- Image tag
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "100m"
       memory: 500Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 500Mi
 
@@ -596,43 +643,41 @@ jobSpawner:
     # Add extra egress rules to the NetworkPolicy of worker pods
     # (only relevent if global.networkPolicy.enabled is true)
 
-    # -- Extra egress rules for workers.
+    # -- Extra egress rules for workers
     extraEgress: []
 
   networkPolicy:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress: []
 
-# Job watcher watches for OOM killed and evicted jobs.
-# Job watcher pod resource definitions.
+# Job watcher watches for OOM killed and evicted jobs
+# Job watcher pod resource definitions
 jobWatcher:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-job-watcher
-    # Tag of the image. If not specified, AppVersion is used.
-
     # -- Image tag.
     tag: ""
-    # -- Image pull secrets.
+    # -- Image pull secrets
     pullSecrets: []
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "50m"
       memory: 250Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 250Mi
 
@@ -640,7 +685,7 @@ jobWatcher:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress: []
 
 # PG Bouncer is a connection pooler for PostgreSQL
@@ -648,17 +693,17 @@ jobWatcher:
 # We suggest using the default image registry if you are not sure:
 pgBouncer:
   # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
-  # satisfy BOTH constraints. Ensure they do not contradict each other.
+  # satisfy BOTH constraints. Ensure they do not contradict each other
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "100m"
       memory: 200Mi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 300Mi
 
@@ -666,53 +711,53 @@ pgBouncer:
     # Add extra egress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
 
-    # -- Extra egress rules.
+    # -- Extra egress rules
     extraEgress: []
 
-# -- Database Configurations --
+# -- Database Configurations
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
 
-    # -- Storage Class to use.
+    # -- Storage Class to use
     storageClassName: ""
 
-    # Size of the persistent volume.
+    # Size of the persistent volume
 
-    # -- Size of the persistent volume.
+    # -- Size of the persistent volume
     size: 8Gi # default size
 
-    # Access mode for the volume.
+    # Access mode for the volume
 
-    # -- Access mode for the volume.
+    # -- Access mode for the volume
     accessMode: ReadWriteOnce
 
   # NOTE: If both 'global.nodeSelectorSts' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       memory: 5Gi
       cpu: 500m
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 6Gi
 
 # For MongoDB migrations during upgrades that require changes in the MongoDB
 mongoMigrate:
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: "engine-mongo-migrate"
 
-    # -- Image tag.
+    # -- Image tag
     tag: ""
 
 # PostgreSQL is used to store structured data.
@@ -721,48 +766,45 @@ postgresql:
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
 
-    # -- Storage Class to use.
+    # -- Storage Class to use
     storageClassName: ""
 
-    # Size of the persistent volume.
+    # Size of the persistent volume
 
-    # -- Size of the persistent volume.
+    # -- Size of the persistent volume
     size: 4Gi # default size
 
-    # Access mode for the volume.
+    # Access mode for the volume
 
-    # -- Access mode for the volume.
+    # -- Access mode for the volume
     accessMode: ReadWriteOnce
 
-  # The default database name to create and connect to.
-  # You can change this if you need to have a different db name
-
-  # -- The default database user.
+  # -- The default database user
   database_user: "gams_engine"
 
-  # -- The default database name.
-  database: "gams_engine" # default database name
+  # -- The default database name
+  database: "gams_engine"
 
   # if externalDatabase.enabled: false > the postgres db pod is created by this chart
   externalDatabase:
-    # -- Enable to use an external PostgreSQL.
+    # -- Enable to use an external PostgreSQL
     enabled: false
 
-    # if externalDatabase enabled connectionString is needed.
+    # if externalDatabase enabled connectionString is needed
     # Hostname of your postgres database:
     # Example: "postgresql-svc-name.database-namespace.svc.cluster.local"
 
-    # -- Hostname of your external postgres database.
+    # -- Hostname of your external postgres database
     host: ""
 
-    # -- Port of your external postgres database.
+    # -- Port of your external postgres database
     port: ""
 
     initialize:
-      # Set to 'true' to run this one-time initialization job.
-      # This is strongly recommended for first-time setup.
+      # Set to 'true' to run this one-time initialization job
+      # This is required for first-time setup when an external PostgreSQL db is used
 
-      # -- Run the one-time initialization job?
+      # -- Run the one-time initialization job
       run: true
 
       # Provide the *admin connection string* for the database.
@@ -788,65 +830,66 @@ postgresql:
   # NOTE: If both 'global.nodeSelectorSts' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   resources:
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       cpu: "500m"
       memory: 2Gi
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 3Gi
 
-# For PostgreSQL migrations during Engine upgrades that require changes in the PostgreSQL db.
+# For PostgreSQL migrations during Engine upgrades that require changes in the PostgreSQL db
 postgresqlMigrate:
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: "engine-postgres-migrate"
 
-    # -- Image tag.
+    # -- Image tag
     tag: ""
 
 # RabbitMQ is used to pass messages between different components.
 # RabbitMQ pod resource definitions
 rabbitmq:
   monitoring:
-    # Specifies whether the monitoring should be enabled. Requires Prometheus Operator CRDs.
+    # Specifies whether the monitoring should be enabled
+    # Requires Prometheus Operator CRDs
 
-    # -- Enable monitoring (Requires Prometheus Operator).
+    # -- Enable monitoring (Requires Prometheus Operator)
     podMonitorEnabled: false
 
   persistence:
-    # Storage Class to use. Set to "" to use the cluster default.
+    # Storage Class to use. Set to "" to use the cluster default
 
-    # -- Storage Class to use.
+    # -- Storage Class to use
     storageClassName: ""
 
-    # Size of the persistent volume.
+    # Size of the persistent volume
 
-    # -- Size of the persistent volume.
+    # -- Size of the persistent volume
     size: 4Gi # default size
 
-    # Access mode for the volume.
+    # Access mode for the volume
 
-    # -- Access mode for the volume.
+    # -- Access mode for the volume
     accessMode: ReadWriteOnce
 
   # NOTE: If both 'global.nodeSelectorSts' and 'affinity' are specified, the pod must
   # satisfy BOTH constraints. Ensure they do not contradict each other.
 
-  # -- Affinity settings for pod assignment.
+  # -- Affinity settings for pod assignment
   affinity: {}
 
   resources:
-    # -- Resource limits.
+    # -- Resource limits
     limits:
       memory: 6Gi
-    # -- Resource requests.
+    # -- Resource requests
     requests:
       memory: 5Gi
       cpu: 500m
@@ -855,16 +898,16 @@ rabbitmq:
     # Add extra ingress rules to the NetworkPolicy
     # (only relevent if global.networkPolicy.enabled is true)
 
-    # -- Add extra ingress rules.
+    # -- Add extra ingress rules
     extraIngress: []
 
 # For RabbitMQ migrations during Engine upgrades that require changes in RabbitMQ
 rabbitmqMigrate:
   image:
-    # -- Image registry.
+    # -- Image registry
     registry: docker.io/gams
-    # -- Image repository.
+    # -- Image repository
     repository: engine-queue-migrate
 
-    # -- Image tag.
+    # -- Image tag
     tag: ""

@@ -8,17 +8,25 @@ CHART INFO:
   Chart Version: {{ .Chart.Version }}
   App Version: {{ .Chart.AppVersion }}
 
-{{- if .Values.ingress.enabled }}
-
 ACCESS COORDINATES:
-{{- $host := (index .Values.ingress.hosts 0) }}
-{{- $protocol := (empty .Values.ingress.tls | ternary "http" "https") }}
+{{- if .Values.ingress.enabled }}
+  {{- $protocol := (empty .Values.ingress.tls | ternary "http" "https") }}
+
+  {{- /* Nested IF: Check if the hosts list actually contains items */}}
+  {{- if and .Values.ingress.hosts (gt (len .Values.ingress.hosts) 0) }}
+  Access the application via the following URLs:
+    {{- range $host := .Values.ingress.hosts }}
   UI:  {{ $protocol }}://{{ $host }}
   API: {{ $protocol }}://{{ $host }}/api
+    {{- end }}
+
+  {{- /* If Ingress is true, but hosts array is empty */}}
+  {{- else }}
+  Ingress is enabled, but no specific host is defined.
+  Access the application via your Ingress Controller's IP:
+  {{- end }}
 
 {{- else }}
-
-ACCESS COORDINATES:
   - Service Type: {{ .Values.broker.service.type }}
   {{- if eq .Values.broker.service.type "NodePort" }}
   - URL: http://<NODE_IP>:{{ .Values.broker.service.nodePort }}

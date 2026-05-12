@@ -34,6 +34,22 @@ spec:
         - name: broker
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.uwsgi.image.registry "repository" .Values.broker.uwsgi.image.repository "tag" (coalesce .Values.broker.uwsgi.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sleep
+                - "30"
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/version
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           resources:
 {{ toYaml .Values.broker.uwsgi.resources | indent 12 }}
           volumeMounts:

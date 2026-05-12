@@ -47,4 +47,13 @@ spec:
       ports:
         - protocol: TCP
           port: 8000
+    {{- if .Values.broker.apiVersion2.enabled }}
+    - from:
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-brokerv2
+      ports:
+        - protocol: TCP
+          port: 8000
+    {{- end }}
 {{ end }}
