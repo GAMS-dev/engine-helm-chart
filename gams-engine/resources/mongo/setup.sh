@@ -71,6 +71,20 @@ db.createRole({
       },
       actions: ["find", "remove"],
     },
+    {
+      resource: {
+        db: "gams_worker",
+        collection: "license_relations",
+      },
+      actions: ["find"],
+    },
+    {
+      resource: {
+        db: "gams_worker",
+        collection: "licenses",
+      },
+      actions: ["find"],
+    },
   ],
 });
 
@@ -265,7 +279,7 @@ db.job_labels.createIndex({ submission_id: 1 });
 db.schema_migrations.drop();
 db.schema_migrations.insertOne({
   dirty: false,
-  version: 11,
+  version: 12,
 });
 
 db.createUser({
