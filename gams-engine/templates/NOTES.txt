@@ -22,7 +22,7 @@ ACCESS COORDINATES:
 
   {{- /* If Ingress is true, but hosts array is empty */}}
   {{- else }}
-  Ingress is enabled, but no specific host is defined. 
+  Ingress is enabled, but no specific host is defined.
   Access the application via your Ingress Controller's IP:
   {{- end }}
 
