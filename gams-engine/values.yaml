@@ -302,6 +302,9 @@ broker:
     # -- Affinity settings for pod assignment
     affinity: {}
 
+    # -- Max replicas for Broker API Version 2
+    maxReplicas: 3
+
   # Broker V2 network policy
   # Only relevant if global.useNetworkPolicies is true
     networkPolicy:
