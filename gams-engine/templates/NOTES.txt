@@ -3,10 +3,10 @@
 ===============================================================================
 
 CHART INFO:
-  Release Name: {{ .Release.Name }}
-  Namespace:    {{ .Release.Namespace }}
+  Release Name:  {{ .Release.Name }}
+  Namespace:     {{ .Release.Namespace }}
   Chart Version: {{ .Chart.Version }}
-  App Version: {{ .Chart.AppVersion }}
+  App Version:   {{ .Chart.AppVersion }}
 
 ACCESS COORDINATES:
 {{- if .Values.ingress.enabled }}
@@ -23,7 +23,7 @@ ACCESS COORDINATES:
   {{- /* If Ingress is true, but hosts array is empty */}}
   {{- else }}
   Ingress is enabled, but no specific host is defined.
-  Access the application via your Ingress Controller's IP:
+  Access the application via your Ingress Controller's IP.
   {{- end }}
 
 {{- else }}
