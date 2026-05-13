@@ -39,6 +39,10 @@ spec:
               value: "{{ .Values.config.cleanerHeartbeatSeconds }}"
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
+{{- if .Values.broker.apiVersion2.enabled }}
+            - name: GMS_RUNNER_CLEANER_MULTIPART_ENABLE
+              value: "1"
+{{- end }}
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: "{{ .Values.postgresql.externalDatabase.host }}"

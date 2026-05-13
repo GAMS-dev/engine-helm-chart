@@ -42,6 +42,11 @@ spec:
       - podSelector:
           matchLabels:
             app: {{ include "gams-engine.prefixname" . }}-broker
+      {{- if .Values.broker.apiVersion2.enabled }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-brokerv2
+      {{- end }}
       ports:
         - protocol: TCP
           port: 6432
