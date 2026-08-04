@@ -159,6 +159,8 @@ spec:
               value: "/"
             - name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
               value: ".template"
+            - name: DISABLE_REQUEST_LIMIT
+              value: {{ .Values.broker.nginx.disableRequestLimit | quote }}
       volumes:
         - name: uwsgi-socket
           emptyDir: {}

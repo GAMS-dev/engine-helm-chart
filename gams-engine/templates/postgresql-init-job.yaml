@@ -36,7 +36,7 @@ spec:
             name: {{ include "gams-engine.prefixname" . }}-database-config
       containers:
         - name: external-db-initialize
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.jobSpawner.image.registry "repository" .Values.jobSpawner.image.repository "tag" (coalesce .Values.jobSpawner.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
+          image: postgres:18.0-alpine
           command: ['sh', '/docker-entrypoint-initdb.d/setup.sh']
           imagePullPolicy: Always
           volumeMounts:
@@ -84,7 +84,7 @@ spec:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
             - name: CONNECTION_STRING
-              value: "{{ .Values.postgresql.externalDatabase.initialize.connectionString }}"
+              value: {{ required "value 'postgresql.externalDatabase.initialize.connectionString' is required when 'postgresql.externalDatabase.initialize.run' is true" .Values.postgresql.externalDatabase.initialize.connectionString | quote }}
             - name: POSTGRES_DB
               value: "{{ .Values.postgresql.database }}"
       restartPolicy: OnFailure
