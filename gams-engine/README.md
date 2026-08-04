@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.11.0
+0.15.0
 
 ## `chart.type`
 
@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-26.05.08
+26.07.15
 
 ## `chart.kubeVersion`
 
@@ -83,6 +83,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | broker.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | broker.networkPolicy.ingress | list | `[{"ports":[{"port":80,"protocol":"TCP"}]}]` | Ingress rules for the Broker |
+| broker.nginx.disableRequestLimit | bool | `false` | Disable nginx request rate limiting (5r/s, burst 20) on the Broker |
 | broker.nginx.image.pullSecrets | list | `[]` | Image pull secrets |
 | broker.nginx.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.nginx.image.repository | string | `"engine-nginx"` | Image repository |
