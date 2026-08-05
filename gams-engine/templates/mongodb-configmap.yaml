@@ -1,3 +1,4 @@
+{{- if not .Values.mongodb.externalDatabase.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,3 +9,4 @@ metadata:
 data:
   setup.sh: |-
 {{ (.Files.Get "resources/mongo/setup.sh") | indent 4 }}
+{{- end }}

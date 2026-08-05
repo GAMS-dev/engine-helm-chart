@@ -1,3 +1,4 @@
+{{- if not .Values.mongodb.externalDatabase.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -142,3 +143,4 @@ spec:
             items:
               - key: setup.sh
                 path: setup.sh
+{{- end }}

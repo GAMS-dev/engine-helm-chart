@@ -1,3 +1,4 @@
+{{- if not .Values.mongodb.externalDatabase.enabled }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -14,3 +15,4 @@ spec:
   resources:
     requests:
       storage: {{ .Values.mongodb.persistence.size | quote }}
+{{- end }}
