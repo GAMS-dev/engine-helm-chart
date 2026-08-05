@@ -731,6 +731,55 @@ pgBouncer:
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
+  externalDatabase:
+    # -- Enable to use an external MongoDB instance instead of the chart's internal database
+    enabled: true
+
+    initialize:
+      # Set to 'true' to run this one-time initialization job.
+      # This is required for first-time setup when an external MongoDB is used.
+
+      # -- Run the one-time initialization job on fresh installs
+      run: true
+
+      # Provide the *admin connection string* for the Mongo database.
+      # REQUIRED if 'initialize.run' is set to 'true'.
+      #
+      # !! IMPORTANT: The user in this string (e.g., 'adminUser') MUST have
+      # privileges to create users, custom roles, collections, and indexes.
+      # Example: "mongodb+srv://adminUser:AdminSecret@my-test-db-svc.default.svc.cluster.local:27017/admin?replicaSet=my-test-db"
+
+      # -- Admin connection string for the database initialization job
+      connectionString: ""
+
+      # The connection protocol to use for the microservices.
+      # Use "mongodb" for standard connections or "mongodb+srv" for DNS seedlist connections.
+
+      # -- Connection protocol for microservices ("mongodb" or "mongodb+srv")
+      protocol: "mongodb+srv"
+
+      # Hostname of your external Mongo database.
+      # If using standard "mongodb", list all nodes (e.g., "node1:27017,node2:27017").
+      # If using "mongodb+srv", provide the service/seedlist hostname (e.g., "my-test-db-svc.default.svc.cluster.local:27017").
+
+      # -- Hostname or service name of your external Mongo database
+      host: ""
+
+      # Connection string arguments for application components (broker, worker, etc.).
+      # If using MongoDB HA, you MUST include 'replicaSet' in the options.
+      # Do not include the leading '?' character.
+      # Example: "replicaSet=my-test-db&authSource=admin"
+
+      # -- Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin)
+      options: ""
+
+    networkPolicy:
+      # -- Pod Selector labels.
+      podSelector:
+        matchLabels: {}
+      # -- Namespace Selector labels.
+      namespaceSelector:
+        matchLabels: {}
 
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
