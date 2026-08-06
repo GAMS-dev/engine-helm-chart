@@ -48,6 +48,14 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+{{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: GMS_RUNNER_MONGO_URI
+              valueFrom:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_CANCEL_MONGO_URI
+{{- else }}
             - name: GMS_RUNNER_MONGO_K8S_CANCEL_USER
               value: "k8s_job_canceler"
             - name: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
@@ -55,10 +63,9 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
-            - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "gams-engine.prefixname" . }}-mongo
+{{- end }}
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: "{{ .Values.postgresql.externalDatabase.host }}"
