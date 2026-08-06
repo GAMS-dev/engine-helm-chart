@@ -107,17 +107,24 @@ spec:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-secret
                   key: GMS_RUNNER_RABBIT_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+{{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: GMS_RUNNER_MONGO_URI
+              valueFrom:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_BROKER_MONGO_URI
+{{- else }}
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "common.names.fullname" . }}-secret
+                  name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_BROKER_PWD
             - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "common.names.fullname" . }}-mongo
-            - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
+              value: {{ include "gams-engine.prefixname" . }}-mongo
+{{- end }}
 {{- if .Values.broker.monitoring.metricsEnabled }}
             - name: PROMETHEUS_AUTH_USERNAME
               valueFrom:
