@@ -56,8 +56,7 @@ spec:
               value:  {{ include "gams-engine.prefixname" . }}-database-bouncer
             - name: GMS_RUNNER_SPWN_WORKER_DB_PORT
               value: "6432"
-            - name: GMS_RUNNER_SPWN_WORKER_MONGO_HOST
-              value:  {{ include "gams-engine.prefixname" . }}-mongo
+
             - name: GMS_RUNNER_RABBIT_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_RABBIT_SPWN_PWD
@@ -67,6 +66,19 @@ spec:
                   key: GMS_RUNNER_RABBIT_SPWN_PWD
             - name: GMS_RUNNER_SPWN_WORKER_CRED_SECRET_NAME
               value:  {{ include "gams-engine.prefixname" . }}-secret
+
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+{{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: GMS_RUNNER_MONGO_URI
+              valueFrom:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_SPAWNER_MONGO_URI
+            - name: GMS_RUNNER_MONGO_WORKER_CONNECT_URI
+              valueFrom:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_WORKER_MONGO_URI
+{{- else }}
             - name: GMS_RUNNER_MONGO_SPWN_USER
               value: "job_spawner"
             - name: GMS_RUNNER_MONGO_SPWN_PWD
@@ -74,10 +86,11 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_SPWN_PWD
-            - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "gams-engine.prefixname" . }}-mongo
+            - name: GMS_RUNNER_SPWN_WORKER_MONGO_HOST
+              value:  {{ include "gams-engine.prefixname" . }}-mongo
+{{- end }}
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: "{{ .Values.postgresql.externalDatabase.host }}"
