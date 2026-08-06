@@ -37,19 +37,27 @@ spec:
           env:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
-            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
-              value: "k8s_job_watcher"
             - name: GMS_RUNNER_WTCH_DISABLE_X509_STRICT_VALIDATION
               value: {{ default "false" .Values.config.disable_x509_strict_validation_k8s_client | quote }}
+
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: "gams_worker"
+{{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: GMS_RUNNER_MONGO_URI
+              valueFrom:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_WATCHER_MONGO_URI
+{{- else }}
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
             - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
-            - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "gams-engine.prefixname" . }}-mongo
+{{- end }}
             - name: GMS_RUNNER_RABBIT_HOST
               value: {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_USER
