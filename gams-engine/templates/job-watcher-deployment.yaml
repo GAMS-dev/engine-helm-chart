@@ -45,6 +45,7 @@ spec:
 {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: GMS_RUNNER_MONGO_URI
               valueFrom:
+                secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_WATCHER_MONGO_URI
 {{- else }}
