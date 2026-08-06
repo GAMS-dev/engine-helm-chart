@@ -1,0 +1,83 @@
+{{- if and .Values.mongodb.externalDatabase.enabled .Values.mongodb.externalDatabase.initialize.run }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-mongo-external-init
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    metadata:
+      name: {{ include "gams-engine.prefixname" . }}-mongo-external-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mongo-init-runner
+          image: mongo:7.0
+          command: ["/bin/bash", "/scripts/setup.sh"]
+          env:
+            - name: GMS_RUNNER_MONGO_ADMIN_URI
+              value: {{ .Values.mongodb.externalDatabase.initialize.connectionString | quote }}
+
+            - name: GMS_RUNNER_MONGO_BROKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_BROKER_PWD
+            - name: GMS_RUNNER_MONGO_WORKER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_WORKER_PWD
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
+            - name: GMS_RUNNER_MONGO_SPWN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_SPWN_PWD
+            - name: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_DEPENDENCY_CHECK_PWD
+            - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
+            - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_K8S_CANCEL_PWD
+            - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_PWD
+            - name: GMS_RUNNER_MONGO_CLEANER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_CLEANER_PWD
+          volumeMounts:
+            - name: setup-script-vol
+              mountPath: /scripts
+      volumes:
+        - name: setup-script-vol
+          configMap:
+            name: {{ include "gams-engine.prefixname" . }}-mongo-external-init-cm
+            defaultMode: 0755
+{{- end }}
