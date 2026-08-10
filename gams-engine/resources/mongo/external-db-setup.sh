@@ -1,14 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Connecting to external MongoDB using Admin Connection String..."
+echo "Connecting to external MongoDB using Connection String..."
 
 mongosh "$GMS_RUNNER_MONGO_ADMIN_URI" << EOF
 db = db.getSiblingDB("gams_worker");
-
-// ==========================================
-// 1. CREATE CUSTOM ROLES
-// ==========================================
 
 db.createRole({
   role: "job_watcher",
@@ -81,10 +77,6 @@ db.createRole({
   ]
 });
 
-// ==========================================
-// 2. CREATE SERVICE USERS
-// ==========================================
-
 db.createUser({
   user: "k8s_job_watcher",
   pwd: "${GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD}",
@@ -144,10 +136,6 @@ db.createUser({
   pwd: "${GMS_RUNNER_MONGO_CLEANER_PWD}",
   roles: [{ role: "readWrite", db: "gams_worker" }]
 });
-
-// ==========================================
-// 3. INITIAL COLLECTIONS & INDEXES
-// ==========================================
 
 db.namespaces.drop();
 db.namespaces.createIndex({ name: 1 }, { unique: true });
