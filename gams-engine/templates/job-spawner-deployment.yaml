@@ -75,8 +75,8 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_SPAWNER_MONGO_URI
-            - name: GMS_RUNNER_WORKER_MONGO_CONNECTION_URI_NAME
-              value: GMS_RUNNER_MONGO_WORKER_CONNECT_URI
+            - name: GMS_RUNNER_WORKER_MONGO_CONNECTION_URI
+              value: GMS_RUNNER_MONGO_WORKER_URI
 {{- else }}
             - name: GMS_RUNNER_MONGO_SPWN_USER
               value: "job_spawner"
