@@ -74,7 +74,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_SPAWNER_MONGO_URI
+                  key: GMS_RUNNER_MONGO_SPAWNER_URI
             - name: GMS_RUNNER_WORKER_MONGO_CONNECTION_URI
               value: GMS_RUNNER_MONGO_WORKER_URI
 {{- else }}

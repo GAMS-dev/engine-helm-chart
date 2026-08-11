@@ -53,7 +53,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_HYPERCUBE_MONGO_URI
+                  key: GMS_RUNNER_MONGO_HYPERCUBE_URI
 {{- else }}
             - name: GMS_RUNNER_MONGO_HYPERCUBE_APPENDER_USER
               value: "stein"

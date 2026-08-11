@@ -118,7 +118,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_BROKER_MONGO_URI
+                  key: GMS_RUNNER_MONGO_BROKER_URI
 {{- else }}
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"

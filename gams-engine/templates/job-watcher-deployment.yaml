@@ -47,7 +47,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_WATCHER_MONGO_URI
+                  key: GMS_RUNNER_MONGO_WATCHER_URI
 {{- else }}
             - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
               value: "k8s_job_watcher"

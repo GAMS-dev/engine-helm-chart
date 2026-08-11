@@ -53,7 +53,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_DEPENDENCY_MONGO_URI
+                  key: GMS_RUNNER_MONGO_DEPENDENCY_URI
 {{- else }}
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "gams-engine.prefixname" . }}-mongo

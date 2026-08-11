@@ -42,7 +42,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_PROXY_MONGO_URI
+                  key: GMS_RUNNER_MONGO_PROXY_URI
 {{- else }}
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_USER
               value: "forward_proxy"
