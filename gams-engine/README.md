@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.11.0
+0.16.0
 
 ## `chart.type`
 
@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-26.05.08
+26.08.13
 
 ## `chart.kubeVersion`
 
@@ -63,14 +63,14 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 |-----|------|---------|-------------|
 | broker.affinity | object | `{}` | Affinity settings for pod assignment |
 | broker.apiVersion2.affinity | object | `{}` | Affinity settings for pod assignment |
-| broker.apiVersion2.enabled | bool | `false` |  |
+| broker.apiVersion2.enabled | bool | `false` | Enable Broker API Version 2 (beta) |
 | broker.apiVersion2.image.pullSecrets | list | `[]` | Image pull secrets |
 | broker.apiVersion2.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.apiVersion2.image.repository | string | `"engine-brokerv2"` | Image repository |
 | broker.apiVersion2.image.tag | string | `""` | Image tag |
 | broker.apiVersion2.maxReplicas | int | `3` | Max replicas for Broker API Version 2 |
 | broker.apiVersion2.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
-| broker.apiVersion2.networkPolicy.extraIngress | list | `[]` |  |
+| broker.apiVersion2.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | broker.apiVersion2.networkPolicy.ingress | list | `[{"ports":[{"port":5000,"protocol":"TCP"}]}]` | Ingress rules for the Broker V2 |
 | broker.apiVersion2.resources.limits | object | `{"memory":"200Mi"}` | Resource limits |
 | broker.apiVersion2.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
@@ -83,6 +83,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | broker.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | broker.networkPolicy.ingress | list | `[{"ports":[{"port":80,"protocol":"TCP"}]}]` | Ingress rules for the Broker |
+| broker.nginx.disableRequestLimit | bool | `false` | Disable nginx request rate limiting (5r/s, burst 20) on the Broker |
 | broker.nginx.image.pullSecrets | list | `[]` | Image pull secrets |
 | broker.nginx.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.nginx.image.repository | string | `"engine-nginx"` | Image repository |

@@ -223,6 +223,8 @@ broker:
       # -- Resource limits
       limits:
         memory: 200Mi
+    # -- Disable nginx request rate limiting (5r/s, burst 20) on the Broker
+    disableRequestLimit: false
 
   # Broker network policy
   # Only relevant if global.useNetworkPolicies is true
@@ -278,6 +280,8 @@ broker:
   apiVersion2:
     # IMPORTANT: New API version is in the beta
     # Currently images might not be available publicly
+
+    # -- Enable Broker API Version 2 (beta)
     enabled: false
     image:
       # -- Image registry
@@ -318,10 +322,10 @@ broker:
           - port: 5000 # should be always 5000 for broker V2
             protocol: TCP
 
-    # -- Extra ingress rules
+      # -- Extra ingress rules
       extraIngress: []
 
-    # -- Extra egress rules
+      # -- Extra egress rules
       extraEgress: []
 
     # Service of broker API version 2
