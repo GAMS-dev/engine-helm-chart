@@ -78,6 +78,6 @@ spec:
       volumes:
         - name: setup-script-vol
           configMap:
-            name: {{ include "gams-engine.prefixname" . }}-mongo-external-init-cm
+            name: {{ include "gams-engine.prefixname" . }}-mongo-config
             defaultMode: 0755
 {{- end }}
