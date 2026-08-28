@@ -1,6 +1,15 @@
 #!/bin/bash
 set -euo pipefail
-cat << EOF | mongosh -u mongo_broker -p "$MONGO_INITDB_ROOT_PASSWORD"
+
+if [ -z "${GMS_RUNNER_MONGO_ADMIN_URI:-}" ]; then
+    echo "No connection string provided. Connecting using root credentials."
+    MONGO_ARGS=(-u "mongo_broker" -p "$MONGO_INITDB_ROOT_PASSWORD")
+else
+    echo "Connecting to external MongoDB using Connection String."
+    MONGO_ARGS=("$GMS_RUNNER_MONGO_ADMIN_URI")
+fi
+
+mongosh "${MONGO_ARGS[@]}" << EOF
 db = db.getSiblingDB("gams_worker");
 
 db.createRole({
@@ -273,7 +282,7 @@ db.fs.files.createIndex(
 db.secrets.drop();
 db.secrets.createIndex({ type: 1 }, { unique: true });
 
-db.job_labels.drop()
+db.job_labels.drop();
 db.job_labels.createIndex({ submission_id: 1 });
 
 db.schema_migrations.drop();
