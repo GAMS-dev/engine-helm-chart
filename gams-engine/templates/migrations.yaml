@@ -31,19 +31,27 @@ spec:
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongoMigrate.image.registry "repository" .Values.mongoMigrate.image.repository "tag" (coalesce .Values.mongoMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           imagePullPolicy: Always
           env:
+          {{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_ADMIN_URI
+          {{- else }}
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"
             - name: MONGODB_HOST
               value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: MONGODB_PORT
               value: "27017"
+            - name: GMS_RUNNER_MONGO_INITDB_MAIN
+              value: "gams_worker"
+          {{- end }}
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_BROKER_PWD
-            - name: GMS_RUNNER_MONGO_INITDB_MAIN
-              value: "gams_worker"
             - name: GMS_RUNNER_MONGO_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:
