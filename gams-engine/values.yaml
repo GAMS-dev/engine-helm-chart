@@ -749,29 +749,32 @@ mongodb:
       # privileges to create users, custom roles, collections, and indexes.
       # Example: "mongodb+srv://adminUser:AdminSecret@my-test-db-svc.default.svc.cluster.local:27017/admin?replicaSet=my-test-db"
 
-      # -- Admin connection string for the database initialization job
-      connectionString: ""
+    # -- Admin connection string for the database initialization and migration jobs
+    connectionString: ""
 
-      # The connection protocol to use for the microservices.
-      # Use "mongodb" for standard connections or "mongodb+srv" for DNS seedlist connections.
+    # The connection protocol to use for the microservices.
+    # Use "mongodb" for standard connections or "mongodb+srv" for DNS seedlist connections.
 
-      # -- Connection protocol for microservices ("mongodb" or "mongodb+srv")
-      protocol: "mongodb+srv"
+    # -- Connection protocol for microservices ("mongodb" or "mongodb+srv")
+    protocol: "mongodb+srv"
 
-      # Hostname of your external Mongo database.
-      # If using standard "mongodb", list all nodes (e.g., "node1:27017,node2:27017").
-      # If using "mongodb+srv", provide the service/seedlist hostname (e.g., "my-test-db-svc.default.svc.cluster.local:27017").
+    # Hostname of your external Mongo database.
+    # If using standard "mongodb", list all nodes (e.g., "node1:27017,node2:27017").
+    # If using "mongodb+srv", provide the service/seedlist hostname (e.g., "my-test-db-svc.default.svc.cluster.local:27017").
 
-      # -- Hostname or service name of your external Mongo database
-      host: ""
+    # -- Hostname or service name of your external Mongo database
+    host: ""
 
-      # Connection string arguments for application components (broker, worker, etc.).
-      # If using MongoDB HA, you MUST include 'replicaSet' in the options.
-      # Do not include the leading '?' character.
-      # Example: "replicaSet=my-test-db&authSource=admin"
+    # Connection string arguments for application components (broker, worker, etc.).
+    # If using MongoDB HA, you MUST include 'replicaSet' in the options.
+    # Do not include the leading '?' character.
+    # Example: "replicaSet=my-test-db&authSource=admin"
 
-      # -- Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin)
-      options: ""
+    # -- Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin)
+    options: ""
+
+    # -- Port of your external Mongo database
+    port: ""
 
     networkPolicy:
       # -- Pod Selector labels.

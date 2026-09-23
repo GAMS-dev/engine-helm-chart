@@ -207,14 +207,15 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.image.registry | string | `"docker.io"` | Image registry |
 | mongodb.image.repository | string | `"library/mongo"` | Image repository |
 | mongodb.image.tag | string | `"8.2-noble"` | Image tag |
+| mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `true` | Enable to use an external MongoDB instance instead of the chart's internal database |
-| mongodb.externalDatabase.initialize.connectionString | string | `""` | Admin connection string for the database initialization job |
-| mongodb.externalDatabase.initialize.host | string | `""` | Hostname or service name of your external Mongo database |
-| mongodb.externalDatabase.initialize.options | string | `""` | Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin) |
-| mongodb.externalDatabase.initialize.protocol | string | `"mongodb+srv"` | Connection protocol for microservices ("mongodb" or "mongodb+srv") |
+| mongodb.externalDatabase.host | string | `""` | Hostname or service name of your external Mongo database |
 | mongodb.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on fresh installs |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
+| mongodb.externalDatabase.options | string | `""` | Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin) |
+| mongodb.externalDatabase.port | string | `""` | Port of your external Mongo database |
+| mongodb.externalDatabase.protocol | string | `"mongodb+srv"` | Connection protocol for microservices ("mongodb" or "mongodb+srv") |
 | mongodb.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | mongodb.persistence.size | string | `"8Gi"` | Size of the persistent volume |
 | mongodb.persistence.storageClassName | string | `""` | Storage Class to use |
