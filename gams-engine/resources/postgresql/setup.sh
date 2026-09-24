@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "${CONNECTION_STRING}" ]; then
+if [ -z "${POSTGRES_CONNECTION_STRING}" ]; then
     cat << EOF | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"
     CREATE USER broker WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_BROKER_PWD}';
     CREATE USER worker WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_WORKER_PWD}';
@@ -14,7 +14,7 @@ if [ -z "${CONNECTION_STRING}" ]; then
 EOF
     cat /docker-entrypoint-initdb.d/create_tables_and_set_permissions | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"
 else
-    cat << EOF | psql -v ON_ERROR_STOP=1 "${CONNECTION_STRING}"
+    cat << EOF | psql -v ON_ERROR_STOP=1 "${POSTGRES_CONNECTION_STRING}"
     CREATE USER broker WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_BROKER_PWD}';
     CREATE USER worker WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_WORKER_PWD}';
     CREATE USER cleaner WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_CLEANER_PWD}';
@@ -25,5 +25,5 @@ else
     CREATE USER k8s_job_watcher WITH ENCRYPTED PASSWORD '${GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD}';
 
 EOF
-    cat /docker-entrypoint-initdb.d/create_tables_and_set_permissions | psql -v ON_ERROR_STOP=1  "${CONNECTION_STRING}"
+    cat /docker-entrypoint-initdb.d/create_tables_and_set_permissions | psql -v ON_ERROR_STOP=1  "${POSTGRES_CONNECTION_STRING}"
 fi
