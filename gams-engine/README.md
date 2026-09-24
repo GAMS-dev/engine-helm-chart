@@ -234,7 +234,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.database_user | string | `"gams_engine"` | The default database user |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL |
 | postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database |
-| postgresql.externalDatabase.initialize.connectionString | string | `""` | Admin connection string. |
+| postgresql.externalDatabase.initialize.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |

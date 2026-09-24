@@ -898,12 +898,13 @@ postgresql:
       # Provide the *admin connection string* for the database.
       # This is REQUIRED if 'initialize.run' is set to 'true'.
       #
-      # !! IMPORTANT: The user in this string (e.g., 'postgres')
-      #    MUST have permissions (create, alter, grant usage) within the database.
+      # !! IMPORTANT: The POSTGRESQL user MUST have privileges to create schema objects
+      #    (tables, types, sequences, views), create roles (broker, worker,
+      #    cleaner, etc.), and grant permissions on those objects.
       #
       # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
 
-      # -- Admin connection string.
+      # -- Admin connection string for the database initialization and migration jobs
       connectionString: ""
       # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
 
