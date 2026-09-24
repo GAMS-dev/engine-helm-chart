@@ -749,7 +749,7 @@ mongodb:
       # Set to 'true' to run this one-time initialization job.
       # This is required for first-time setup when an external MongoDB is used.
 
-      # -- Run the one-time initialization job on fresh installs
+      # -- Run the one-time initialization job on initial installs
       run: true
 
     # The connection protocol to use for the microservices.
@@ -878,7 +878,19 @@ postgresql:
     # -- Enable to use an external PostgreSQL
     enabled: false
 
-    # if externalDatabase enabled connectionString is needed
+    # Provide the *admin connection string* for the database.
+    # REQUIRED when externalDatabase is enabled.
+    #
+    # !! IMPORTANT: The POSTGRESQL user MUST have privileges to create schema objects
+    #    (tables, types, sequences, views), create roles (broker, worker,
+    #    cleaner, etc.), and grant permissions on those objects.
+    #
+    # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
+
+    # -- Admin connection string for the database initialization and migration jobs
+    connectionString: ""
+    # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
+
     # Hostname of your postgres database:
     # Example: "postgresql-svc-name.database-namespace.svc.cluster.local"
 
@@ -889,24 +901,11 @@ postgresql:
     port: ""
 
     initialize:
-      # Set to 'true' to run this one-time initialization job
-      # This is required for first-time setup when an external PostgreSQL db is used
+      # Set to 'true' to run this one-time initialization job.
+      # This is required for first-time setup when an external PostgreSQL db is used.
 
-      # -- Run the one-time initialization job
+      # -- Run the one-time initialization job on initial installs.
       run: true
-
-      # Provide the *admin connection string* for the database.
-      # This is REQUIRED if 'initialize.run' is set to 'true'.
-      #
-      # !! IMPORTANT: The POSTGRESQL user MUST have privileges to create schema objects
-      #    (tables, types, sequences, views), create roles (broker, worker,
-      #    cleaner, etc.), and grant permissions on those objects.
-      #
-      # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
-
-      # -- Admin connection string for the database initialization and migration jobs
-      connectionString: ""
-      # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
 
     networkPolicy:
       # -- Pod Selector labels.

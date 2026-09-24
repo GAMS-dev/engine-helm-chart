@@ -210,7 +210,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `true` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.host | string | `""` | Hostname or service name of your external Mongo database |
-| mongodb.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on fresh installs |
+| mongodb.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
 | mongodb.externalDatabase.options | string | `""` | Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin) |
@@ -232,10 +232,10 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.affinity | object | `{}` | Affinity settings for pod assignment |
 | postgresql.database | string | `"gams_engine"` | The default database name |
 | postgresql.database_user | string | `"gams_engine"` | The default database user |
+| postgresql.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL |
 | postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database |
-| postgresql.externalDatabase.initialize.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
-| postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job |
+| postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs. |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
 | postgresql.externalDatabase.port | string | `""` | Port of your external postgres database |
