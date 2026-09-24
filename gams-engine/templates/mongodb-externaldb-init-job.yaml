@@ -20,7 +20,7 @@ spec:
           command: ["/bin/bash", "/scripts/setup.sh"]
           env:
             - name: GMS_RUNNER_MONGO_ADMIN_URI
-              value: {{ .Values.mongodb.externalDatabase.initialize.connectionString | quote }}
+              value: {{ .Values.mongodb.externalDatabase.connectionString | quote }}
 
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
