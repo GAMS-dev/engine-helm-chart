@@ -15,16 +15,24 @@ spec:
     - Egress
   ingress: []
   egress:
+{{- if .Values.mongodb.externalDatabase.enabled }}
+    - to:
+      - podSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.podSelector | indent 10 }}
+        namespaceSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.mongodb.externalDatabase.port }}
+{{- else }}
     - to:
       - podSelector:
           matchLabels:
             app: {{ include "gams-engine.prefixname" . }}-mongo
-        namespaceSelector:
-          matchLabels:
-            kubernetes.io/metadata.name: {{ .Release.Namespace }}
       ports:
         - protocol: TCP
           port: 27017
+{{- end }}
     - to:
       - namespaceSelector: {}
         podSelector:
