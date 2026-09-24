@@ -214,7 +214,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
 | mongodb.externalDatabase.options | string | `""` | Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin) |
-| mongodb.externalDatabase.port | string | `""` | Port of your external Mongo database |
+| mongodb.externalDatabase.port | string | `"27017"` | Port of your external Mongo database (used ONLY for NetworkPolicy egress rules). For "mongodb" protocol, ensure this matches the port embedded in 'host' above. |
 | mongodb.externalDatabase.protocol | string | `"mongodb+srv"` | Connection protocol for microservices ("mongodb" or "mongodb+srv") |
 | mongodb.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | mongodb.persistence.size | string | `"8Gi"` | Size of the persistent volume |

@@ -759,8 +759,9 @@ mongodb:
     protocol: "mongodb+srv"
 
     # Hostname of your external Mongo database.
-    # If using standard "mongodb", list all nodes (e.g., "node1:27017,node2:27017").
-    # If using "mongodb+srv", provide the service/seedlist hostname (e.g., "my-test-db-svc.default.svc.cluster.local:27017").
+    # For "mongodb" protocol, list all nodes WITH ports (e.g. "node1:27017,node2:27017").
+    # For "mongodb+srv" protocol, provide the hostname only (port is resolved via DNS).
+    # Example: "my-test-db-svc.default.svc.cluster.local"
 
     # -- Hostname or service name of your external Mongo database
     host: ""
@@ -773,8 +774,9 @@ mongodb:
     # -- Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin)
     options: ""
 
-    # -- Port of your external Mongo database
-    port: ""
+    # -- Port of your external Mongo database (used ONLY for NetworkPolicy egress rules).
+    # For "mongodb" protocol, ensure this matches the port embedded in 'host' above.
+    port: "27017"
 
     networkPolicy:
       # -- Pod Selector labels.
