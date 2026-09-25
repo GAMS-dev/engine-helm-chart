@@ -733,7 +733,7 @@ pgBouncer:
 mongodb:
   externalDatabase:
     # -- Enable to use an external MongoDB instance instead of the chart's internal database
-    enabled: true
+    enabled: false
 
     # Provide the *admin connection string* for the Mongo database.
     # REQUIRED when external MongoDB is enabled.

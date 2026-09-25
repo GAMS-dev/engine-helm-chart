@@ -208,7 +208,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.image.repository | string | `"library/mongo"` | Image repository |
 | mongodb.image.tag | string | `"8.2-noble"` | Image tag |
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
-| mongodb.externalDatabase.enabled | bool | `true` | Enable to use an external MongoDB instance instead of the chart's internal database |
+| mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.host | string | `""` | Hostname or service name of your external Mongo database |
 | mongodb.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
