@@ -891,14 +891,14 @@ postgresql:
     connectionString: ""
     # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
 
-    # Hostname of your postgres database:
+    # Hostname of your postgres database.
     # Example: "postgresql-svc-name.database-namespace.svc.cluster.local"
 
     # -- Hostname of your external postgres database
     host: ""
 
-    # -- Port of your external postgres database
-    port: ""
+    # -- Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars).
+    port: "5432"
 
     initialize:
       # Set to 'true' to run this one-time initialization job.

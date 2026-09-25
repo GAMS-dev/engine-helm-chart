@@ -243,6 +243,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.image.registry | string | `"docker.io"` | Image registry |
 | postgresql.image.repository | string | `"library/postgres"` | Image repository |
 | postgresql.image.tag | string | `"18-alpine"` | Image tag |
+| postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars). |
 | postgresql.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | postgresql.persistence.size | string | `"4Gi"` | Size of the persistent volume |
 | postgresql.persistence.storageClassName | string | `""` | Storage Class to use |
