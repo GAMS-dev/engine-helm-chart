@@ -98,13 +98,6 @@ spec:
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresqlMigrate.image.registry "repository" .Values.postgresqlMigrate.image.repository "tag" (coalesce .Values.postgresqlMigrate.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           imagePullPolicy: Always
           env:
-{{- if .Values.postgresql.externalDatabase.enabled }}
-            - name: POSTGRES_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "gams-engine.prefixname" . }}-secret
-                  key: GMS_RUNNER_DATABASE_ADMIN_URI
-{{- end }}
             - name: GMS_RUNNER_DATABASE_ADMIN_USER
               value: "{{ .Values.postgresql.database_user }}"
             - name: GMS_RUNNER_DATABASE_ADMIN_PWD
@@ -112,12 +105,24 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_ADMIN_PWD
+            - name: POSTGRES_USER
+              value: "{{ .Values.postgresql.database_user }}"
+{{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_ADMIN_URI
+            - name: POSTGRES_HOST
+              value: "{{ .Values.postgresql.externalDatabase.host }}"
+            - name: POSTGRES_PORT
+              value: "{{ .Values.postgresql.externalDatabase.port }}"
+{{- else }}
             - name: POSTGRES_HOST
               value: {{ include "gams-engine.prefixname" . }}-database
             - name: POSTGRES_PORT
               value: "5432"
-            - name: POSTGRES_USER
-              value: "{{ .Values.postgresql.database_user }}"
+{{- end }}
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
               value: "{{ .Values.postgresql.database }}"
             - name: POSTGRES_NAME
