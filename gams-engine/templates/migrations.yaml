@@ -33,10 +33,16 @@ spec:
           env:
           {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: MONGODB_URI
+            {{- if .Values.mongodb.externalDatabase.connectionString }}
+              # Pre-upgrade hooks run before the Secret is updated, so currently the URI
+              # is taken rom values.yaml.
+              value: {{ .Values.mongodb.externalDatabase.connectionString | quote }}
+            {{- else }}
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_ADMIN_URI
+            {{- end }}
           {{- else }}
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"
@@ -109,10 +115,16 @@ spec:
               value: "{{ .Values.postgresql.database_user }}"
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRES_CONNECTION_STRING
+  {{- if .Values.postgresql.externalDatabase.connectionString }}
+              # Pre-upgrade hooks run before the Secret is updated, so currently the URI
+              # is taken from values.yaml directly.
+              value: {{ .Values.postgresql.externalDatabase.connectionString | quote }}
+  {{- else }}
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_ADMIN_URI
+  {{- end }}
             - name: POSTGRES_HOST
               value: "{{ .Values.postgresql.externalDatabase.host }}"
             - name: POSTGRES_PORT
