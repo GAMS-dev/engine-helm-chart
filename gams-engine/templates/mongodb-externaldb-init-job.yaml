@@ -16,7 +16,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: mongo-init-runner
-          image: mongo:7.0
+          image: mongo:8.2-noble
           command: ["/bin/bash", "/scripts/setup.sh"]
           env:
             - name: GMS_RUNNER_MONGO_ADMIN_URI
