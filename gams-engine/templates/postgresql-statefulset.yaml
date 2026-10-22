@@ -28,10 +28,11 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresql.image) "context" $) | indent 6}}
       terminationGracePeriodSeconds: 30
       containers:
         - name: engine-db
-          image: postgres:18.0-alpine
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag) "global" .Values.global) }}
           ports:
             - containerPort: 5432
           volumeMounts:

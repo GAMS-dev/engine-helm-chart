@@ -702,6 +702,16 @@ pgBouncer:
   # -- Affinity settings for pod assignment
   affinity: {}
 
+  image:
+    # -- Image registry
+    registry: docker.io
+    # -- Image repository
+    repository: bitnamilegacy/pgbouncer
+    # -- Image tag
+    tag: "1.24.1"
+    # -- Image pull secrets
+    pullSecrets: []
+
   resources:
     # -- Resource requests
     requests:
@@ -718,10 +728,10 @@ pgBouncer:
     # -- Extra egress rules
     extraEgress: []
 
-# -- Database Configurations
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
+
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
 
@@ -743,6 +753,16 @@ mongodb:
 
   # -- Affinity settings for pod assignment
   affinity: {}
+
+  image:
+    # -- Image registry
+    registry: docker.io
+    # -- Image repository
+    repository: library/mongo
+    # -- Image tag
+    tag: "8.2-noble"
+    # -- Image pull secrets
+    pullSecrets: []
 
   resources:
     # -- Resource requests
@@ -788,6 +808,16 @@ postgresql:
 
   # -- The default database name
   database: "gams_engine"
+
+  image:
+    # -- Image registry
+    registry: docker.io
+    # -- Image repository
+    repository: library/postgres
+    # -- Image tag
+    tag: "18-alpine"
+    # -- Image pull secrets
+    pullSecrets: []
 
   # if externalDatabase.enabled: false > the postgres db pod is created by this chart
   externalDatabase:
@@ -860,6 +890,26 @@ postgresqlMigrate:
 # RabbitMQ is used to pass messages between different components.
 # RabbitMQ pod resource definitions
 rabbitmq:
+  image:
+    # -- Image registry
+    registry: docker.io
+    # -- Image repository
+    repository: library/rabbitmq
+    # -- Image tag
+    tag: "4.2-management-alpine"
+    # -- Image pull secrets
+    pullSecrets: []
+
+  initImage:
+    # -- Image registry
+    registry: docker.io
+    # -- Image repository
+    repository: library/python
+    # -- Image tag
+    tag: "3.13-alpine"
+    # -- Image pull secrets
+    pullSecrets: []
+
   monitoring:
     # Specifies whether the monitoring should be enabled
     # Requires Prometheus Operator CRDs

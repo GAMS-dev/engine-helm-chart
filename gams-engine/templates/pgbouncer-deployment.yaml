@@ -27,9 +27,10 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.pgBouncer.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.pgBouncer.image) "context" $) | indent 6}}
       containers:
         - name: engine-pgbouncer
-          image: "docker.io/bitnamilegacy/pgbouncer:1.24.1"
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.pgBouncer.image.registry "repository" .Values.pgBouncer.image.repository "tag" .Values.pgBouncer.image.tag) "global" .Values.global) }}
           imagePullPolicy: Always
           resources:
 {{ toYaml .Values.pgBouncer.resources | indent 12 }}
