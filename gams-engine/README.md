@@ -203,10 +203,6 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |
 | mongodb.affinity | object | `{}` | Affinity settings for pod assignment |
-| mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
-| mongodb.image.registry | string | `"docker.io"` | Image registry |
-| mongodb.image.repository | string | `"library/mongo"` | Image repository |
-| mongodb.image.tag | string | `"8.2-noble"` | Image tag |
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.host | string | `""` | Hostname or service name of your external Mongo database |
@@ -216,6 +212,10 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.externalDatabase.options | string | `""` | Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin) |
 | mongodb.externalDatabase.port | string | `"27017"` | Port of your external Mongo database (used ONLY for NetworkPolicy egress rules). For "mongodb" protocol, ensure this matches the port embedded in 'host' above. |
 | mongodb.externalDatabase.protocol | string | `"mongodb+srv"` | Connection protocol for microservices ("mongodb" or "mongodb+srv") |
+| mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
+| mongodb.image.registry | string | `"docker.io"` | Image registry |
+| mongodb.image.repository | string | `"library/mongo"` | Image repository |
+| mongodb.image.tag | string | `"8.2-noble"` | Image tag |
 | mongodb.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | mongodb.persistence.size | string | `"8Gi"` | Size of the persistent volume |
 | mongodb.persistence.storageClassName | string | `""` | Storage Class to use |
@@ -238,12 +238,11 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs. |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| postgresql.externalDatabase.port | string | `""` | Port of your external postgres database |
+| postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars). |
 | postgresql.image.pullSecrets | list | `[]` | Image pull secrets |
 | postgresql.image.registry | string | `"docker.io"` | Image registry |
 | postgresql.image.repository | string | `"library/postgres"` | Image repository |
 | postgresql.image.tag | string | `"18-alpine"` | Image tag |
-| postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars). |
 | postgresql.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | postgresql.persistence.size | string | `"4Gi"` | Size of the persistent volume |
 | postgresql.persistence.storageClassName | string | `""` | Storage Class to use |
