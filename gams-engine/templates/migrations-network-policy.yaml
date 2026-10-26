@@ -34,7 +34,9 @@ spec:
           port: 27017
 {{- end }}
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
         podSelector:
           matchLabels:
             k8s-app: kube-dns
@@ -79,7 +81,9 @@ spec:
           port: 5432
 {{- end }}
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
         podSelector:
           matchLabels:
             k8s-app: kube-dns
@@ -113,7 +117,9 @@ spec:
         - protocol: TCP
           port: 15672
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
         podSelector:
           matchLabels:
             k8s-app: kube-dns

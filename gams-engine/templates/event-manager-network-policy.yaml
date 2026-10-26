@@ -59,7 +59,9 @@ spec:
           port: 27017
 {{- end }}
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
         podSelector:
           matchLabels:
             k8s-app: kube-dns
