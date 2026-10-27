@@ -41,7 +41,7 @@ spec:
               value: {{ default "false" .Values.config.disable_x509_strict_validation_k8s_client | quote }}
 
             - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
+              value: "{{ .Values.mongodb.database }}"
 {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: GMS_RUNNER_MONGO_URI
               valueFrom:

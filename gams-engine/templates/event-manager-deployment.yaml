@@ -45,7 +45,7 @@ spec:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_EVENT_MANAGER_PWD
             - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
+              value: "{{ .Values.mongodb.database }}"
 {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: GMS_RUNNER_MONGO_URI
               valueFrom:

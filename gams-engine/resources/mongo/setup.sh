@@ -10,7 +10,7 @@ else
 fi
 
 mongosh "${MONGO_ARGS[@]}" << EOF
-db = db.getSiblingDB("gams_worker");
+db = db.getSiblingDB("${MONGO_DATABASE}");
 
 db.createRole({
   role: "job_watcher",
@@ -18,21 +18,21 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "fs.files"
       },
       actions: ["find", "update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "hypercubes",
       },
       actions: ["find", "update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "job_labels",
       },
       actions: ["find", "update"],
@@ -47,49 +47,49 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "fs.files",
       },
       actions: ["find"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "job_labels",
       },
       actions: ["find", "update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "instance_info",
       },
       actions: ["find"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "hypercubes",
       },
       actions: ["find", "update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "dependencies",
       },
       actions: ["find", "remove"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "license_relations",
       },
       actions: ["find"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "licenses",
       },
       actions: ["find"],
@@ -103,21 +103,21 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "dependencies",
       },
       actions: ["find", "update", "remove"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "hypercubes",
       },
       actions: ["update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "engine_config",
       },
       actions: ["find"],
@@ -131,14 +131,14 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "hypercubes",
       },
       actions: ["find"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "engine_config",
       },
       actions: ["find"],
@@ -152,28 +152,28 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "job_labels",
       },
       actions: ["find"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "webhook_events_disabled",
       },
       actions: ["find", "insert", "update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "webpush_config",
       },
       actions: ["find", "insert"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "secrets",
       },
       actions: ["find"],
@@ -187,7 +187,7 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "engine_config",
       },
       actions: ["find"],
@@ -202,14 +202,14 @@ db.createRole({
   privileges: [
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "hypercubes",
       },
       actions: ["find", "update"],
     },
     {
       resource: {
-        db: "gams_worker",
+        db: "${MONGO_DATABASE}",
         collection: "dependencies",
       },
       actions: ["find", "remove"],
@@ -297,7 +297,7 @@ db.createUser({
   roles: [
     {
       role: "readWrite",
-      db: "gams_worker",
+      db: "${MONGO_DATABASE}",
     },
   ],
 });
@@ -308,7 +308,7 @@ db.createUser({
   roles: [
     {
       role: "readWrite",
-      db: "gams_worker",
+      db: "${MONGO_DATABASE}",
     },
   ],
 });
@@ -319,7 +319,7 @@ db.createUser({
   roles: [
     {
       role: "readWrite",
-      db: "gams_worker",
+      db: "${MONGO_DATABASE}",
     },
   ],
 });
@@ -330,7 +330,7 @@ db.createUser({
   roles: [
     {
       role: "readWrite",
-      db: "gams_worker",
+      db: "${MONGO_DATABASE}",
     },
   ],
 });

@@ -203,6 +203,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |
 | mongodb.affinity | object | `{}` | Affinity settings for pod assignment |
+| mongodb.database | string | `"gams_worker"` | Name of the MongoDB database. |
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.host | string | `""` | Hostname or service name of your external Mongo database |

@@ -731,6 +731,10 @@ pgBouncer:
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
+  # -- Name of the MongoDB database.
+  database: "gams_worker"
+    # For external MongoDB, this must match the database in the connection strings.
+
   externalDatabase:
     # -- Enable to use an external MongoDB instance instead of the chart's internal database
     enabled: false
