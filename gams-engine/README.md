@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.17.0
+0.19.0
 
 ## `chart.type`
 
@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-26.08.22
+26.10.23
 
 ## `chart.kubeVersion`
 
@@ -202,14 +202,21 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongoMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |
-| mongodb | object | `{"affinity":{},"persistence":{"accessMode":"ReadWriteOnce","size":"8Gi","storageClassName":""},"resources":{"limits":{"memory":"6Gi"},"requests":{"cpu":"500m","memory":"5Gi"}}}` | Database Configurations MongoDB is used to store structured and unstructured data. MongoDB configurations |
 | mongodb.affinity | object | `{}` | Affinity settings for pod assignment |
+| mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
+| mongodb.image.registry | string | `"docker.io"` | Image registry |
+| mongodb.image.repository | string | `"library/mongo"` | Image repository |
+| mongodb.image.tag | string | `"8.2-noble"` | Image tag |
 | mongodb.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | mongodb.persistence.size | string | `"8Gi"` | Size of the persistent volume |
 | mongodb.persistence.storageClassName | string | `""` | Storage Class to use |
 | mongodb.resources.limits | object | `{"memory":"6Gi"}` | Resource limits |
 | mongodb.resources.requests | object | `{"cpu":"500m","memory":"5Gi"}` | Resource requests |
 | pgBouncer.affinity | object | `{}` | Affinity settings for pod assignment |
+| pgBouncer.image.pullSecrets | list | `[]` | Image pull secrets |
+| pgBouncer.image.registry | string | `"docker.io"` | Image registry |
+| pgBouncer.image.repository | string | `"bitnamilegacy/pgbouncer"` | Image repository |
+| pgBouncer.image.tag | string | `"1.24.1"` | Image tag |
 | pgBouncer.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | pgBouncer.resources.limits | object | `{"memory":"300Mi"}` | Resource limits |
 | pgBouncer.resources.requests | object | `{"cpu":"100m","memory":"200Mi"}` | Resource requests |
@@ -223,6 +230,10 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
 | postgresql.externalDatabase.port | string | `""` | Port of your external postgres database |
+| postgresql.image.pullSecrets | list | `[]` | Image pull secrets |
+| postgresql.image.registry | string | `"docker.io"` | Image registry |
+| postgresql.image.repository | string | `"library/postgres"` | Image repository |
+| postgresql.image.tag | string | `"18-alpine"` | Image tag |
 | postgresql.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | postgresql.persistence.size | string | `"4Gi"` | Size of the persistent volume |
 | postgresql.persistence.storageClassName | string | `""` | Storage Class to use |
@@ -232,6 +243,14 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresqlMigrate.image.repository | string | `"engine-postgres-migrate"` | Image repository |
 | postgresqlMigrate.image.tag | string | `""` | Image tag |
 | rabbitmq.affinity | object | `{}` | Affinity settings for pod assignment |
+| rabbitmq.image.pullSecrets | list | `[]` | Image pull secrets |
+| rabbitmq.image.registry | string | `"docker.io"` | Image registry |
+| rabbitmq.image.repository | string | `"library/rabbitmq"` | Image repository |
+| rabbitmq.image.tag | string | `"4.2-management-alpine"` | Image tag |
+| rabbitmq.initImage.pullSecrets | list | `[]` | Image pull secrets |
+| rabbitmq.initImage.registry | string | `"docker.io"` | Image registry |
+| rabbitmq.initImage.repository | string | `"library/python"` | Image repository |
+| rabbitmq.initImage.tag | string | `"3.13-alpine"` | Image tag |
 | rabbitmq.monitoring.podMonitorEnabled | bool | `false` | Enable monitoring (Requires Prometheus Operator) |
 | rabbitmq.networkPolicy.extraIngress | list | `[]` | Add extra ingress rules |
 | rabbitmq.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |

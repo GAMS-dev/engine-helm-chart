@@ -30,13 +30,14 @@ spec:
     {{- if .Values.mongodb.affinity }}
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
     {{- end }}
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresql.image) "context" $) | indent 6}}
       volumes:
         - name: db-config-data
           configMap:
             name: {{ include "gams-engine.prefixname" . }}-database-config
       containers:
         - name: external-db-initialize
-          image: postgres:18.0-alpine
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag) "global" .Values.global) }}
           command: ['sh', '/docker-entrypoint-initdb.d/setup.sh']
           imagePullPolicy: Always
           volumeMounts:

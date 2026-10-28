@@ -27,10 +27,11 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
     {{- end }}
       automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.mongodb.image) "context" $) | indent 6}}
       terminationGracePeriodSeconds: 30
       containers:
         - name: engine-mongo
-          image: mongo:8.2-noble
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongodb.image.registry "repository" .Values.mongodb.image.repository "tag" .Values.mongodb.image.tag) "global" .Values.global) }}
           resources:
 {{ toYaml .Values.mongodb.resources | indent 12 }}
           ports:
