@@ -153,3 +153,40 @@ upload-helm-chart:
     - if: '$CI_COMMIT_REF_NAME == "main" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - when: never
+
+
+create-tag:
+  image: alpine:3.24
+  stage: deploy
+  variables:
+    VERSION_FILE: gams-engine/Chart.yaml
+  before_script:
+    - apk add --no-cache curl yq
+  script:
+    - VERSION=$(yq -r '.version' "$VERSION_FILE")
+    - |
+      if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+        echo "No 'version' key found in $VERSION_FILE"
+        exit 1
+      fi
+    - TAG="v${VERSION}"
+    - echo "Creating tag $TAG at $CI_COMMIT_SHA"
+    - |
+      status=$(curl -s -o /dev/null -w '%{http_code}' \
+        --header "PRIVATE-TOKEN: $GITLAB_TAG_TOKEN" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags/$TAG")
+      if [ "$status" = "200" ]; then
+        echo "Tag $TAG already exists, skipping"
+        exit 0
+      fi
+    - |
+      curl --fail-with-body -X POST \
+        --header "PRIVATE-TOKEN: $GITLAB_TAG_TOKEN" \
+        --data-urlencode "tag_name=$TAG" \
+        --data-urlencode "ref=$CI_COMMIT_SHA" \
+        --data-urlencode "message=Release $TAG" \
+        "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags"
+  needs:
+    - upload-helm-chart
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
