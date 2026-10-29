@@ -7,7 +7,6 @@ run_psql() {
         psql -v ON_ERROR_STOP=1 "$@" "${POSTGRES_CONNECTION_STRING}"
     fi
 }
-trap 'echo "Script failed! Keeping pod alive for debugging..."; tail -f /dev/null' ERR
 # Count the number of user tables in the public schema
 TABLE_COUNT=$(run_psql -tAc "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
 
