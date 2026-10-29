@@ -30,7 +30,7 @@ spec:
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.pgBouncer.image) "context" $) | indent 6}}
       containers:
         - name: engine-pgbouncer
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.pgBouncer.image.registry "repository" .Values.pgBouncer.image.repository "tag" .Values.pgBouncer.image.tag) "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.pgBouncer.image.registry "repository" .Values.pgBouncer.image.repository "tag" .Values.pgBouncer.image.tag)) }}
           imagePullPolicy: Always
           resources:
 {{ toYaml .Values.pgBouncer.resources | indent 12 }}

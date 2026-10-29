@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: engine-db
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag) "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag)) }}
           ports:
             - containerPort: 5432
           volumeMounts:

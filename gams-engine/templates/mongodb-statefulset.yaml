@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: engine-mongo
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongodb.image.registry "repository" .Values.mongodb.image.repository "tag" .Values.mongodb.image.tag) "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongodb.image.registry "repository" .Values.mongodb.image.repository "tag" .Values.mongodb.image.tag)) }}
           resources:
 {{ toYaml .Values.mongodb.resources | indent 12 }}
           ports:
