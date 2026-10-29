@@ -9,6 +9,19 @@ else
     MONGO_ARGS=("$GMS_RUNNER_MONGO_ADMIN_URI")
 fi
 
+# Skip setup if the database has already been initialized
+SCHEMA_EXISTS=$(mongosh "${MONGO_ARGS[@]}" --quiet --eval "
+  print(db.getSiblingDB('${MONGO_DATABASE}')
+          .getCollectionInfos({ name: 'schema_migrations' }).length > 0)
+" | tail -n 1 | tr -d '[:space:]')
+
+if [ "$SCHEMA_EXISTS" = "true" ]; then
+    echo "schema_migrations already exists in '${MONGO_DATABASE}'. Skipping Mongo setup."
+    exit 0
+fi
+
+echo "schema_migrations not found. Running initial Mongo setup."
+
 mongosh "${MONGO_ARGS[@]}" << EOF
 db = db.getSiblingDB("${MONGO_DATABASE}");
 
@@ -278,18 +291,16 @@ db.fs.files.createIndex(
     }
   }
 );
+db.fs.files.createIndex(
+  { "metadata.app_user_id": 1, "metadata.type": 1 },
+  { name: "disk_quota_usage_index" }
+);
 
 db.secrets.drop();
 db.secrets.createIndex({ type: 1 }, { unique: true });
 
-db.job_labels.drop();
+db.job_labels.drop()
 db.job_labels.createIndex({ submission_id: 1 });
-
-db.schema_migrations.drop();
-db.schema_migrations.insertOne({
-  dirty: false,
-  version: 12,
-});
 
 db.createUser({
   user: "mongo_broker",
@@ -333,6 +344,12 @@ db.createUser({
       db: "${MONGO_DATABASE}",
     },
   ],
+});
+
+db.schema_migrations.drop();
+db.schema_migrations.insertOne({
+  dirty: false,
+  version: 13,
 });
 
 
