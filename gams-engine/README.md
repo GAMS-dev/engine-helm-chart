@@ -206,13 +206,10 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.database | string | `"gams_worker"` | Name of the MongoDB database. |
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
-| mongodb.externalDatabase.host | string | `""` | Hostname or service name of your external Mongo database |
 | mongodb.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| mongodb.externalDatabase.options | string | `""` | Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin) |
-| mongodb.externalDatabase.port | string | `"27017"` | Port of your external Mongo database (used ONLY for NetworkPolicy egress rules). For "mongodb" protocol, ensure this matches the port embedded in 'host' above. |
-| mongodb.externalDatabase.protocol | string | `"mongodb+srv"` | Connection protocol for microservices ("mongodb" or "mongodb+srv") |
+| mongodb.externalDatabase.port | string | `"27017"` | Port of your external Mongo database (used ONLY for NetworkPolicy egress rules). |
 | mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
 | mongodb.image.registry | string | `"docker.io"` | Image registry |
 | mongodb.image.repository | string | `"library/mongo"` | Image repository |

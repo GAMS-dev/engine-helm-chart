@@ -756,30 +756,7 @@ mongodb:
       # -- Run the one-time initialization job on initial installs
       run: true
 
-    # The connection protocol to use for the microservices.
-    # Use "mongodb" for standard connections or "mongodb+srv" for DNS seedlist connections.
-
-    # -- Connection protocol for microservices ("mongodb" or "mongodb+srv")
-    protocol: "mongodb+srv"
-
-    # Hostname of your external Mongo database.
-    # For "mongodb" protocol, list all nodes WITH ports (e.g. "node1:27017,node2:27017").
-    # For "mongodb+srv" protocol, provide the hostname only (port is resolved via DNS).
-    # Example: "my-test-db-svc.default.svc.cluster.local"
-
-    # -- Hostname or service name of your external Mongo database
-    host: ""
-
-    # Connection string arguments for application components (broker, worker, etc.).
-    # If using MongoDB HA, you MUST include 'replicaSet' in the options.
-    # Do not include the leading '?' character.
-    # Example: "replicaSet=my-test-db&authSource=admin"
-
-    # -- Connection string options appended to service users (e.g., replicaSet=my-test-db&authSource=admin)
-    options: ""
-
     # -- Port of your external Mongo database (used ONLY for NetworkPolicy egress rules).
-    # For "mongodb" protocol, ensure this matches the port embedded in 'host' above.
     port: "27017"
 
     networkPolicy:
