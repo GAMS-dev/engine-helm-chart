@@ -228,13 +228,11 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | pgBouncer.resources.requests | object | `{"cpu":"100m","memory":"200Mi"}` | Resource requests |
 | postgresql.affinity | object | `{}` | Affinity settings for pod assignment |
 | postgresql.database | string | `"gams_engine"` | The default database name |
-| postgresql.database_user | string | `"gams_engine"` | The default database user |
+| postgresql.databaseUser | string | `"gams_engine"` | The default database user |
 | postgresql.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL |
-| postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used by the Engine component deployments to connect, and in NetworkPolicy egress rules). |
 | postgresql.image.pullSecrets | list | `[]` | Image pull secrets |
 | postgresql.image.registry | string | `"docker.io"` | Image registry |
 | postgresql.image.repository | string | `"library/postgres"` | Image repository |

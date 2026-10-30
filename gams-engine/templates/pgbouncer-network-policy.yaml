@@ -63,7 +63,7 @@ spec:
 {{ toYaml .Values.postgresql.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
       ports:
         - protocol: TCP
-          port: {{ .Values.postgresql.externalDatabase.port }}
+          port: {{ include "gams-engine.postgres.port" $ }}
 {{- else }}
     - to:
       - podSelector:

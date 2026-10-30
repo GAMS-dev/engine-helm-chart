@@ -45,9 +45,9 @@ spec:
 {{- end }}
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: "{{ .Values.postgresql.externalDatabase.host }}"
+              value: {{ include "gams-engine.postgres.host" $ | quote }}
             - name: GMS_RUNNER_DATABASE_PORT
-              value: "{{ .Values.postgresql.externalDatabase.port }}"
+              value: {{ include "gams-engine.postgres.port" $ | quote }}
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value:  {{ include "gams-engine.prefixname" . }}-database

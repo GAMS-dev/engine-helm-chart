@@ -44,9 +44,9 @@ spec:
                   key: GMS_RUNNER_DATABASE_WORKER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRESQL_HOST
-              value: "{{ .Values.postgresql.externalDatabase.host }}"
+              value: {{ include "gams-engine.postgres.host" $ | quote }}
             - name: POSTGRESQL_PORT
-              value: "{{ .Values.postgresql.externalDatabase.port }}"
+              value: {{ include "gams-engine.postgres.port" $ | quote }}
 {{- else }}
             - name: POSTGRESQL_HOST
               value: {{ include "gams-engine.prefixname" . }}-database
