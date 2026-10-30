@@ -749,11 +749,10 @@ mongodb:
     # -- Admin connection string for the database initialization and migration jobs
     connectionString: ""
 
-
-    # -- Port of your external Mongo database (used ONLY for NetworkPolicy egress rules).
-    port: "27017"
-
     networkPolicy:
+      # -- Port for the NetworkPolicy egress rule to the external MongoDB (for "mongodb" protocol, keep it in sync with the port embedded in the connection string).
+      port: "27017"
+
       # -- Pod Selector labels.
       podSelector:
         matchLabels: {}
@@ -872,9 +871,8 @@ postgresql:
     # -- Hostname of your external postgres database
     host: ""
 
-    # -- Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars).
+    # -- Port of your external postgres database (used by the Engine component deployments to connect, and in NetworkPolicy egress rules).
     port: "5432"
-
 
     networkPolicy:
       # -- Pod Selector labels.

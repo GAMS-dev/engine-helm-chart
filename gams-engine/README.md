@@ -208,7 +208,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| mongodb.externalDatabase.port | string | `"27017"` | Port of your external Mongo database (used ONLY for NetworkPolicy egress rules). |
+| mongodb.externalDatabase.networkPolicy.port | string | `"27017"` | Port for the NetworkPolicy egress rule to the external MongoDB (for "mongodb" protocol, keep it in sync with the port embedded in the connection string). |
 | mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
 | mongodb.image.registry | string | `"docker.io"` | Image registry |
 | mongodb.image.repository | string | `"library/mongo"` | Image repository |
@@ -234,7 +234,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars). |
+| postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used by the Engine component deployments to connect, and in NetworkPolicy egress rules). |
 | postgresql.image.pullSecrets | list | `[]` | Image pull secrets |
 | postgresql.image.registry | string | `"docker.io"` | Image registry |
 | postgresql.image.repository | string | `"library/postgres"` | Image repository |
