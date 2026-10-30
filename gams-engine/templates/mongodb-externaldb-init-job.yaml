@@ -1,4 +1,4 @@
-{{- if and .Values.mongodb.externalDatabase.enabled .Values.mongodb.externalDatabase.initialize.run }}
+{{- if .Values.mongodb.externalDatabase.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:

@@ -749,12 +749,6 @@ mongodb:
     # -- Admin connection string for the database initialization and migration jobs
     connectionString: ""
 
-    initialize:
-      # Set to 'true' to run this one-time initialization job.
-      # This is required for first-time setup when an external MongoDB is used.
-
-      # -- Run the one-time initialization job on initial installs
-      run: true
 
     # -- Port of your external Mongo database (used ONLY for NetworkPolicy egress rules).
     port: "27017"
@@ -881,12 +875,6 @@ postgresql:
     # -- Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars).
     port: "5432"
 
-    initialize:
-      # Set to 'true' to run this one-time initialization job.
-      # This is required for first-time setup when an external PostgreSQL db is used.
-
-      # -- Run the one-time initialization job on initial installs.
-      run: true
 
     networkPolicy:
       # -- Pod Selector labels.

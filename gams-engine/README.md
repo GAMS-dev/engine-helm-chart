@@ -206,7 +206,6 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.database | string | `"gams_worker"` | Name of the MongoDB database. |
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
-| mongodb.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
 | mongodb.externalDatabase.port | string | `"27017"` | Port of your external Mongo database (used ONLY for NetworkPolicy egress rules). |
@@ -233,7 +232,6 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresql.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL |
 | postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database |
-| postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job on initial installs. |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
 | postgresql.externalDatabase.port | string | `"5432"` | Port of your external postgres database (used for NetworkPolicy egress rules and deployment env vars). |
