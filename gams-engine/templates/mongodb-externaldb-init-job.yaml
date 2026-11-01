@@ -22,7 +22,7 @@ spec:
             - name: GMS_RUNNER_MONGO_ADMIN_URI
               value: {{ .Values.mongodb.externalDatabase.connectionString | quote }}
             - name: MONGO_DATABASE
-              value: "{{ .Values.mongodb.database }}"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
 
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:

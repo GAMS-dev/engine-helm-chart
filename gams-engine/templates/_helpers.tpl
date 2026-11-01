@@ -102,3 +102,18 @@ Usage:
 {{- $p := regexFind ":[0-9]+$" $firstHost | trimPrefix ":" -}}
 {{- if $p }}{{- $p -}}{{- else }}5432{{- end -}}
 {{- end -}}
+
+{{/*
+Derive the MongoDB database name from MongoDB connection string when mongodb.externalDatabase.enabled.
+
+Usage:
+  {{ include "gams-engine.mongo.databaseName" $ }}
+*/}}
+{{- define "gams-engine.mongo.databaseName" -}}
+{{- if .Values.mongodb.externalDatabase.enabled -}}
+  {{- $cs := required "A valid 'mongodb.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.mongodb.externalDatabase.connectionString -}}
+  {{- required "The MongoDB connection string must include a database path (mongodb://user:pass@host/db)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*/" $cs "")) -}}  # pragma: allowlist secret
+{{- else -}}
+  {{- .Values.mongodb.database -}}
+{{- end -}}
+{{- end -}}

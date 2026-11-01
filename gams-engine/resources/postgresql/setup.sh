@@ -1,18 +1,19 @@
 #!/bin/sh
 set -euo pipefail
 run_psql() {
-    if [ -z "${POSTGRES_CONNECTION_STRING}" ]; then
+    if [ -z "${POSTGRES_CONNECTION_STRING:-}" ]; then
         psql -v ON_ERROR_STOP=1 "$@" --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"
     else
         psql -v ON_ERROR_STOP=1 "$@" "${POSTGRES_CONNECTION_STRING}"
     fi
 }
-# Count the number of user tables in the public schema
-TABLE_COUNT=$(run_psql -tAc "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
-
-if [ "$TABLE_COUNT" != "0" ]; then
-    echo "Database already initialized ($TABLE_COUNT tables found). Skipping Postgres setup."
-    exit 0
+# Auto-detection only matters in external DB mode
+if [ -n "${POSTGRES_CONNECTION_STRING:-}" ]; then
+    TABLE_COUNT=$(run_psql -tAc "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+    if [ "$TABLE_COUNT" != "0" ]; then
+        echo "Database already initialized ($TABLE_COUNT tables found). Skipping Postgres setup."
+        return 0 2>/dev/null || exit 0
+    fi
 fi
 
 echo "No tables found in public schema. Running initial Postgres setup."

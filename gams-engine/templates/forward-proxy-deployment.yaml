@@ -36,7 +36,7 @@ spec:
 {{ toYaml .Values.forwardProxy.resources | indent 12 }}
           env:
             - name: GMS_RUNNER_MONGO_INITDB
-              value: "{{ .Values.mongodb.database }}"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
   {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: GMS_RUNNER_MONGO_URI
               valueFrom:

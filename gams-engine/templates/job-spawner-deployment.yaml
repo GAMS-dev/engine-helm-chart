@@ -68,9 +68,9 @@ spec:
               value:  {{ include "gams-engine.prefixname" . }}-secret
 
             - name: GMS_RUNNER_MONGO_INITDB
-              value: "{{ .Values.mongodb.database }}"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
             - name: GMS_RUNNER_SPWN_WORKER_MONGO_NAME
-              value: "{{ .Values.mongodb.database }}"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
 {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: GMS_RUNNER_MONGO_URI
               valueFrom:

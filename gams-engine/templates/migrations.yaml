@@ -52,7 +52,7 @@ spec:
               value: "27017"
           {{- end }}
             - name: GMS_RUNNER_MONGO_INITDB_MAIN
-              value: "{{ .Values.mongodb.database }}"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
             - name: GMS_RUNNER_MONGO_BROKER_PWD
               valueFrom:
                 secretKeyRef:

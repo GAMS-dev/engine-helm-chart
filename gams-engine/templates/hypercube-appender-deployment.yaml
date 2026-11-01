@@ -47,7 +47,7 @@ spec:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_APPENDER_PWD
             - name: GMS_RUNNER_MONGO_INITDB
-              value: "{{ .Values.mongodb.database }}"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
 {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: GMS_RUNNER_MONGO_URI
               valueFrom:
