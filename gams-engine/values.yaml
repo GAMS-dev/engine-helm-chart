@@ -785,7 +785,7 @@ mongodb:
     #
     # !! IMPORTANT: The user in this string (e.g., 'adminUser') MUST have
     # privileges to create users, custom roles, collections, and indexes.
-    # Example: "mongodb+srv://adminUser:AdminSecret@my-test-db-svc.default.svc.cluster.local:27017/admin?replicaSet=my-test-db"
+    # Example: "mongodb://adminUser:...@host:27017/gams_worker?authSource=admin"
 
     # -- Admin connection string for the database initialization and migration jobs
     connectionString: ""

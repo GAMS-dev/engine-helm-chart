@@ -127,7 +127,7 @@ Usage:
 {{- define "gams-engine.postgres.databaseName" -}}
 {{- if .Values.postgresql.externalDatabase.enabled -}}
   {{- $cs := required "A valid 'postgresql.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.postgresql.externalDatabase.connectionString -}}
-  {{- required "The PostgreSQL connection string must include a database path (the segment after the host, e.g. /mydb)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*/" $cs "")) -}}
+  {{- required "The PostgreSQL connection string must include a database path (the segment after the host, e.g. /mydb)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*" $cs "")) -}}
 {{- else -}}
   {{- .Values.postgresql.database -}}
 {{- end -}}
