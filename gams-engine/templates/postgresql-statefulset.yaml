@@ -45,7 +45,7 @@ spec:
 {{ toYaml .Values.postgresql.resources | indent 12 }}
           env:
             - name: POSTGRES_DB
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
             - name: POSTGRES_USER
               value: "{{ .Values.postgresql.databaseUser }}"
             - name: POSTGRES_PASSWORD
@@ -101,7 +101,7 @@ spec:
                 - "-U"
                 - "{{ .Values.postgresql.databaseUser }}"
                 - "-d"
-                - "{{ .Values.postgresql.database }}"
+                - {{ include "gams-engine.postgres.databaseName" $ | quote }}
                 - "-h"
                 - "127.0.0.1"
                 - "-p"
@@ -117,7 +117,7 @@ spec:
                 - "-U"
                 - "{{ .Values.postgresql.databaseUser }}"
                 - "-d"
-                - "{{ .Values.postgresql.database }}"
+                - {{ include "gams-engine.postgres.databaseName" $ | quote }}
                 - "-h"
                 - "127.0.0.1"
                 - "-p"

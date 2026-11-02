@@ -89,7 +89,7 @@ spec:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_ADMIN_URI
             - name: POSTGRES_DB
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
       restartPolicy: OnFailure
   backoffLimit: 8
 {{- end }}

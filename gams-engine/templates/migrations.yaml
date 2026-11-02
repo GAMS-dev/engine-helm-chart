@@ -136,9 +136,9 @@ spec:
               value: "5432"
 {{- end }}
             - name: GMS_RUNNER_DATABASE_INITDB_MAIN
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
             - name: POSTGRES_NAME
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
             - name: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
               valueFrom:
                 secretKeyRef:

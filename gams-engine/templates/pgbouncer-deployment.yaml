@@ -54,9 +54,9 @@ spec:
               value: "5432"
 {{- end }}
             - name: PGBOUNCER_DATABASE
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
             - name: POSTGRESQL_DATABASE
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
             - name: PGBOUNCER_POOL_MODE
               value: transaction
             - name: PGBOUNCER_MAX_CLIENT_CONN
