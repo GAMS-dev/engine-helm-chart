@@ -104,7 +104,7 @@ Usage:
 {{- end -}}
 
 {{/*
-Derive the MongoDB database name from MongoDB connection string when mongodb.externalDatabase.enabled.
+Derive the MongoDB database name from MongoDB connection string when mongodb.externalDatabase.enabled, otherwise mongodb.database is used.
 
 Usage:
   {{ include "gams-engine.mongo.databaseName" $ }}
@@ -112,8 +112,23 @@ Usage:
 {{- define "gams-engine.mongo.databaseName" -}}
 {{- if .Values.mongodb.externalDatabase.enabled -}}
   {{- $cs := required "A valid 'mongodb.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.mongodb.externalDatabase.connectionString -}}
-  {{- required "The MongoDB connection string must include a database path (mongodb://user:pass@host/db)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*/" $cs "")) -}}  # pragma: allowlist secret
+  {{- required "The MongoDB connection string must include a database path (the segment after the host, e.g. /mydb)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*" $cs "")) -}}
 {{- else -}}
   {{- .Values.mongodb.database -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Derive the PostgreSQL database name from PostgreSQL connection string when postgresql.externalDatabase.enabled, otherwise postgresql.database is used.
+
+Usage:
+  {{ include "gams-engine.postgres.databaseName" $ }}
+*/}}
+{{- define "gams-engine.postgres.databaseName" -}}
+{{- if .Values.postgresql.externalDatabase.enabled -}}
+  {{- $cs := required "A valid 'postgresql.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.postgresql.externalDatabase.connectionString -}}
+  {{- required "The PostgreSQL connection string must include a database path (the segment after the host, e.g. /mydb)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*/" $cs "")) -}}
+{{- else -}}
+  {{- .Values.postgresql.database -}}
 {{- end -}}
 {{- end -}}
