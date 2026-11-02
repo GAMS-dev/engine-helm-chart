@@ -203,7 +203,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |
 | mongodb.affinity | object | `{}` | Affinity settings for pod assignment |
-| mongodb.database | string | `"gams_worker"` | Name of the MongoDB database. |
+| mongodb.database | string | `"gams_worker"` | The default MongoDB database name. Only used if the chart-managed internal MongoDB database is used (if mongodb.externalDatabase.enabled: false). |
 | mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
@@ -227,8 +227,8 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | pgBouncer.resources.limits | object | `{"memory":"300Mi"}` | Resource limits |
 | pgBouncer.resources.requests | object | `{"cpu":"100m","memory":"200Mi"}` | Resource requests |
 | postgresql.affinity | object | `{}` | Affinity settings for pod assignment |
-| postgresql.database | string | `"gams_engine"` | The default database name |
-| postgresql.databaseUser | string | `"gams_engine"` | The default database user |
+| postgresql.database | string | `"gams_engine"` | The default database name. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false). |
+| postgresql.databaseUser | string | `"gams_engine"` | The default database user. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false). |
 | postgresql.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |

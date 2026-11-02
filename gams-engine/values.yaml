@@ -731,9 +731,8 @@ pgBouncer:
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
-  # -- Name of the MongoDB database.
+  # -- The default MongoDB database name. Only used if the chart-managed internal MongoDB database is used (if mongodb.externalDatabase.enabled: false).
   database: "gams_worker"
-    # For external MongoDB, this must match the database in the connection strings.
 
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
@@ -776,6 +775,7 @@ mongodb:
     limits:
       memory: 6Gi
 
+  # if externalDatabase.enabled: false > the mongo db pod is created by this chart
   externalDatabase:
     # -- Enable to use an external MongoDB instance instead of the chart's internal database
     enabled: false
@@ -815,11 +815,13 @@ mongoMigrate:
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
-  # -- The default database user
+  # -- The default database user. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false).
   databaseUser: "gams_engine"
+  # with an external database, the user comes from the connection string.
 
-  # -- The default database name
+  # -- The default database name. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false).
   database: "gams_engine"
+  # with an external database, the name is derived from the connection string's path.
 
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
