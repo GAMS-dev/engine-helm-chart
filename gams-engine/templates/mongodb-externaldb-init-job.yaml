@@ -2,8 +2,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gams-engine.prefixname" . }}-mongo-external-init
+  name: {{ include "gams-engine.prefixname" . }}-mongo-init
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+    app: {{ include "gams-engine.prefixname" . }}-mongo-init
   annotations:
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "1"
@@ -11,16 +14,22 @@ metadata:
 spec:
   template:
     metadata:
-      name: {{ include "gams-engine.prefixname" . }}-mongo-external-init
+      name: {{ include "gams-engine.prefixname" . }}-mongo-init
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-mongo-init
     spec:
       restartPolicy: OnFailure
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.mongodb.image) "context" $) | indent 6}}
       containers:
         - name: mongo-init-runner
-          image: mongo:8.2-noble
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.mongodb.image.registry "repository" .Values.mongodb.image.repository "tag" .Values.mongodb.image.tag)) }}
           command: ["/bin/bash", "/scripts/setup.sh"]
           env:
             - name: GMS_RUNNER_MONGO_ADMIN_URI
-              value: {{ .Values.mongodb.externalDatabase.connectionString | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_ADMIN_URI
             - name: MONGO_DATABASE
               value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
 
