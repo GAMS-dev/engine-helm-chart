@@ -35,10 +35,15 @@ spec:
           resources:
 {{ toYaml .Values.forwardProxy.resources | indent 12 }}
           env:
-            - name: GMS_RUNNER_MONGO_HOST
-              value: {{ include "gams-engine.prefixname" . }}-mongo
             - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
+  {{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: GMS_RUNNER_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_PROXY_URI
+{{- else }}
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_USER
               value: "forward_proxy"
             - name: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
@@ -46,6 +51,9 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_FORWARD_PROXY_PWD
+            - name: GMS_RUNNER_MONGO_HOST
+              value: {{ include "gams-engine.prefixname" . }}-mongo
+{{- end }}
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_FORWARD_PROXY_PWD

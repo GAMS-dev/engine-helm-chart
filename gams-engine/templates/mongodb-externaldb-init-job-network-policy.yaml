@@ -1,0 +1,38 @@
+{{ if and .Values.global.useNetworkPolicies .Values.mongodb.externalDatabase.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-mongo-init-np
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "gams-engine.prefixname" . }}-mongo-init
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+    - to:
+      - podSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.podSelector | indent 10 }}
+        namespaceSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.mongodb.externalDatabase.networkPolicy.port }}
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+{{ end }}

@@ -37,19 +37,28 @@ spec:
           env:
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
-            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
-              value: "k8s_job_watcher"
             - name: GMS_RUNNER_WTCH_DISABLE_X509_STRICT_VALIDATION
               value: {{ default "false" .Values.config.disable_x509_strict_validation_k8s_client | quote }}
+
+            - name: GMS_RUNNER_MONGO_INITDB
+              value: {{ include "gams-engine.mongo.databaseName" $ | quote }}
+{{- if .Values.mongodb.externalDatabase.enabled }}
+            - name: GMS_RUNNER_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_MONGO_WATCHER_URI
+{{- else }}
+            - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_USER
+              value: "k8s_job_watcher"
             - name: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_MONGO_K8S_JOB_WATCHER_PWD
-            - name: GMS_RUNNER_MONGO_INITDB
-              value: "gams_worker"
             - name: GMS_RUNNER_MONGO_HOST
               value: {{ include "gams-engine.prefixname" . }}-mongo
+{{- end }}
             - name: GMS_RUNNER_RABBIT_HOST
               value: {{ include "gams-engine.prefixname" . }}-queue
             - name: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_USER
@@ -61,9 +70,9 @@ spec:
                   key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: GMS_RUNNER_DATABASE_SERVER
-              value: "{{ .Values.postgresql.externalDatabase.host }}"
+              value: {{ include "gams-engine.postgres.host" $ | quote }}
             - name: GMS_RUNNER_DATABASE_PORT
-              value: "{{ .Values.postgresql.externalDatabase.port }}"
+              value: {{ include "gams-engine.postgres.port" $ | quote }}
 {{- else }}
             - name: GMS_RUNNER_DATABASE_SERVER
               value: {{ include "gams-engine.prefixname" . }}-database
@@ -71,7 +80,7 @@ spec:
               value: "5432"
 {{- end }}
             - name: GMS_RUNNER_DATABASE_NAME
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
             - name: GMS_RUNNER_DATABASE_DIALECT
               value: "postgresql"
             - name: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_DRIVER

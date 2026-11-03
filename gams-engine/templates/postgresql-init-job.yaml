@@ -1,5 +1,4 @@
 {{- if .Values.postgresql.externalDatabase.enabled }}
-{{- if .Values.postgresql.externalDatabase.initialize.run }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -27,8 +26,8 @@ spec:
     {{- if .Values.global.tolerationsSts }}
       tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
     {{- end }}
-    {{- if .Values.mongodb.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.mongodb.affinity "context" $) | nindent 8 }}
+    {{- if .Values.postgresql.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
     {{- end }}
 {{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresql.image) "context" $) | indent 6}}
       volumes:
@@ -37,7 +36,7 @@ spec:
             name: {{ include "gams-engine.prefixname" . }}-database-config
       containers:
         - name: external-db-initialize
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag) "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag)) }}
           command: ['sh', '/docker-entrypoint-initdb.d/setup.sh']
           imagePullPolicy: Always
           volumeMounts:
@@ -84,11 +83,13 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
-            - name: CONNECTION_STRING
-              value: {{ required "value 'postgresql.externalDatabase.initialize.connectionString' is required when 'postgresql.externalDatabase.initialize.run' is true" .Values.postgresql.externalDatabase.initialize.connectionString | quote }}
+            - name: POSTGRES_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_ADMIN_URI
             - name: POSTGRES_DB
-              value: "{{ .Values.postgresql.database }}"
+              value: {{ include "gams-engine.postgres.databaseName" $ | quote }}
       restartPolicy: OnFailure
   backoffLimit: 8
-{{- end }}
 {{- end }}

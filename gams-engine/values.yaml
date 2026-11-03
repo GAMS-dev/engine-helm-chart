@@ -731,6 +731,8 @@ pgBouncer:
 # MongoDB is used to store structured and unstructured data.
 # MongoDB configurations
 mongodb:
+  # -- The default MongoDB database name. Only used if the chart-managed internal MongoDB database is used (if mongodb.externalDatabase.enabled: false).
+  database: "gams_worker"
 
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
@@ -773,6 +775,32 @@ mongodb:
     limits:
       memory: 6Gi
 
+  # if externalDatabase.enabled: false > the mongo db pod is created by this chart
+  externalDatabase:
+    # -- Enable to use an external MongoDB instance instead of the chart's internal database
+    enabled: false
+
+    # Provide the *admin connection string* for the Mongo database.
+    # REQUIRED when external MongoDB is enabled.
+    #
+    # !! IMPORTANT: The user in this string (e.g., 'adminUser') MUST have
+    # privileges to create users, custom roles, collections, and indexes.
+    # Example: "mongodb://adminUser:...@host:27017/gams_worker?authSource=admin"
+
+    # -- Admin connection string for the database initialization and migration jobs
+    connectionString: ""
+
+    networkPolicy:
+      # -- Port for the NetworkPolicy egress rule to the external MongoDB (for "mongodb" protocol, keep it in sync with the port embedded in the connection string).
+      port: "27017"
+
+      # -- Pod Selector labels.
+      podSelector:
+        matchLabels: {}
+      # -- Namespace Selector labels.
+      namespaceSelector:
+        matchLabels: {}
+
 # For MongoDB migrations during upgrades that require changes in the MongoDB
 mongoMigrate:
   image:
@@ -787,6 +815,14 @@ mongoMigrate:
 # PostgreSQL is used to store structured data.
 # PostgreSQL pod resource definitions
 postgresql:
+  # -- The default database user. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false).
+  databaseUser: "gams_engine"
+  # with an external database, the user comes from the connection string.
+
+  # -- The default database name. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false).
+  database: "gams_engine"
+  # with an external database, the name is derived from the connection string's path.
+
   persistence:
     # Storage Class to use. Set to "" to use the cluster default.
 
@@ -803,12 +839,6 @@ postgresql:
     # -- Access mode for the volume
     accessMode: ReadWriteOnce
 
-  # -- The default database user
-  database_user: "gams_engine"
-
-  # -- The default database name
-  database: "gams_engine"
-
   image:
     # -- Image registry
     registry: docker.io
@@ -824,34 +854,19 @@ postgresql:
     # -- Enable to use an external PostgreSQL
     enabled: false
 
-    # if externalDatabase enabled connectionString is needed
-    # Hostname of your postgres database:
-    # Example: "postgresql-svc-name.database-namespace.svc.cluster.local"
+    # Provide the *admin connection string* for the database.
+    # REQUIRED when externalDatabase is enabled.
+    #
+    #
+    # !! IMPORTANT: The POSTGRESQL user MUST have privileges to create schema objects
+    #    (tables, types, sequences, views), create roles (broker, worker,
+    #    cleaner, etc.), and grant permissions on those objects.
+    #
+    # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
 
-    # -- Hostname of your external postgres database
-    host: ""
-
-    # -- Port of your external postgres database
-    port: ""
-
-    initialize:
-      # Set to 'true' to run this one-time initialization job
-      # This is required for first-time setup when an external PostgreSQL db is used
-
-      # -- Run the one-time initialization job
-      run: true
-
-      # Provide the *admin connection string* for the database.
-      # This is REQUIRED if 'initialize.run' is set to 'true'.
-      #
-      # !! IMPORTANT: The user in this string (e.g., 'postgres')
-      #    MUST have permissions (create, alter, grant usage) within the database.
-      #
-      # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
-
-      # -- Admin connection string.
-      connectionString: ""
-      # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
+    # -- Admin connection string for the database initialization and migration jobs
+    connectionString: ""
+    # Example: "postgresql://gams_engine:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/gams_engine"
 
     networkPolicy:
       # -- Pod Selector labels.

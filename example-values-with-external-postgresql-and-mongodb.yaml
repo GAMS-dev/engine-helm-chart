@@ -1,0 +1,55 @@
+# Example values: using an external PostgreSQL database
+postgresql:
+  externalDatabase:
+    enabled: true
+
+    # The admin connection string is used by the initialization job (post-install) and the migration job (pre-upgrade)
+    # The server host and port are derived from it for the components and NetworkPolicies
+    # The database name is derived from its path (the segment after the host)
+    #
+    # !! IMPORTANT: The user in the connection string (e.g., 'engine-postgres') MUST:
+    #   - own the target database
+    #   - have privileges to create schema objects (tables, types, sequences, views),
+    #     create roles (broker, worker, cleaner, etc.), and grant permissions on those objects
+    connectionString: "postgresql://engine-postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/test-db"
+
+    networkPolicy:
+      # If network policies are enabled, to allow engine components to connect
+      # with your external PostgreSQL db, network configuration is needed.
+      # If your PostgreSQL also has network policies, you should allow ingress from engine components.
+      podSelector:
+        matchLabels:
+          cnpg.io/cluster: postgresql-ha-cnpg
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: database
+
+# Example values: using an external MongoDB database
+mongodb:
+  externalDatabase:
+    enabled: true
+
+    # The admin connection string is used by the initialization job (post-install) and the migration job (pre-upgrade)
+    # The server address (protocol + host) and server-level options (replicaSet, tls, ...)
+    # are derived from it for the components' connection URIs
+    #
+    # !! IMPORTANT:
+    #   - The user in this connection string (e.g., 'mongo-admin') MUST have privileges to create users,
+    #     custom roles, collections, and indexes in the database in the path
+    # For replica sets without SRV records, use the multi-host form instead:
+    #   "mongodb://user:pass@host1:27017,host2:27017/my-engine-db?replicaSet=my-replicaset"
+    connectionString: "mongodb+srv://mongo-admin:YourSecurePa$$word@my-mongo-host.example.com/my-engine-db?authSource=admin&replicaSet=my-replicaset"
+
+    # Port is used only for the NetworkPolicy egress rules (mongodb+srv resolves the port via DNS;
+    # for "mongodb" protocol, keep it in sync with the port in the connection string)
+
+    networkPolicy:
+      # If network policies are enabled, to allow engine components to connect
+      # with your external MongoDB, network configuration is needed.
+      # If your MongoDB also has network policies, you should allow ingress from engine components.
+      podSelector:
+        matchLabels:
+          app: my-mongo-db
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: database

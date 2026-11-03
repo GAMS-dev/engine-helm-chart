@@ -45,6 +45,16 @@ spec:
       ports:
         - protocol: TCP
           port: 6432
+{{- if .Values.mongodb.externalDatabase.enabled }}
+    - to:
+      - podSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.podSelector | indent 10 }}
+        namespaceSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.mongodb.externalDatabase.networkPolicy.port }}
+{{- else }}
     - to:
       - podSelector:
           matchLabels:
@@ -52,8 +62,11 @@ spec:
       ports:
         - protocol: TCP
           port: 27017
+{{- end }}
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
         podSelector:
           matchLabels:
             k8s-app: kube-dns

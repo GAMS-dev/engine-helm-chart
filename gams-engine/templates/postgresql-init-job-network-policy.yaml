@@ -1,4 +1,4 @@
-{{ if .Values.global.useNetworkPolicies }}
+{{ if and .Values.global.useNetworkPolicies .Values.postgresql.externalDatabase.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -21,7 +21,7 @@ spec:
 {{ toYaml .Values.postgresql.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
       ports:
         - protocol: TCP
-          port: {{ .Values.postgresql.externalDatabase.port }}
+          port: {{ include "gams-engine.postgres.port" $ }}
 {{- else }}
     - to:
       - podSelector:
@@ -32,7 +32,9 @@ spec:
           port: 5432
 {{- end }}
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
         podSelector:
           matchLabels:
             k8s-app: kube-dns

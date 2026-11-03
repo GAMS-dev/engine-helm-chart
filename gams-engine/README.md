@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.19.0
+0.20.0
 
 ## `chart.type`
 
@@ -203,6 +203,12 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |
 | mongodb.affinity | object | `{}` | Affinity settings for pod assignment |
+| mongodb.database | string | `"gams_worker"` | The default MongoDB database name. Only used if the chart-managed internal MongoDB database is used (if mongodb.externalDatabase.enabled: false). |
+| mongodb.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
+| mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
+| mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
+| mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
+| mongodb.externalDatabase.networkPolicy.port | string | `"27017"` | Port for the NetworkPolicy egress rule to the external MongoDB (for "mongodb" protocol, keep it in sync with the port embedded in the connection string). |
 | mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
 | mongodb.image.registry | string | `"docker.io"` | Image registry |
 | mongodb.image.repository | string | `"library/mongo"` | Image repository |
@@ -221,15 +227,12 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | pgBouncer.resources.limits | object | `{"memory":"300Mi"}` | Resource limits |
 | pgBouncer.resources.requests | object | `{"cpu":"100m","memory":"200Mi"}` | Resource requests |
 | postgresql.affinity | object | `{}` | Affinity settings for pod assignment |
-| postgresql.database | string | `"gams_engine"` | The default database name |
-| postgresql.database_user | string | `"gams_engine"` | The default database user |
+| postgresql.database | string | `"gams_engine"` | The default database name. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false). |
+| postgresql.databaseUser | string | `"gams_engine"` | The default database user. Only used if the chart-managed internal PostgreSQL database is used (if postgresql.externalDatabase.enabled: false). |
+| postgresql.externalDatabase.connectionString | string | `""` | Admin connection string for the database initialization and migration jobs |
 | postgresql.externalDatabase.enabled | bool | `false` | Enable to use an external PostgreSQL |
-| postgresql.externalDatabase.host | string | `""` | Hostname of your external postgres database |
-| postgresql.externalDatabase.initialize.connectionString | string | `""` | Admin connection string. |
-| postgresql.externalDatabase.initialize.run | bool | `true` | Run the one-time initialization job |
 | postgresql.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | postgresql.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| postgresql.externalDatabase.port | string | `""` | Port of your external postgres database |
 | postgresql.image.pullSecrets | list | `[]` | Image pull secrets |
 | postgresql.image.registry | string | `"docker.io"` | Image registry |
 | postgresql.image.repository | string | `"library/postgres"` | Image repository |
