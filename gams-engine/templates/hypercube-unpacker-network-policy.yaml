@@ -23,7 +23,9 @@ spec:
         - protocol: TCP
           port: 5672
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Values.global.dnsNamespace | quote }}
         podSelector:
           matchLabels:
             k8s-app: kube-dns

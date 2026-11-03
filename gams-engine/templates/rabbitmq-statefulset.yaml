@@ -31,7 +31,7 @@ spec:
       terminationGracePeriodSeconds: 30
       initContainers:
         - name: init-queue-definition-data
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmq.initImage.registry "repository" .Values.rabbitmq.initImage.repository "tag" .Values.rabbitmq.initImage.tag) "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmq.initImage.registry "repository" .Values.rabbitmq.initImage.repository "tag" .Values.rabbitmq.initImage.tag)) }}
           command: ["python3", "/tmp/generate_hashes.py"]
           volumeMounts:
             - name: queue-definition-data
@@ -101,7 +101,7 @@ spec:
                   key: GMS_RUNNER_RABBIT_K8S_JOB_WATCHER_PWD
       containers:
         - name: gamswebqueue
-          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmq.image.registry "repository" .Values.rabbitmq.image.repository "tag" .Values.rabbitmq.image.tag) "global" .Values.global) }}
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.rabbitmq.image.registry "repository" .Values.rabbitmq.image.repository "tag" .Values.rabbitmq.image.tag)) }}
           resources:
 {{ toYaml .Values.rabbitmq.resources | indent 12 }}
           ports:

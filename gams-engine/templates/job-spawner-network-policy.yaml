@@ -34,7 +34,7 @@ spec:
 {{ toYaml .Values.postgresql.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
       ports:
         - protocol: TCP
-          port: {{ .Values.postgresql.externalDatabase.port }}
+          port: {{ include "gams-engine.postgres.port" $ }}
 {{- else }}
     - to:
       - podSelector:
@@ -44,6 +44,16 @@ spec:
         - protocol: TCP
           port: 5432
 {{- end }}
+{{- if .Values.mongodb.externalDatabase.enabled }}
+    - to:
+      - podSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.podSelector | indent 10 }}
+        namespaceSelector:
+{{ toYaml .Values.mongodb.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
+      ports:
+        - protocol: TCP
+          port: {{ include "gams-engine.mongo.port" $ }}
+{{- else }}
     - to:
       - podSelector:
           matchLabels:
@@ -51,6 +61,7 @@ spec:
       ports:
         - protocol: TCP
           port: 27017
+{{- end }}
     - to:
       - ipBlock:
           cidr: "0.0.0.0/0"
@@ -60,7 +71,9 @@ spec:
         - protocol: TCP
           port: 443
     - to:
-      - namespaceSelector: {}
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Values.global.dnsNamespace | quote }}
         podSelector:
           matchLabels:
             k8s-app: kube-dns
