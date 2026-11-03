@@ -14,6 +14,9 @@ global:
   # -- Enable/Disable NetworkPolicies globally
   useNetworkPolicies: true
 
+  # -- Namespace of the cluster DNS pods (k8s-app: kube-dns), used in NetworkPolicy DNS egress rules
+  dnsNamespace: "kube-system"
+
   # nodeSelector: Node labels for pod assignment
 
   # -- Node labels for pod assignment

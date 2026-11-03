@@ -139,7 +139,8 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | forwardProxy.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | forwardProxy.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | forwardProxy.resources.requests | object | `{"cpu":"50m","memory":"100Mi"}` | Resource requests |
-| global | object | `{"imagePullSecrets":[],"imageRegistry":"","nodeSelector":{},"nodeSelectorSts":{},"tolerations":[],"tolerationsSts":[],"useNetworkPolicies":true}` | --------------------------------------------------------------- |
+| global | object | `{"dnsNamespace":"kube-system","imagePullSecrets":[],"imageRegistry":"","nodeSelector":{},"nodeSelectorSts":{},"tolerations":[],"tolerationsSts":[],"useNetworkPolicies":true}` | --------------------------------------------------------------- |
+| global.dnsNamespace | string | `"kube-system"` | Namespace of the cluster DNS pods (k8s-app: kube-dns), used in NetworkPolicy DNS egress rules |
 | global.imagePullSecrets | list | `[]` | List of image pull secrets |
 | global.imageRegistry | string | `""` | Global Docker image registry |
 | global.nodeSelector | object | `{}` | Node labels for pod assignment |
