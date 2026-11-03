@@ -40,8 +40,7 @@ mongodb:
     #   "mongodb://user:pass@host1:27017,host2:27017/my-engine-db?replicaSet=my-replicaset"
     connectionString: "mongodb+srv://mongo-admin:YourSecurePa$$word@my-mongo-host.example.com/my-engine-db?authSource=admin&replicaSet=my-replicaset"
 
-    # Port is used only for the NetworkPolicy egress rules (mongodb+srv resolves the port via DNS;
-    # for "mongodb" protocol, keep it in sync with the port in the connection string)
+    # NetworkPolicy port is taken from the connection string; networkPolicy.port is the fallback (e.g. mongodb+srv).
 
     networkPolicy:
       # If network policies are enabled, to allow engine components to connect

@@ -22,11 +22,11 @@ spec:
 {{ toYaml .Values.mongodb.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
       ports:
         - protocol: TCP
-          port: {{ .Values.mongodb.externalDatabase.networkPolicy.port }}
+          port: {{ include "gams-engine.mongo.port" $ }}
     - to:
       - namespaceSelector:
           matchLabels:
-            kubernetes.io/metadata.name: kube-system
+            kubernetes.io/metadata.name: {{ .Values.global.dnsNamespace | quote }}
         podSelector:
           matchLabels:
             k8s-app: kube-dns
