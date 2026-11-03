@@ -33,8 +33,10 @@ spec:
           env:
           {{- if .Values.mongodb.externalDatabase.enabled }}
             - name: MONGODB_URI
-              # Pre-upgrade hooks run before the Secret is updated, so read from values.
-              value: {{ include "gams-engine.mongo.connectionString" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-migrate-secret
+                  key: MONGODB_URI
           {{- else }}
             - name: GMS_RUNNER_MONGO_BROKER_USER
               value: "mongo_broker"
@@ -98,8 +100,10 @@ spec:
           env:
 {{- if .Values.postgresql.externalDatabase.enabled }}
             - name: POSTGRES_CONNECTION_STRING
-              # Pre-upgrade hooks run before the Secret is updated, so read from values.
-              value: {{ include "gams-engine.postgres.connectionString" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-migrate-secret
+                  key: POSTGRES_CONNECTION_STRING
             - name: POSTGRES_HOST
               value: {{ include "gams-engine.postgres.host" $ | quote }}
             - name: POSTGRES_PORT
