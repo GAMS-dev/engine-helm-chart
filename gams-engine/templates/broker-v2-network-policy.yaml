@@ -53,7 +53,7 @@ spec:
 {{ toYaml .Values.mongodb.externalDatabase.networkPolicy.namespaceSelector | indent 10 }}
       ports:
         - protocol: TCP
-          port: {{ .Values.mongodb.externalDatabase.networkPolicy.port }}
+          port: {{ include "gams-engine.mongo.port" $ }}
 {{- else }}
     - to:
       - podSelector:

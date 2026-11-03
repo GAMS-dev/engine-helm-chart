@@ -791,7 +791,7 @@ mongodb:
     connectionString: ""
 
     networkPolicy:
-      # -- Port for the NetworkPolicy egress rule to the external MongoDB (for "mongodb" protocol, keep it in sync with the port embedded in the connection string).
+      # -- Fallback NetworkPolicy egress port to the external MongoDB if the connection string has no port (e.g. mongodb+srv).
       port: "27017"
 
       # -- Pod Selector labels.

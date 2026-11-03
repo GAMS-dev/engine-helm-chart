@@ -76,58 +76,57 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{/*
-Derive the PostgreSQL server host from the external database connection string.
-The connection string is the single source of truth for the server address
-(used by component deployments, pgbouncer, migrations and NetworkPolicies).
+{{/* Hosts of a connection string, e.g. "h1:27017,h2:27017". */}}
+{{- define "gams-engine.uri.hosts" -}}
+{{- regexFind "^[^/?]+" (regexReplaceAll "^[^:]+://([^@]+@)?" . "") -}}
+{{- end -}}
 
-Usage:
-  {{ include "gams-engine.postgres.host" $ }}
-*/}}
+{{/* Port of the first host of a connection string, or "". */}}
+{{- define "gams-engine.uri.port" -}}
+{{- regexFind ":[0-9]+$" (include "gams-engine.uri.hosts" . | splitList "," | first) | trimPrefix ":" -}}
+{{- end -}}
+
+{{/* Database path segment of a connection string, or "". */}}
+{{- define "gams-engine.uri.database" -}}
+{{- regexFind "^/[^/?]+" (regexReplaceAll "^[^:]+://[^/?]*" . "") | trimPrefix "/" -}}
+{{- end -}}
+
+{{- define "gams-engine.postgres.connectionString" -}}
+{{- required "A valid 'postgresql.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.postgresql.externalDatabase.connectionString -}}
+{{- end -}}
+
+{{- define "gams-engine.mongo.connectionString" -}}
+{{- required "A valid 'mongodb.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.mongodb.externalDatabase.connectionString -}}
+{{- end -}}
+
+{{/* PostgreSQL host (first host, without port) from the external connection string. */}}
 {{- define "gams-engine.postgres.host" -}}
-{{- $cs := required "A valid 'postgresql.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.postgresql.externalDatabase.connectionString -}}
-{{- regexFind "^[^/?]+" (regexReplaceAll "^[^:]+://([^@]+@)?" $cs "") -}}
+{{- regexReplaceAll ":[0-9]+$" (include "gams-engine.uri.hosts" (include "gams-engine.postgres.connectionString" .) | splitList "," | first) "" -}}
 {{- end -}}
 
-{{/*
-Derive the PostgreSQL server port from the external database connection string.
-Defaults to 5432 when the connection string carries no explicit port.
-Supports multi-host strings (the first host's port is used).
-
-Usage:
-  {{ include "gams-engine.postgres.port" $ }}
-*/}}
+{{/* PostgreSQL port from the external connection string, default 5432. */}}
 {{- define "gams-engine.postgres.port" -}}
-{{- $firstHost := splitList "," (include "gams-engine.postgres.host" .) | first -}}
-{{- $p := regexFind ":[0-9]+$" $firstHost | trimPrefix ":" -}}
-{{- if $p }}{{- $p -}}{{- else }}5432{{- end -}}
+{{- include "gams-engine.uri.port" (include "gams-engine.postgres.connectionString" .) | default "5432" -}}
 {{- end -}}
 
-{{/*
-Derive the MongoDB database name from MongoDB connection string when mongodb.externalDatabase.enabled, otherwise mongodb.database is used.
+{{/* MongoDB port from the external connection string, else networkPolicy.port (e.g. for mongodb+srv). */}}
+{{- define "gams-engine.mongo.port" -}}
+{{- include "gams-engine.uri.port" (include "gams-engine.mongo.connectionString" .) | default .Values.mongodb.externalDatabase.networkPolicy.port -}}
+{{- end -}}
 
-Usage:
-  {{ include "gams-engine.mongo.databaseName" $ }}
-*/}}
+{{/* MongoDB database name: connection string path if external, else mongodb.database. */}}
 {{- define "gams-engine.mongo.databaseName" -}}
 {{- if .Values.mongodb.externalDatabase.enabled -}}
-  {{- $cs := required "A valid 'mongodb.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.mongodb.externalDatabase.connectionString -}}
-  {{- required "The MongoDB connection string must include a database path (the segment after the host, e.g. /mydb)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*" $cs "")) -}}
+  {{- required "The MongoDB connection string must include a database path (the segment after the host, e.g. /mydb)" (include "gams-engine.uri.database" (include "gams-engine.mongo.connectionString" .)) -}}
 {{- else -}}
   {{- .Values.mongodb.database -}}
 {{- end -}}
 {{- end -}}
 
-{{/*
-Derive the PostgreSQL database name from PostgreSQL connection string when postgresql.externalDatabase.enabled, otherwise postgresql.database is used.
-
-Usage:
-  {{ include "gams-engine.postgres.databaseName" $ }}
-*/}}
+{{/* PostgreSQL database name: connection string path if external, else postgresql.database. */}}
 {{- define "gams-engine.postgres.databaseName" -}}
 {{- if .Values.postgresql.externalDatabase.enabled -}}
-  {{- $cs := required "A valid 'postgresql.externalDatabase.connectionString' is required when externalDatabase is enabled!" .Values.postgresql.externalDatabase.connectionString -}}
-  {{- required "The PostgreSQL connection string must include a database path (the segment after the host, e.g. /mydb)" (regexFind "[^/?]+" (regexReplaceAll "^[^:]+://[^/]*" $cs "")) -}}
+  {{- required "The PostgreSQL connection string must include a database path (the segment after the host, e.g. /mydb)" (include "gams-engine.uri.database" (include "gams-engine.postgres.connectionString" .)) -}}
 {{- else -}}
   {{- .Values.postgresql.database -}}
 {{- end -}}

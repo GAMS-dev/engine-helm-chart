@@ -208,7 +208,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | mongodb.externalDatabase.enabled | bool | `false` | Enable to use an external MongoDB instance instead of the chart's internal database |
 | mongodb.externalDatabase.networkPolicy.namespaceSelector | object | `{"matchLabels":{}}` | Namespace Selector labels. |
 | mongodb.externalDatabase.networkPolicy.podSelector | object | `{"matchLabels":{}}` | Pod Selector labels. |
-| mongodb.externalDatabase.networkPolicy.port | string | `"27017"` | Port for the NetworkPolicy egress rule to the external MongoDB (for "mongodb" protocol, keep it in sync with the port embedded in the connection string). |
+| mongodb.externalDatabase.networkPolicy.port | string | `"27017"` | Fallback NetworkPolicy egress port to the external MongoDB if the connection string has no port (e.g. mongodb+srv). |
 | mongodb.image.pullSecrets | list | `[]` | Image pull secrets |
 | mongodb.image.registry | string | `"docker.io"` | Image registry |
 | mongodb.image.repository | string | `"library/mongo"` | Image repository |
