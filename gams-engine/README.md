@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.21.0
+0.22.0
 
 ## `chart.type`
 
@@ -139,6 +139,8 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | forwardProxy.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | forwardProxy.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | forwardProxy.resources.requests | object | `{"cpu":"50m","memory":"100Mi"}` | Resource requests |
+| gams-license-server | object | `{"replicaCount":1}` | Values of gams-license-server |
+| gams-license-server.replicaCount | int | `1` | Replica count of gams-license-server deployment |
 | global | object | `{"dnsNamespace":"kube-system","imagePullSecrets":[],"imageRegistry":"","nodeSelector":{},"nodeSelectorSts":{},"tolerations":[],"tolerationsSts":[],"useNetworkPolicies":true}` | --------------------------------------------------------------- |
 | global.dnsNamespace | string | `"kube-system"` | Namespace of the cluster DNS pods (k8s-app: kube-dns), used in NetworkPolicy DNS egress rules |
 | global.imagePullSecrets | list | `[]` | List of image pull secrets |
@@ -200,6 +202,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | jobWatcher.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | jobWatcher.resources.limits | object | `{"memory":"250Mi"}` | Resource limits |
 | jobWatcher.resources.requests | object | `{"cpu":"50m","memory":"250Mi"}` | Resource requests |
+| licenseServer.enabled | bool | `false` | Enable to install the bundled GAMS License Server |
 | mongoMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |

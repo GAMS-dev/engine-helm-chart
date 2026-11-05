@@ -113,6 +113,18 @@ config:
     # -- How much time to wait for the license server to reply
     licenseServerTimeoutSeconds: 10
 
+# GAMS License Server that can be installed alongside GAMS Engine K
+
+licenseServer:
+  # -- Enable to install the bundled GAMS License Server
+  enabled: false
+
+# -- Values of gams-license-server
+gams-license-server:
+  # -- Replica count of gams-license-server deployment
+  replicaCount: 1
+
+
 ingress:
   # -- Enable or disable the Ingress resource
   enabled: false
