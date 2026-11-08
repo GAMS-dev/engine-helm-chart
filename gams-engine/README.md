@@ -139,8 +139,15 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | forwardProxy.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | forwardProxy.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | forwardProxy.resources.requests | object | `{"cpu":"50m","memory":"100Mi"}` | Resource requests |
-| gams-license-server | object | `{"replicaCount":1}` | Values of gams-license-server |
-| gams-license-server.replicaCount | int | `1` | Replica count of gams-license-server deployment |
+| gams-license-server.cnpgDatabase | bool | `false` |  |
+| gams-license-server.externalDatabase.database | string | `"license_server"` |  |
+| gams-license-server.externalDatabase.dbExistingSecretKey | string | `"LICENSE_SERVER_DB_PWD"` | Do not change this value, unless you know what you are doing. |
+| gams-license-server.externalDatabase.dbExistingSecretName | string | `"license-server-secret"` | Do not change this value, unless you know what you are doing. |
+| gams-license-server.externalDatabase.host | string | `""` |  |
+| gams-license-server.externalDatabase.port | int | `5432` |  |
+| gams-license-server.externalDatabase.user | string | `"license_server"` |  |
+| gams-license-server.replicaCount | int | `1` |  |
+| gamsLicenseServer.enabled | bool | `false` | Enable to install the bundled GAMS License Server |
 | global | object | `{"dnsNamespace":"kube-system","imagePullSecrets":[],"imageRegistry":"","nodeSelector":{},"nodeSelectorSts":{},"tolerations":[],"tolerationsSts":[],"useNetworkPolicies":true}` | --------------------------------------------------------------- |
 | global.dnsNamespace | string | `"kube-system"` | Namespace of the cluster DNS pods (k8s-app: kube-dns), used in NetworkPolicy DNS egress rules |
 | global.imagePullSecrets | list | `[]` | List of image pull secrets |
@@ -202,7 +209,6 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | jobWatcher.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | jobWatcher.resources.limits | object | `{"memory":"250Mi"}` | Resource limits |
 | jobWatcher.resources.requests | object | `{"cpu":"50m","memory":"250Mi"}` | Resource requests |
-| licenseServer.enabled | bool | `false` | Enable to install the bundled GAMS License Server |
 | mongoMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
 | mongoMigrate.image.repository | string | `"engine-mongo-migrate"` | Image repository |
 | mongoMigrate.image.tag | string | `""` | Image tag |

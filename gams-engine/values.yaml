@@ -115,14 +115,26 @@ config:
 
 # GAMS License Server that can be installed alongside GAMS Engine K
 
-licenseServer:
+gamsLicenseServer:
   # -- Enable to install the bundled GAMS License Server
   enabled: false
 
-# -- Values of gams-license-server
 gams-license-server:
-  # -- Replica count of gams-license-server deployment
+  #  Replica count of gams-license-server deployment
   replicaCount: 1
+  #  Do not create a new postgres instance, try to use a new database in Engine
+  cnpgDatabase: false
+  #  License server is a subchart, so our database is an external database not created by that chart.
+  externalDatabase:
+    host: ""
+    port: 5432
+    database: "license_server"
+    user: "license_server"
+    # -- Do not change this value, unless you know what you are doing.
+    dbExistingSecretName: "license-server-secret"
+    # -- Do not change this value, unless you know what you are doing.
+    dbExistingSecretKey: "LICENSE_SERVER_DB_PWD"
+
 
 
 ingress:

@@ -19,5 +19,5 @@ dependencies:
     version: 2.x.x
   - name: gams-license-server
     repository: https://charts.gams.com
-    version: 0.x.x
-    condition: licenseServer.enabled
+    version: 1.x.x
+    condition: gamsLicenseServer.enabled
