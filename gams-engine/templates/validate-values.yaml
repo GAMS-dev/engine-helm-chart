@@ -1,0 +1,6 @@
+{{- if and .Values.gamsLicenseServer .Values.gamsLicenseServer.enabled -}}
+  {{- $subchart := index .Values "gams-license-server" -}}
+  {{- if and $subchart $subchart.cnpgDatabase -}}
+    {{- fail "\n\n[ERROR] Enabling 'gams-license-server.cnpgDatabase' is not supported in this deployment. Please set 'gams-license-server.cnpgDatabase: false'.\n" -}}
+  {{- end -}}
+{{- end -}}
