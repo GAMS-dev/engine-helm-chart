@@ -93,6 +93,24 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
+            {{- $gls := .Values.gamsLicenseServer | default dict -}}
+            {{- if $gls.enabled }}
+            {{- $subchart := index .Values "gams-license-server" | default dict -}}
+            {{- $extDb := $subchart.externalDatabase | default dict -}}
+            {{- if and $extDb.dbExistingSecretName $extDb.dbExistingSecretKey }}
+            - name: LICENSE_SERVER_ENABLED
+              value: "yes"
+            - name: LICENSE_SERVER_USERNAME
+              value: {{ $extDb.user | default "license_server" | quote }}
+            - name: LICENSE_SERVER_DATABASE
+              value: {{ $extDb.database | default "license_server" | quote }}
+            - name: LICENSE_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $extDb.dbExistingSecretName | quote }}
+                  key: {{ $extDb.dbExistingSecretKey | quote }}
+            {{- end }}
+            {{- end }}
           imagePullPolicy: Always
           livenessProbe:
             exec:
