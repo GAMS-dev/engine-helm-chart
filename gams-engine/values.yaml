@@ -133,9 +133,9 @@ gams-license-server:
     database: "license_server"
     user: "license_server"
     # -- Do not change this value, unless you know what you are doing.
-    dbExistingSecretName: "license-server-secret"
-    # -- Do not change this value, unless you know what you are doing.
-    dbExistingSecretKey: "LICENSE_SERVER_DB_PWD"
+    # The license server chart generates the database password and stores it
+    # in the Secret <release>-db-credentials, which the PostgreSQL pod reads.
+    generatePassword: true
 
 
 

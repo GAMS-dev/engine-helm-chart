@@ -97,7 +97,7 @@ spec:
             {{- if $gls.enabled }}
             {{- $subchart := index .Values "gams-license-server" | default dict -}}
             {{- $extDb := $subchart.externalDatabase | default dict -}}
-            {{- if and $extDb.dbExistingSecretName $extDb.dbExistingSecretKey }}
+            {{- if $extDb.generatePassword }}
             - name: LICENSE_SERVER_ENABLED
               value: "yes"
             - name: LICENSE_SERVER_USERNAME
@@ -107,8 +107,9 @@ spec:
             - name: LICENSE_SERVER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ $extDb.dbExistingSecretName | quote }}
-                  key: {{ $extDb.dbExistingSecretKey | quote }}
+                  # created by the license server chart
+                  name: {{ printf "%s-db-credentials" .Release.Name | quote }}
+                  key: password
             {{- end }}
             {{- end }}
           imagePullPolicy: Always
