@@ -139,7 +139,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | forwardProxy.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | forwardProxy.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | forwardProxy.resources.requests | object | `{"cpu":"50m","memory":"100Mi"}` | Resource requests |
-| gams-license-server.cnpgDatabase | bool | `false` |  |
+| gams-license-server.cnpgDatabase.enabled | bool | `false` |  |
 | gams-license-server.externalDatabase.database | string | `"license_server"` |  |
 | gams-license-server.externalDatabase.dbExistingSecretKey | string | `"LICENSE_SERVER_DB_PWD"` | Do not change this value, unless you know what you are doing. |
 | gams-license-server.externalDatabase.dbExistingSecretName | string | `"license-server-secret"` | Do not change this value, unless you know what you are doing. |
