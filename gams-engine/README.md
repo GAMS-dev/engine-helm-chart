@@ -142,7 +142,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | gams-license-server.cnpgDatabase.enabled | bool | `false` |  |
 | gams-license-server.externalDatabase.database | string | `"license_server"` |  |
 | gams-license-server.externalDatabase.generatePassword | bool | `true` | Do not change this value, unless you know what you are doing. The license server chart generates the database password and stores it in the Secret <release>-db-credentials, which the license-server-db-setup Job reads. |
-| gams-license-server.externalDatabase.host | string | `""` |  |
+| gams-license-server.externalDatabase.host | string | `"license-server-database"` | Engine's own PostgreSQL, through a Service with this fixed name. With an external Engine database (postgresql.externalDatabase.enabled), set it to that database. |
 | gams-license-server.externalDatabase.port | int | `5432` |  |
 | gams-license-server.externalDatabase.user | string | `"license_server"` |  |
 | gams-license-server.licenseServer.networkPolicy.extraEgress | list | `[{"ports":[{"port":5432,"protocol":"TCP"}],"to":[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"gams-engine"}}}]}]` | Lets the license server and its migration Job reach Engine's PostgreSQL. With an external Engine database, replace it with a rule for that database. |

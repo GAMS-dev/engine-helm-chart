@@ -138,7 +138,8 @@ gams-license-server:
     enabled: false
   #  License server is a subchart, so our database is an external database not created by that chart.
   externalDatabase:
-    host: ""
+    # -- Engine's own PostgreSQL, through a Service with this fixed name. With an external Engine database (postgresql.externalDatabase.enabled), set it to that database.
+    host: "license-server-database"
     port: 5432
     database: "license_server"
     user: "license_server"
