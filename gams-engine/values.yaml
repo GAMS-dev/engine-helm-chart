@@ -123,6 +123,16 @@ gams-license-server:
   #  Replica count of gams-license-server deployment
   licenseServer:
     replicaCount: 1
+    networkPolicy:
+      # -- Lets the license server and its migration Job reach Engine's PostgreSQL. With an external Engine database, replace it with a rule for that database.
+      extraEgress:
+        - to:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: gams-engine
+          ports:
+            - port: 5432
+              protocol: TCP
   #  Do not create a new postgres instance, try to use a new database in Engine
   cnpgDatabase:
     enabled: false
@@ -134,7 +144,8 @@ gams-license-server:
     user: "license_server"
     # -- Do not change this value, unless you know what you are doing.
     # The license server chart generates the database password and stores it
-    # in the Secret <release>-db-credentials, which the PostgreSQL pod reads.
+    # in the Secret <release>-db-credentials, which the license-server-db-setup
+    # Job reads.
     generatePassword: true
 
 
