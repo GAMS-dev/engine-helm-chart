@@ -146,7 +146,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | gams-license-server.externalDatabase.host | string | `""` |  |
 | gams-license-server.externalDatabase.port | int | `5432` |  |
 | gams-license-server.externalDatabase.user | string | `"license_server"` |  |
-| gams-license-server.replicaCount | int | `1` |  |
+| gams-license-server.licenseServer.replicaCount | int | `1` |  |
 | gamsLicenseServer.enabled | bool | `false` | Enable to install the bundled GAMS License Server |
 | global | object | `{"dnsNamespace":"kube-system","imagePullSecrets":[],"imageRegistry":"","nodeSelector":{},"nodeSelectorSts":{},"tolerations":[],"tolerationsSts":[],"useNetworkPolicies":true}` | --------------------------------------------------------------- |
 | global.dnsNamespace | string | `"kube-system"` | Namespace of the cluster DNS pods (k8s-app: kube-dns), used in NetworkPolicy DNS egress rules |

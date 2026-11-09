@@ -121,7 +121,8 @@ gamsLicenseServer:
 
 gams-license-server:
   #  Replica count of gams-license-server deployment
-  replicaCount: 1
+  licenseServer:
+    replicaCount: 1
   #  Do not create a new postgres instance, try to use a new database in Engine
   cnpgDatabase:
     enabled: false
