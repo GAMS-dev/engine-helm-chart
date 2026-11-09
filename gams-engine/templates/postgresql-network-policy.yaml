@@ -88,6 +88,14 @@ spec:
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      {{- if include "gams-engine.licenseServer.setupDatabase" . }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-ls-db-setup
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      {{- end }}
       ports:
         - protocol: TCP
           port: 5432
