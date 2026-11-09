@@ -93,25 +93,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_JOB_WATCHER_PWD
-            {{- $gls := .Values.gamsLicenseServer | default dict -}}
-            {{- if $gls.enabled }}
-            {{- $subchart := index .Values "gams-license-server" | default dict -}}
-            {{- $extDb := $subchart.externalDatabase | default dict -}}
-            {{- if $extDb.generatePassword }}
-            - name: LICENSE_SERVER_ENABLED
-              value: "yes"
-            - name: LICENSE_SERVER_USERNAME
-              value: {{ $extDb.user | default "license_server" | quote }}
-            - name: LICENSE_SERVER_DATABASE
-              value: {{ $extDb.database | default "license_server" | quote }}
-            - name: LICENSE_SERVER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  # created by the license server chart
-                  name: {{ printf "%s-db-credentials" .Release.Name | quote }}
-                  key: password
-            {{- end }}
-            {{- end }}
           imagePullPolicy: Always
           livenessProbe:
             exec:
