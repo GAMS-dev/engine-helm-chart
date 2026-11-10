@@ -902,6 +902,9 @@ postgresql:
     # !! IMPORTANT: The POSTGRESQL user MUST have privileges to create schema objects
     #    (tables, types, sequences, views), create roles (broker, worker,
     #    cleaner, etc.), and grant permissions on those objects.
+    #    With the bundled license server (gamsLicenseServer.enabled), it also
+    #    needs CREATEROLE and CREATEDB: a Job creates the license server's
+    #    user and database with it.
     #
     # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
 
