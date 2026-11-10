@@ -149,8 +149,6 @@ gams-license-server:
     # Job reads.
     generatePassword: true
 
-
-
 ingress:
   # -- Enable or disable the Ingress resource
   enabled: false
