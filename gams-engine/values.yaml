@@ -145,7 +145,7 @@ gams-license-server:
     user: "license_server"
     # -- Do not change this value, unless you know what you are doing.
     # The license server chart generates the database password and stores it
-    # in the Secret <release>-db-credentials, which the license-server-db-setup
+    # in the Secret <release>-ls-db-credentials, which the license-server-db-setup
     # Job reads.
     generatePassword: true
 

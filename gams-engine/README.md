@@ -141,7 +141,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | forwardProxy.resources.requests | object | `{"cpu":"50m","memory":"100Mi"}` | Resource requests |
 | gams-license-server.cnpgDatabase.enabled | bool | `false` |  |
 | gams-license-server.externalDatabase.database | string | `"license_server"` |  |
-| gams-license-server.externalDatabase.generatePassword | bool | `true` | Do not change this value, unless you know what you are doing. The license server chart generates the database password and stores it in the Secret <release>-db-credentials, which the license-server-db-setup Job reads. |
+| gams-license-server.externalDatabase.generatePassword | bool | `true` | Do not change this value, unless you know what you are doing. The license server chart generates the database password and stores it in the Secret <release>-ls-db-credentials, which the license-server-db-setup Job reads. |
 | gams-license-server.externalDatabase.host | string | `"license-server-database"` | Engine's own PostgreSQL, through a Service with this fixed name. With an external Engine database (postgresql.externalDatabase.enabled), set it to that database. |
 | gams-license-server.externalDatabase.port | int | `5432` |  |
 | gams-license-server.externalDatabase.user | string | `"license_server"` |  |

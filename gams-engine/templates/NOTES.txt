@@ -80,7 +80,7 @@ GAMS LICENSE SERVER:
 {{- else }}
   Log in to the license server as "admin". Its initial password was generated
   on the first install and stays the same across upgrades:
-    kubectl get secret {{ .Release.Name }}-settings -n {{ .Release.Namespace }} \
+    kubectl get secret {{ include "gams-license-server.fullname" . }}-settings -n {{ .Release.Namespace }} \
       -o jsonpath='{.data.settings\.json}' | base64 -d | grep initial_admin_password
 {{- end }}
 ===============================================================================
