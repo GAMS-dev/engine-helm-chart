@@ -51,6 +51,18 @@ spec:
         - protocol: TCP
           port: 27017
 {{- end }}
+{{- if .Values.gamsLicenseServer.enabled }}
+    # the bundled license server, for GAMS network licenses
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: gams-license-server
+            app.kubernetes.io/instance: {{ .Release.Name }}
+            app.kubernetes.io/component: server
+      ports:
+        - protocol: TCP
+          port: 8080
+{{- end }}
     - to:
       - namespaceSelector:
           matchLabels:
