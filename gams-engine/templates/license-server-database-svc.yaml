@@ -1,0 +1,24 @@
+{{- /*
+A second Service for Engine's own PostgreSQL with a fixed name, so that the
+bundled license server can be pointed at it with a static value
+(gams-license-server.externalDatabase.host): subcharts only see values, and
+the name of <prefix>-database depends on the release. It selects the same
+pods. With an external Engine database there are no pods to select, and the
+host has to be set to that database.
+*/}}
+{{- if and .Values.gamsLicenseServer.enabled (not .Values.postgresql.externalDatabase.enabled) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: license-server-database
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gams-engine.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ include "gams-engine.prefixname" . }}-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+{{- end }}

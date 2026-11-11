@@ -1,0 +1,102 @@
+{{- /*
+Creates the database user and database of the bundled GAMS License Server
+in Engine's PostgreSQL (internal or external), with the password the license
+server chart generated in <release>-ls-db-credentials. It runs on every install
+and upgrade and only creates what is missing, so the license server can also
+be enabled on an existing installation; it also resets the password to the
+one in the Secret.
+
+It runs after the resources are created, as the Secret only exists then, but
+before the license server's migration Job (hook weight 0).
+*/}}
+{{- if include "gams-engine.licenseServer.setupDatabase" . }}
+{{- $extDb := (index .Values "gams-license-server").externalDatabase }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "gams-engine.prefixname" . }}-ls-db-setup
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "gams-engine.prefixname" . }}-ls-db-setup
+    {{- include "gams-engine.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 8
+  template:
+    metadata:
+      labels:
+        app: {{ include "gams-engine.prefixname" . }}-ls-db-setup
+    spec:
+    {{- if .Values.global.nodeSelectorSts }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.global.nodeSelectorSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.global.tolerationsSts }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.global.tolerationsSts "context" $) | nindent 8 }}
+    {{- end }}
+    {{- if .Values.postgresql.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.postgresql.affinity "context" $) | nindent 8 }}
+    {{- end }}
+      automountServiceAccountToken: false
+{{ include "common.images.renderPullSecrets" ( dict "images" (list .Values.postgresql.image) "context" $) | indent 6}}
+      restartPolicy: OnFailure
+      containers:
+        - name: license-server-db-setup
+          image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.postgresql.image.registry "repository" .Values.postgresql.image.repository "tag" .Values.postgresql.image.tag)) }}
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              until pg_isready -q -d "$PG_CONN"; do
+                echo "Waiting for the database..."
+                sleep 5
+              done
+              psql -v ON_ERROR_STOP=1 -d "$PG_CONN" <<'SQL'
+              \getenv user LICENSE_SERVER_USERNAME
+              \getenv db LICENSE_SERVER_DATABASE
+              \getenv pw LICENSE_SERVER_PASSWORD
+              SELECT format('CREATE ROLE %I LOGIN', :'user')
+                WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'user') \gexec
+              SELECT format('ALTER ROLE %I WITH LOGIN PASSWORD %L', :'user', :'pw') \gexec
+              -- CREATE DATABASE ... OWNER needs SET ROLE on the owner, which
+              -- an admin that is not a superuser (managed databases) lacks
+              -- for the roles it creates since PostgreSQL 16.
+              SELECT format('GRANT %I TO CURRENT_USER', :'user')
+                WHERE NOT pg_has_role(current_user, :'user',
+                  CASE WHEN current_setting('server_version_num')::int >= 160000
+                       THEN 'SET' ELSE 'MEMBER' END) \gexec
+              SELECT format('CREATE DATABASE %I OWNER %I', :'db', :'user')
+                WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = :'db') \gexec
+              SQL
+              echo "License server database and user are ready."
+          env:
+            {{- if .Values.postgresql.externalDatabase.enabled }}
+            - name: PG_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_ADMIN_URI
+            {{- else }}
+            - name: PG_CONN
+              value: {{ printf "host=%s-database port=5432 user=%s dbname=%s" (include "gams-engine.prefixname" .) .Values.postgresql.databaseUser (include "gams-engine.postgres.databaseName" .) | quote }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gams-engine.prefixname" . }}-secret
+                  key: GMS_RUNNER_DATABASE_ADMIN_PWD
+            {{- end }}
+            - name: LICENSE_SERVER_USERNAME
+              value: {{ $extDb.user | quote }}
+            - name: LICENSE_SERVER_DATABASE
+              value: {{ $extDb.database | quote }}
+            - name: LICENSE_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  # created by the license server chart, named by its helper
+                  name: {{ include "gams-license-server.dbSecretName" . | quote }}
+                  key: password
+{{- end }}

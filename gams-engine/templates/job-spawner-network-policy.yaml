@@ -70,6 +70,18 @@ spec:
           port: 6443
         - protocol: TCP
           port: 443
+{{- if .Values.gamsLicenseServer.enabled }}
+    # the bundled license server, for the license check
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: gams-license-server
+            app.kubernetes.io/instance: {{ .Release.Name }}
+            app.kubernetes.io/component: server
+      ports:
+        - protocol: TCP
+          port: 8080
+{{- end }}
     - to:
       - namespaceSelector:
           matchLabels:

@@ -45,6 +45,46 @@ VERIFICATION:
 ! Use username "admin" and password "admin" for initial login.                !
 ! YOU MUST CHANGE THE ADMIN PASSWORD IMMEDIATELY AFTER LOGGING IN.            !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+{{- if .Values.gamsLicenseServer.enabled }}
+{{- /* Helm does not show the NOTES of a subchart, so the license server's
+       are summarized here. Host and port follow the subchart's rules. */}}
+{{- $ls := index .Values "gams-license-server" }}
+{{- $server := $ls.licenseServer }}
+{{- $ingress := $ls.ingress }}
+{{- $host := printf "%s.%s.svc" $server.service.name .Release.Namespace }}
+{{- $port := $server.service.port }}
+{{- if $ingress.enabled }}
+{{- $host = $ingress.host }}
+{{- $port = 443 }}
+{{- end }}
+{{- $host = $server.host | default $host }}
+{{- $port = $server.port | default $port }}
+
+GAMS LICENSE SERVER:
+  Network licenses issued by the bundled license server point clients at
+    {{ $host }}:{{ $port }}
+
+  Its API documentation is at
+  {{- if $ingress.enabled }}
+    https://{{ $ingress.host }}/docs
+  {{- else }}
+    http://localhost:8080/docs
+  after forwarding the port with:
+    kubectl port-forward svc/{{ $server.service.name }} 8080:{{ $server.service.port }} -n {{ .Release.Namespace }}
+  {{- end }}
+
+===============================================================================
+{{- if $server.serverSettingsSecret }}
+  Log in to the license server as "admin" with the initial_admin_password
+  from your settings Secret "{{ $server.serverSettingsSecret }}".
+{{- else }}
+  Log in to the license server as "admin". Its initial password was generated
+  on the first install and stays the same across upgrades:
+    kubectl get secret {{ include "gams-license-server.fullname" . }}-settings -n {{ .Release.Namespace }} \
+      -o jsonpath='{.data.settings\.json}' | base64 -d | grep initial_admin_password
+{{- end }}
+===============================================================================
+{{- end }}
 
 LEGAL NOTICE:
   By using this software, you agree to the GAMS End User License Agreement:

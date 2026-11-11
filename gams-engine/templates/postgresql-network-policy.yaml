@@ -88,6 +88,28 @@ spec:
         namespaceSelector:
           matchLabels:
             kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      {{- if include "gams-engine.licenseServer.setupDatabase" . }}
+      - podSelector:
+          matchLabels:
+            app: {{ include "gams-engine.prefixname" . }}-ls-db-setup
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      {{- end }}
+      {{- if .Values.gamsLicenseServer.enabled }}
+      # the bundled license server and its migration Job
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: gams-license-server
+            app.kubernetes.io/instance: {{ .Release.Name }}
+          matchExpressions:
+            - key: app.kubernetes.io/component
+              operator: In
+              values: [server, migration]
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: {{ .Release.Namespace }}
+      {{- end }}
       ports:
         - protocol: TCP
           port: 5432
