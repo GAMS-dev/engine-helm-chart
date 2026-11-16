@@ -114,6 +114,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | config.licenseCheck.enabled | bool | `true` | Should job spawner check license and get reservation before creating the pod |
 | config.licenseCheck.licenseServerTimeoutSeconds | int | `10` | How much time to wait for the license server to reply |
 | config.licenseCheck.retryBackoffSeconds | int | `5` | How much time to wait before retrying in the blocking mode |
+| config.maxDataSize | string | `"1000"` | Max combined size of model and its data in MB. |
 | config.maxPendingJobDurationSeconds | int | `120` | Max duration (seconds) a job can remain pending |
 | config.maxPendingJobs | int | `5` | Max pending jobs in the queue before new ones are held |
 | config.workerStartupDurationSeconds | int | `0` | Volume quota deduction per worker spawned |

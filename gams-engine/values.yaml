@@ -99,6 +99,9 @@ config:
   # -- Disables strict X509 certificate validation for the K8s client
   disable_x509_strict_validation_k8s_client: "false"
 
+  # -- Max combined size of model and its data in MB.
+  maxDataSize: "1000"
+
   licenseCheck:
     # -- Should job spawner check license and get reservation before creating the pod
     enabled: true
