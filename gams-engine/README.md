@@ -73,8 +73,8 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.apiVersion2.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | broker.apiVersion2.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | broker.apiVersion2.networkPolicy.ingress | list | `[{"ports":[{"port":5000,"protocol":"TCP"}]}]` | Ingress rules for the Broker V2 |
-| broker.apiVersion2.resources.limits | object | `{"memory":"200Mi"}` | Resource limits |
-| broker.apiVersion2.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
+| broker.apiVersion2.resources.limits | object | `{"memory":"1000Mi"}` | Resource limits |
+| broker.apiVersion2.resources.requests | object | `{"cpu":"600m","memory":"1000Mi"}` | Resource requests |
 | broker.apiVersion2.service.annotations | object | `{}` |  |
 | broker.apiVersion2.service.port | int | `80` | Service Port |
 | broker.apiVersion2.service.type | string | `"ClusterIP"` | Service Type (ClusterIP, NodePort, LoadBalancer) |
