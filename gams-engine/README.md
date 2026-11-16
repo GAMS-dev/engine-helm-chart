@@ -255,11 +255,12 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresqlMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
 | postgresqlMigrate.image.repository | string | `"engine-postgres-migrate"` | Image repository |
 | postgresqlMigrate.image.tag | string | `""` | Image tag |
+| rabbitmq.advancedConfig | string | `""` | advanced.config content. If empty, the chart's built-in default is used |
 | rabbitmq.affinity | object | `{}` | Affinity settings for pod assignment |
 | rabbitmq.image.pullSecrets | list | `[]` | Image pull secrets |
 | rabbitmq.image.registry | string | `"docker.io"` | Image registry |
 | rabbitmq.image.repository | string | `"library/rabbitmq"` | Image repository |
-| rabbitmq.image.tag | string | `"4.2-management-alpine"` | Image tag |
+| rabbitmq.image.tag | string | `"4.4-management-alpine"` | Image tag |
 | rabbitmq.initImage.pullSecrets | list | `[]` | Image pull secrets |
 | rabbitmq.initImage.registry | string | `"docker.io"` | Image registry |
 | rabbitmq.initImage.repository | string | `"library/python"` | Image repository |
@@ -269,6 +270,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | rabbitmq.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | rabbitmq.persistence.size | string | `"4Gi"` | Size of the persistent volume |
 | rabbitmq.persistence.storageClassName | string | `""` | Storage Class to use |
+| rabbitmq.rabbitmqConf | string | `""` | rabbitmq.conf content. If empty, the chart's built-in default is used |
 | rabbitmq.resources.limits | object | `{"memory":"6Gi"}` | Resource limits |
 | rabbitmq.resources.requests | object | `{"cpu":"500m","memory":"5Gi"}` | Resource requests |
 | rabbitmqMigrate.image.registry | string | `"docker.io/gams"` | Image registry |

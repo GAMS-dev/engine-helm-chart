@@ -953,9 +953,17 @@ rabbitmq:
     # -- Image repository
     repository: library/rabbitmq
     # -- Image tag
-    tag: "4.2-management-alpine"
+    tag: "4.4-management-alpine"
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- rabbitmq.conf content. If empty, the chart's built-in default is used
+  rabbitmqConf: ""
+
+  # -- advanced.config content. If empty, the chart's built-in default is used
+  advancedConfig: ""
+  # By default (consumer_timeout = 604800000 ms / 7 days, sized for the Engine's
+  # long-running jobs on RabbitMQ 4.4+). Set it to override.
 
   initImage:
     # -- Image registry

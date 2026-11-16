@@ -18,7 +18,11 @@ metadata:
     {{- include "gams-engine.labels" . | nindent 4 }}
 data:
   advanced.config: |-
+{{- if .Values.rabbitmq.advancedConfig }}
+{{ .Values.rabbitmq.advancedConfig | indent 4 }}
+{{- else }}
 {{ (tpl (.Files.Get "resources/rabbitmq/advanced.config") .) | indent 4 }}
+{{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -29,4 +33,8 @@ metadata:
     {{- include "gams-engine.labels" . | nindent 4 }}
 data:
   rabbitmq.conf: |-
+{{- if .Values.rabbitmq.rabbitmqConf }}
+{{ .Values.rabbitmq.rabbitmqConf | indent 4 }}
+{{- else }}
 {{ (tpl (.Files.Get "resources/rabbitmq/rabbitmq.conf") .) | indent 4 }}
+{{- end }}
