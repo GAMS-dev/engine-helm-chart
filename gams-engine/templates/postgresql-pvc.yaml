@@ -18,5 +18,5 @@ spec:
     - {{ .Values.postgresql.persistence.accessMode | quote }}
   resources:
     requests:
-      storage: {{ .Values.mongodb.persistence.size | quote }}
+      storage: {{ .Values.postgresql.persistence.size | quote }}
 {{- end }}
