@@ -208,10 +208,12 @@ broker:
   affinity: {}
 
   # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
-  # minReplicas is 1 by default
+
+  # -- Min replicas for Broker HPA
+  minReplicas: 1
 
   # -- Max replicas for Broker HPA
-  maxReplicas: 3
+  maxReplicas: 10
 
   monitoring:
     # When set to true exposes metric at /api/metrics
@@ -345,7 +347,12 @@ broker:
     # -- Affinity settings for pod assignment
     affinity: {}
 
-    # -- Max replicas for Broker API Version 2
+    # maxReplicas is to set max pod replica limit to API Version 2 HorizontalPodAutoscaler
+
+    # -- Min replicas for Broker API Version 2 HPA
+    minReplicas: 1
+
+    # -- Max replicas for Broker API Version 2 HPA
     maxReplicas: 3
 
   # Broker V2 network policy

@@ -10,6 +10,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "gams-engine.prefixname" . }}-broker
-  minReplicas: 1
+  minReplicas: {{ .Values.broker.minReplicas }}
   maxReplicas: {{ .Values.broker.maxReplicas }}
   targetCPUUtilizationPercentage: 90

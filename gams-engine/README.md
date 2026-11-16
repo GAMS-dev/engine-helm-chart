@@ -68,7 +68,8 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.apiVersion2.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.apiVersion2.image.repository | string | `"engine-brokerv2"` | Image repository |
 | broker.apiVersion2.image.tag | string | `""` | Image tag |
-| broker.apiVersion2.maxReplicas | int | `3` | Max replicas for Broker API Version 2 |
+| broker.apiVersion2.maxReplicas | int | `3` | Max replicas for Broker API Version 2 HPA |
+| broker.apiVersion2.minReplicas | int | `1` | Min replicas for Broker API Version 2 HPA |
 | broker.apiVersion2.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | broker.apiVersion2.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | broker.apiVersion2.networkPolicy.ingress | list | `[{"ports":[{"port":5000,"protocol":"TCP"}]}]` | Ingress rules for the Broker V2 |
@@ -77,7 +78,8 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.apiVersion2.service.annotations | object | `{}` |  |
 | broker.apiVersion2.service.port | int | `80` | Service Port |
 | broker.apiVersion2.service.type | string | `"ClusterIP"` | Service Type (ClusterIP, NodePort, LoadBalancer) |
-| broker.maxReplicas | int | `3` | Max replicas for Broker HPA |
+| broker.maxReplicas | int | `10` | Max replicas for Broker HPA |
+| broker.minReplicas | int | `1` | Min replicas for Broker HPA |
 | broker.monitoring.metricsEnabled | bool | `false` | Expose metrics at /api/metrics |
 | broker.monitoring.podMonitorEnabled | bool | `false` | Create a Prometheus Operator PodMonitor |
 | broker.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
