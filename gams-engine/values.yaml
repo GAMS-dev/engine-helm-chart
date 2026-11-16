@@ -218,6 +218,9 @@ broker:
   # -- Max replicas for Broker HPA
   maxReplicas: 10
 
+  # -- Extra environment variables for broker
+  extraEnv: []
+
   monitoring:
     # When set to true exposes metric at /api/metrics
 
@@ -358,6 +361,9 @@ broker:
     # -- Max replicas for Broker API Version 2 HPA
     maxReplicas: 3
 
+    # -- Extra environment variables for broker v2
+    extraEnv: []
+
   # Broker V2 network policy
   # Only relevant if global.useNetworkPolicies is true
     networkPolicy:
@@ -412,6 +418,9 @@ forwardProxy:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for forwardProxy
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -474,6 +483,9 @@ eventManager:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for eventManager
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -524,6 +536,9 @@ cleaner:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for cleaner
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -552,6 +567,9 @@ dependencyChecker:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for dependencyChecker
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -579,6 +597,9 @@ hypercubeAppender:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for hypercubeAppender
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -610,6 +631,9 @@ hypercubeUnpacker:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for hypercubeUnpacker
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -637,6 +661,9 @@ jobCanceler:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for jobCanceler
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -683,6 +710,9 @@ jobSpawner:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for jobSpawner
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -724,6 +754,9 @@ jobWatcher:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for jobWatcher
+  extraEnv: []
 
   resources:
     # -- Resource requests

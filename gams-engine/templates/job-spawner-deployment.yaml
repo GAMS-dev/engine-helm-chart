@@ -132,3 +132,7 @@ spec:
               value: {{ .Values.config.licenseCheck.retryBackoffSeconds | quote }}
             - name: GMS_RUNNER_SPWN_LICENSE_SERVER_TIMEOUT_SECONDS
               value: {{ .Values.config.licenseCheck.licenseServerTimeoutSeconds | quote }}
+
+            {{- if .Values.jobSpawner.extraEnv }}
+            {{- toYaml .Values.jobSpawner.extraEnv | nindent 12 }}
+            {{- end }}

@@ -64,6 +64,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.affinity | object | `{}` | Affinity settings for pod assignment |
 | broker.apiVersion2.affinity | object | `{}` | Affinity settings for pod assignment |
 | broker.apiVersion2.enabled | bool | `false` | Enable Broker API Version 2 (beta) |
+| broker.apiVersion2.extraEnv | list | `[]` | Extra environment variables for broker v2 |
 | broker.apiVersion2.image.pullSecrets | list | `[]` | Image pull secrets |
 | broker.apiVersion2.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.apiVersion2.image.repository | string | `"engine-brokerv2"` | Image repository |
@@ -78,6 +79,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.apiVersion2.service.annotations | object | `{}` |  |
 | broker.apiVersion2.service.port | int | `80` | Service Port |
 | broker.apiVersion2.service.type | string | `"ClusterIP"` | Service Type (ClusterIP, NodePort, LoadBalancer) |
+| broker.extraEnv | list | `[]` | Extra environment variables for broker |
 | broker.maxReplicas | int | `10` | Max replicas for Broker HPA |
 | broker.minReplicas | int | `1` | Min replicas for Broker HPA |
 | broker.monitoring.metricsEnabled | bool | `false` | Expose metrics at /api/metrics |
@@ -102,6 +104,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.uwsgi.resources.limits | object | `{"memory":"1000Mi"}` | Resource limits |
 | broker.uwsgi.resources.requests | object | `{"cpu":"600m","memory":"1000Mi"}` | Resource requests |
 | cleaner.affinity | object | `{}` | Affinity settings for pod assignment |
+| cleaner.extraEnv | list | `[]` | Extra environment variables for cleaner |
 | cleaner.image.pullSecrets | list | `[]` | Image pull secrets |
 | cleaner.image.registry | string | `"docker.io/gams"` | Image registry |
 | cleaner.image.repository | string | `"engine-cleaner"` | Image repository |
@@ -119,6 +122,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | config.maxPendingJobs | int | `5` | Max pending jobs in the queue before new ones are held |
 | config.workerStartupDurationSeconds | int | `0` | Volume quota deduction per worker spawned |
 | dependencyChecker.affinity | object | `{}` | Affinity settings for pod assignment |
+| dependencyChecker.extraEnv | list | `[]` | Extra environment variables for dependencyChecker |
 | dependencyChecker.image.pullSecrets | list | `[]` | Image pull secrets |
 | dependencyChecker.image.registry | string | `"docker.io/gams"` | Image registry |
 | dependencyChecker.image.repository | string | `"engine-dependency-checker"` | Image repository |
@@ -126,6 +130,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | dependencyChecker.resources.limits | object | `{"memory":"250Mi"}` | Resource limits |
 | dependencyChecker.resources.requests | object | `{"cpu":"50m","memory":"250Mi"}` | Resource requests |
 | eventManager.affinity | object | `{}` | Affinity settings for pod assignment |
+| eventManager.extraEnv | list | `[]` | Extra environment variables for eventManager |
 | eventManager.image.pullSecrets | list | `[]` | Image pull secrets |
 | eventManager.image.registry | string | `"docker.io/gams"` | Image registry |
 | eventManager.image.repository | string | `"engine-event-manager"` | Image repository |
@@ -134,6 +139,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | eventManager.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | eventManager.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
 | forwardProxy.affinity | object | `{}` | Affinity settings for pod assignment |
+| forwardProxy.extraEnv | list | `[]` | Extra environment variables for forwardProxy |
 | forwardProxy.image.pullSecrets | list | `[]` | Image pull secrets |
 | forwardProxy.image.registry | string | `"docker.io/gams"` | Image registry |
 | forwardProxy.image.repository | string | `"engine-forward-proxy"` | Image repository |
@@ -161,6 +167,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | global.tolerationsSts | list | `[]` | Tolerations for StatefulSets (Databases) |
 | global.useNetworkPolicies | bool | `true` | Enable/Disable NetworkPolicies globally |
 | hypercubeAppender.affinity | object | `{}` | Affinity settings for pod assignment |
+| hypercubeAppender.extraEnv | list | `[]` | Extra environment variables for hypercubeAppender |
 | hypercubeAppender.image.pullSecrets | list | `[]` | Image pull secrets |
 | hypercubeAppender.image.registry | string | `"docker.io/gams"` | Image registry |
 | hypercubeAppender.image.repository | string | `"engine-hypercube-appender"` | Image repository |
@@ -168,6 +175,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | hypercubeAppender.resources.limits | object | `{"ephemeral-storage":"4Gi","memory":"100Mi"}` | Resource limits |
 | hypercubeAppender.resources.requests | object | `{"cpu":"50m","ephemeral-storage":"512Mi","memory":"100Mi"}` | Resource requests |
 | hypercubeUnpacker.affinity | object | `{}` | Affinity settings for pod assignment |
+| hypercubeUnpacker.extraEnv | list | `[]` | Extra environment variables for hypercubeUnpacker |
 | hypercubeUnpacker.image.pullSecrets | list | `[]` | Image pull secrets |
 | hypercubeUnpacker.image.registry | string | `"docker.io/gams"` | Image registry |
 | hypercubeUnpacker.image.repository | string | `"engine-hypercube-unpacker"` | Image repository |
@@ -184,6 +192,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | ingress.pathType | string | `"Prefix"` | The path matching type (e.g. Prefix) |
 | ingress.tls | list | `[]` | TLS configuration |
 | jobCanceler.affinity | object | `{}` | Affinity settings for pod assignment |
+| jobCanceler.extraEnv | list | `[]` | Extra environment variables for jobCanceler |
 | jobCanceler.image.pullSecrets | list | `[]` | Image pull secrets |
 | jobCanceler.image.registry | string | `"docker.io/gams"` | Image registry |
 | jobCanceler.image.repository | string | `"engine-job-canceler"` | Image repository |
@@ -192,6 +201,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | jobCanceler.resources.limits | object | `{"memory":"400Mi"}` | Resource limits |
 | jobCanceler.resources.requests | object | `{"cpu":"50m","memory":"400Mi"}` | Resource requests |
 | jobSpawner.affinity | object | `{}` | Affinity settings for pod assignment |
+| jobSpawner.extraEnv | list | `[]` | Extra environment variables for jobSpawner |
 | jobSpawner.image.pullSecrets | list | `[]` | Image pull secrets |
 | jobSpawner.image.registry | string | `"docker.io/gams"` | Image registry |
 | jobSpawner.image.repository | string | `"engine-job-spawner"` | Image repository |
@@ -205,6 +215,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | jobSpawner.workerImage.tag | string | `""` | Worker Image tag |
 | jobSpawner.workerNetworkPolicy.extraEgress | list | `[]` | Extra egress rules for workers |
 | jobWatcher.affinity | object | `{}` | Affinity settings for pod assignment |
+| jobWatcher.extraEnv | list | `[]` | Extra environment variables for jobWatcher |
 | jobWatcher.image.pullSecrets | list | `[]` | Image pull secrets |
 | jobWatcher.image.registry | string | `"docker.io/gams"` | Image registry |
 | jobWatcher.image.repository | string | `"engine-job-watcher"` | Image repository |

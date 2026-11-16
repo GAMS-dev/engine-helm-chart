@@ -142,6 +142,9 @@ spec:
                   key: PROMETHEUS_AUTH_PASSWORD
                   name: {{ include "gams-engine.prefixname" . }}-secret
 {{- end }}
+            {{- if .Values.broker.extraEnv }}
+            {{- toYaml .Values.broker.extraEnv | nindent 12 }}
+            {{- end }}
         - name: nginx
           image: {{ include "common.images.image" (dict "imageRoot" (dict "registry" .Values.broker.nginx.image.registry "repository" .Values.broker.nginx.image.repository "tag" (coalesce .Values.broker.nginx.image.tag .Values.image.tag .Chart.AppVersion)) "global" .Values.global) }}
           imagePullPolicy: Always

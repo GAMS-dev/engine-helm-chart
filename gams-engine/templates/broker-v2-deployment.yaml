@@ -135,4 +135,7 @@ spec:
                   key: PROMETHEUS_AUTH_PASSWORD
                   name: {{ include "gams-engine.prefixname" . }}-secret
 {{- end }}
+            {{- if .Values.broker.apiVersion2.extraEnv }}
+            {{- toYaml .Values.broker.apiVersion2.extraEnv | nindent 12 }}
+            {{- end }}
 {{- end }}

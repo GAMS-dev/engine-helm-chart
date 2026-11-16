@@ -46,3 +46,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_HYPERCUBE_UNPACKER_PWD
+
+            {{- if .Values.hypercubeUnpacker.extraEnv }}
+            {{- toYaml .Values.hypercubeUnpacker.extraEnv | nindent 12 }}
+            {{- end }}
