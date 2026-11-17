@@ -1004,9 +1004,16 @@ rabbitmq:
   rabbitmqConf: ""
 
   # -- advanced.config content. If empty, the chart's built-in default is used
+  # (consumer_timeout: undefined — no limit). When using RabbitMQ 4.4+, consider
+  # setting an explicit limit, e.g.:
+  #   advancedConfig: |-
+  #     %% advanced.config
+  #     [
+  #       {rabbit, [
+  #         {consumer_timeout, 604800000}
+  #       ]}
+  #     ].
   advancedConfig: ""
-  # By default (consumer_timeout = 604800000 ms / 7 days, sized for the Engine's
-  # long-running jobs on RabbitMQ 4.4+). Set it to override.
 
   initImage:
     # -- Image registry

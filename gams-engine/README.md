@@ -269,7 +269,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresqlMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
 | postgresqlMigrate.image.repository | string | `"engine-postgres-migrate"` | Image repository |
 | postgresqlMigrate.image.tag | string | `""` | Image tag |
-| rabbitmq.advancedConfig | string | `""` | advanced.config content. If empty, the chart's built-in default is used |
+| rabbitmq.advancedConfig | string | `""` | advanced.config content. If empty, the chart's built-in default is used (consumer_timeout: undefined — no limit). When using RabbitMQ 4.4+, consider setting an explicit limit, e.g.:   advancedConfig: |-     %% advanced.config     [       {rabbit, [         {consumer_timeout, 604800000}       ]}     ]. |
 | rabbitmq.affinity | object | `{}` | Affinity settings for pod assignment |
 | rabbitmq.image.pullSecrets | list | `[]` | Image pull secrets |
 | rabbitmq.image.registry | string | `"docker.io"` | Image registry |
