@@ -80,7 +80,7 @@ spec:
             - name: GMS_RUNNER_FORWARD_PROXY_HOST
               value: http://{{ include "gams-engine.prefixname" . }}-fwd-prxy:8000
             - name: UWSGI_NUM_PROCESSES
-              value: "1"
+              value: {{ .Values.broker.uwsgi.numProcesses | quote }}
             - name: UWSGI_MOUNT_LOCATION
               value: "{{ $mountApiUrl }}"
             - name: UWSGI_SOCKET

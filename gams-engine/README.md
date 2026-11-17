@@ -101,6 +101,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.uwsgi.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.uwsgi.image.repository | string | `"engine-broker"` | Image repository |
 | broker.uwsgi.image.tag | string | `""` | Image tag |
+| broker.uwsgi.numProcesses | int | `1` | Number of uWSGI worker processes the broker runs (defaults to 1) |
 | broker.uwsgi.resources.limits | object | `{"memory":"1000Mi"}` | Resource limits |
 | broker.uwsgi.resources.requests | object | `{"cpu":"600m","memory":"1000Mi"}` | Resource requests |
 | cleaner.affinity | object | `{}` | Affinity settings for pod assignment |

@@ -243,6 +243,8 @@ broker:
       tag: ""
       # -- Image pull secrets
       pullSecrets: []
+    # -- Number of uWSGI worker processes the broker runs (defaults to 1)
+    numProcesses: 1
     resources:
       # -- Resource requests
       requests:
