@@ -274,7 +274,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | rabbitmq.image.pullSecrets | list | `[]` | Image pull secrets |
 | rabbitmq.image.registry | string | `"docker.io"` | Image registry |
 | rabbitmq.image.repository | string | `"library/rabbitmq"` | Image repository |
-| rabbitmq.image.tag | string | `"4.4-management-alpine"` | Image tag |
+| rabbitmq.image.tag | string | `"4.2-management-alpine"` | Image tag |
 | rabbitmq.initImage.pullSecrets | list | `[]` | Image pull secrets |
 | rabbitmq.initImage.registry | string | `"docker.io"` | Image registry |
 | rabbitmq.initImage.repository | string | `"library/python"` | Image repository |

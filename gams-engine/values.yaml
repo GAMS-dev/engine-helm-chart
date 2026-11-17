@@ -996,7 +996,7 @@ rabbitmq:
     # -- Image repository
     repository: library/rabbitmq
     # -- Image tag
-    tag: "4.4-management-alpine"
+    tag: "4.2-management-alpine"
     # -- Image pull secrets
     pullSecrets: []
 
