@@ -91,3 +91,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_K8S_CANCEL_PWD
+
+            {{- if .Values.jobCanceler.extraEnv }}
+            {{- toYaml .Values.jobCanceler.extraEnv | nindent 12 }}
+            {{- end }}

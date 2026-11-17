@@ -87,3 +87,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_EVENT_MANAGER_PWD
+
+            {{- if .Values.eventManager.extraEnv }}
+            {{- toYaml .Values.eventManager.extraEnv | nindent 12 }}
+            {{- end }}

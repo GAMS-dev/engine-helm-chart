@@ -71,3 +71,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_FORWARD_PROXY_ENC_KEY
+
+            {{- if .Values.forwardProxy.extraEnv }}
+            {{- toYaml .Values.forwardProxy.extraEnv | nindent 12 }}
+            {{- end }}

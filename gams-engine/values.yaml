@@ -99,6 +99,9 @@ config:
   # -- Disables strict X509 certificate validation for the K8s client
   disable_x509_strict_validation_k8s_client: "false"
 
+  # -- Max combined size of model and its data in MB.
+  maxDataSize: "1000"
+
   licenseCheck:
     # -- Should job spawner check license and get reservation before creating the pod
     enabled: true
@@ -208,10 +211,15 @@ broker:
   affinity: {}
 
   # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
-  # minReplicas is 1 by default
+
+  # -- Min replicas for Broker HPA
+  minReplicas: 1
 
   # -- Max replicas for Broker HPA
-  maxReplicas: 3
+  maxReplicas: 10
+
+  # -- Extra environment variables for broker
+  extraEnv: []
 
   monitoring:
     # When set to true exposes metric at /api/metrics
@@ -334,19 +342,27 @@ broker:
     resources:
       # -- Resource requests
       requests:
-        cpu: "100m"
-        memory: 100Mi
+        cpu: "600m"
+        memory: 1000Mi
       # -- Resource limits
       limits:
-        memory: 200Mi
+        memory: 1000Mi
     # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
     # satisfy BOTH constraints. Ensure they do not contradict each other
 
     # -- Affinity settings for pod assignment
     affinity: {}
 
-    # -- Max replicas for Broker API Version 2
+    # maxReplicas is to set max pod replica limit to API Version 2 HorizontalPodAutoscaler
+
+    # -- Min replicas for Broker API Version 2 HPA
+    minReplicas: 1
+
+    # -- Max replicas for Broker API Version 2 HPA
     maxReplicas: 3
+
+    # -- Extra environment variables for broker v2
+    extraEnv: []
 
   # Broker V2 network policy
   # Only relevant if global.useNetworkPolicies is true
@@ -402,6 +418,9 @@ forwardProxy:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for forwardProxy
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -464,6 +483,9 @@ eventManager:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for eventManager
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -514,6 +536,9 @@ cleaner:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for cleaner
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -542,6 +567,9 @@ dependencyChecker:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for dependencyChecker
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -569,6 +597,9 @@ hypercubeAppender:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for hypercubeAppender
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -600,6 +631,9 @@ hypercubeUnpacker:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for hypercubeUnpacker
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -627,6 +661,9 @@ jobCanceler:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for jobCanceler
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -673,6 +710,9 @@ jobSpawner:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for jobSpawner
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -714,6 +754,9 @@ jobWatcher:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for jobWatcher
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -953,9 +996,17 @@ rabbitmq:
     # -- Image repository
     repository: library/rabbitmq
     # -- Image tag
-    tag: "4.2-management-alpine"
+    tag: "4.4-management-alpine"
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- rabbitmq.conf content. If empty, the chart's built-in default is used
+  rabbitmqConf: ""
+
+  # -- advanced.config content. If empty, the chart's built-in default is used
+  advancedConfig: ""
+  # By default (consumer_timeout = 604800000 ms / 7 days, sized for the Engine's
+  # long-running jobs on RabbitMQ 4.4+). Set it to override.
 
   initImage:
     # -- Image registry

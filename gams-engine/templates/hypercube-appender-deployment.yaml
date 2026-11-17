@@ -65,3 +65,7 @@ spec:
             - name: GMS_RUNNER_MONGO_HOST
               value:  {{ include "gams-engine.prefixname" . }}-mongo
 {{- end }}
+
+            {{- if .Values.hypercubeAppender.extraEnv }}
+            {{- toYaml .Values.hypercubeAppender.extraEnv | nindent 12 }}
+            {{- end }}
