@@ -11,6 +11,8 @@ postgresql:
     #   - own the target database
     #   - have privileges to create schema objects (tables, types, sequences, views),
     #     create roles (broker, worker, cleaner, etc.), and grant permissions on those objects
+    #   - with the bundled license server (gamsLicenseServer.enabled), also have CREATEROLE
+    #     and CREATEDB: a Job creates the license server's user and database with it
     connectionString: "postgresql://engine-postgres:YourSecurePa$$word@postgresql-ha-cnpg-rw.database.svc.cluster.local/test-db"
 
     networkPolicy:

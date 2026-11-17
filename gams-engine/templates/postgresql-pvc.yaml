@@ -4,6 +4,10 @@ apiVersion: v1
 metadata:
   name: {{ include "gams-engine.prefixname" . }}-database-pvc
   namespace: {{ .Release.Namespace }}
+  annotations:
+    # Use a StorageClass with
+    # reclaimPolicy: Retain so the PV survives PVC deletion.
+    helm.sh/resource-policy: keep
   labels:
     {{- include "gams-engine.labels" . | nindent 4 }}
 spec:
@@ -14,5 +18,5 @@ spec:
     - {{ .Values.postgresql.persistence.accessMode | quote }}
   resources:
     requests:
-      storage: {{ .Values.mongodb.persistence.size | quote }}
+      storage: {{ .Values.postgresql.persistence.size | quote }}
 {{- end }}

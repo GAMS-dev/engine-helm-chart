@@ -95,3 +95,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_RABBIT_CLEANER_PWD
+
+            {{- if .Values.cleaner.extraEnv }}
+            {{- toYaml .Values.cleaner.extraEnv | nindent 12 }}
+            {{- end }}

@@ -131,3 +131,16 @@ Create the name of the service account to use
   {{- .Values.postgresql.database -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Non-empty if the bundled GAMS License Server is enabled and its database user
+and database are created by the license-server-db-setup Job.
+*/}}
+{{- define "gams-engine.licenseServer.setupDatabase" -}}
+{{- if .Values.gamsLicenseServer.enabled -}}
+{{- $extDb := (index .Values "gams-license-server").externalDatabase | default dict -}}
+{{- if $extDb.generatePassword -}}
+true
+{{- end -}}
+{{- end -}}
+{{- end -}}

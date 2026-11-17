@@ -89,3 +89,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "gams-engine.prefixname" . }}-secret
                   key: GMS_RUNNER_DATABASE_DEPENDENCY_CHECK_PWD
+
+            {{- if .Values.dependencyChecker.extraEnv }}
+            {{- toYaml .Values.dependencyChecker.extraEnv | nindent 12 }}
+            {{- end }}

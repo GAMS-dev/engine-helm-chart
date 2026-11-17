@@ -57,6 +57,8 @@ spec:
               value: "129"
             - name: GMS_RUNNER_SPWN_MAX_RAM_MiB
               value: "4200000"
+            - name: MAX_DATA_SIZE
+              value: {{ .Values.config.maxDataSize | quote }}
             - name: GMS_RUNNER_LOG_SHOW_MSEC
               value: "true"
             - name: GMS_RUNNER_FORWARD_PROXY_PWD
@@ -133,4 +135,7 @@ spec:
                   key: PROMETHEUS_AUTH_PASSWORD
                   name: {{ include "gams-engine.prefixname" . }}-secret
 {{- end }}
+            {{- if .Values.broker.apiVersion2.extraEnv }}
+            {{- toYaml .Values.broker.apiVersion2.extraEnv | nindent 12 }}
+            {{- end }}
 {{- end }}

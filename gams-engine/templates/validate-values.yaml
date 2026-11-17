@@ -1,0 +1,9 @@
+{{- if and .Values.gamsLicenseServer .Values.gamsLicenseServer.enabled -}}
+  {{- $subchart := index .Values "gams-license-server" -}}
+  {{- if $subchart.cnpgDatabase.enabled -}}
+    {{- fail "\n\n[ERROR] Enabling 'gams-license-server.cnpgDatabase.enabled' is not supported in this deployment. Please set 'gams-license-server.cnpgDatabase.enabled: false'.\n" -}}
+  {{- end -}}
+  {{- if and .Values.postgresql.externalDatabase.enabled (eq $subchart.externalDatabase.host "license-server-database") -}}
+    {{- fail "\n\n[ERROR] With an external PostgreSQL database (postgresql.externalDatabase.enabled), set 'gams-license-server.externalDatabase.host' (and 'port') to that database, and replace 'gams-license-server.licenseServer.networkPolicy.extraEgress' with a rule for it.\n" -}}
+  {{- end -}}
+{{- end -}}

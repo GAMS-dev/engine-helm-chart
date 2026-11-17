@@ -99,6 +99,9 @@ config:
   # -- Disables strict X509 certificate validation for the K8s client
   disable_x509_strict_validation_k8s_client: "false"
 
+  # -- Max combined size of model and its data in MB.
+  maxDataSize: "1000"
+
   licenseCheck:
     # -- Should job spawner check license and get reservation before creating the pod
     enabled: true
@@ -112,6 +115,42 @@ config:
 
     # -- How much time to wait for the license server to reply
     licenseServerTimeoutSeconds: 10
+
+# GAMS License Server that can be installed alongside GAMS Engine K
+
+gamsLicenseServer:
+  # -- Enable to install the bundled GAMS License Server
+  enabled: false
+
+gams-license-server:
+  #  Replica count of gams-license-server deployment
+  licenseServer:
+    replicaCount: 1
+    networkPolicy:
+      # -- Lets the license server and its migration Job reach Engine's PostgreSQL. With an external Engine database, replace it with a rule for that database.
+      extraEgress:
+        - to:
+            - podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: gams-engine
+          ports:
+            - port: 5432
+              protocol: TCP
+  #  Do not create a new postgres instance, try to use a new database in Engine
+  cnpgDatabase:
+    enabled: false
+  #  License server is a subchart, so our database is an external database not created by that chart.
+  externalDatabase:
+    # -- Engine's own PostgreSQL, through a Service with this fixed name. With an external Engine database (postgresql.externalDatabase.enabled), set it to that database.
+    host: "license-server-database"
+    port: 5432
+    database: "license_server"
+    user: "license_server"
+    # -- Do not change this value, unless you know what you are doing.
+    # The license server chart generates the database password and stores it
+    # in the Secret <release>-ls-db-credentials, which the license-server-db-setup
+    # Job reads.
+    generatePassword: true
 
 ingress:
   # -- Enable or disable the Ingress resource
@@ -172,10 +211,15 @@ broker:
   affinity: {}
 
   # maxReplicas is to set max pod replica limit to broker HorizontalPodAutoscaler
-  # minReplicas is 1 by default
+
+  # -- Min replicas for Broker HPA
+  minReplicas: 1
 
   # -- Max replicas for Broker HPA
-  maxReplicas: 3
+  maxReplicas: 10
+
+  # -- Extra environment variables for broker
+  extraEnv: []
 
   monitoring:
     # When set to true exposes metric at /api/metrics
@@ -199,6 +243,8 @@ broker:
       tag: ""
       # -- Image pull secrets
       pullSecrets: []
+    # -- Number of uWSGI worker processes the broker runs (defaults to 1)
+    numProcesses: 1
     resources:
       # -- Resource requests
       requests:
@@ -298,19 +344,27 @@ broker:
     resources:
       # -- Resource requests
       requests:
-        cpu: "100m"
-        memory: 100Mi
+        cpu: "600m"
+        memory: 1000Mi
       # -- Resource limits
       limits:
-        memory: 200Mi
+        memory: 1000Mi
     # NOTE: If both 'global.nodeSelector' and 'affinity' are specified, the pod must
     # satisfy BOTH constraints. Ensure they do not contradict each other
 
     # -- Affinity settings for pod assignment
     affinity: {}
 
-    # -- Max replicas for Broker API Version 2
+    # maxReplicas is to set max pod replica limit to API Version 2 HorizontalPodAutoscaler
+
+    # -- Min replicas for Broker API Version 2 HPA
+    minReplicas: 1
+
+    # -- Max replicas for Broker API Version 2 HPA
     maxReplicas: 3
+
+    # -- Extra environment variables for broker v2
+    extraEnv: []
 
   # Broker V2 network policy
   # Only relevant if global.useNetworkPolicies is true
@@ -366,6 +420,9 @@ forwardProxy:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for forwardProxy
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -428,6 +485,9 @@ eventManager:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for eventManager
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -478,6 +538,9 @@ cleaner:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for cleaner
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -506,6 +569,9 @@ dependencyChecker:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for dependencyChecker
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -533,6 +599,9 @@ hypercubeAppender:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for hypercubeAppender
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -564,6 +633,9 @@ hypercubeUnpacker:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for hypercubeUnpacker
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -591,6 +663,9 @@ jobCanceler:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for jobCanceler
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -637,6 +712,9 @@ jobSpawner:
     # -- Image pull secrets
     pullSecrets: []
 
+  # -- Extra environment variables for jobSpawner
+  extraEnv: []
+
   resources:
     # -- Resource requests
     requests:
@@ -678,6 +756,9 @@ jobWatcher:
     tag: ""
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- Extra environment variables for jobWatcher
+  extraEnv: []
 
   resources:
     # -- Resource requests
@@ -864,6 +945,9 @@ postgresql:
     # !! IMPORTANT: The POSTGRESQL user MUST have privileges to create schema objects
     #    (tables, types, sequences, views), create roles (broker, worker,
     #    cleaner, etc.), and grant permissions on those objects.
+    #    With the bundled license server (gamsLicenseServer.enabled), it also
+    #    needs CREATEROLE and CREATEDB: a Job creates the license server's
+    #    user and database with it.
     #
     # Format: postgresql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>
 
@@ -917,6 +1001,21 @@ rabbitmq:
     tag: "4.2-management-alpine"
     # -- Image pull secrets
     pullSecrets: []
+
+  # -- rabbitmq.conf content. If empty, the chart's built-in default is used
+  rabbitmqConf: ""
+
+  # -- advanced.config content. If empty, the chart's built-in default is used
+  # (consumer_timeout: undefined — no limit). When using RabbitMQ 4.4+, consider
+  # setting an explicit limit, e.g.:
+  #   advancedConfig: |-
+  #     %% advanced.config
+  #     [
+  #       {rabbit, [
+  #         {consumer_timeout, 604800000}
+  #       ]}
+  #     ].
+  advancedConfig: ""
 
   initImage:
     # -- Image registry

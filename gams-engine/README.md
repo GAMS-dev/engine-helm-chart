@@ -4,7 +4,7 @@ Official Helm chart for GAMS Engine. A scalable job and user management system f
 
 ## `chart.version`
 
-0.21.0
+0.23.0
 
 ## `chart.type`
 
@@ -12,7 +12,7 @@ application
 
 ## `chart.appVersion`
 
-26.11.04
+26.11.17
 
 ## `chart.kubeVersion`
 
@@ -64,20 +64,24 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.affinity | object | `{}` | Affinity settings for pod assignment |
 | broker.apiVersion2.affinity | object | `{}` | Affinity settings for pod assignment |
 | broker.apiVersion2.enabled | bool | `false` | Enable Broker API Version 2 (beta) |
+| broker.apiVersion2.extraEnv | list | `[]` | Extra environment variables for broker v2 |
 | broker.apiVersion2.image.pullSecrets | list | `[]` | Image pull secrets |
 | broker.apiVersion2.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.apiVersion2.image.repository | string | `"engine-brokerv2"` | Image repository |
 | broker.apiVersion2.image.tag | string | `""` | Image tag |
-| broker.apiVersion2.maxReplicas | int | `3` | Max replicas for Broker API Version 2 |
+| broker.apiVersion2.maxReplicas | int | `3` | Max replicas for Broker API Version 2 HPA |
+| broker.apiVersion2.minReplicas | int | `1` | Min replicas for Broker API Version 2 HPA |
 | broker.apiVersion2.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
 | broker.apiVersion2.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | broker.apiVersion2.networkPolicy.ingress | list | `[{"ports":[{"port":5000,"protocol":"TCP"}]}]` | Ingress rules for the Broker V2 |
-| broker.apiVersion2.resources.limits | object | `{"memory":"200Mi"}` | Resource limits |
-| broker.apiVersion2.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
+| broker.apiVersion2.resources.limits | object | `{"memory":"1000Mi"}` | Resource limits |
+| broker.apiVersion2.resources.requests | object | `{"cpu":"600m","memory":"1000Mi"}` | Resource requests |
 | broker.apiVersion2.service.annotations | object | `{}` |  |
 | broker.apiVersion2.service.port | int | `80` | Service Port |
 | broker.apiVersion2.service.type | string | `"ClusterIP"` | Service Type (ClusterIP, NodePort, LoadBalancer) |
-| broker.maxReplicas | int | `3` | Max replicas for Broker HPA |
+| broker.extraEnv | list | `[]` | Extra environment variables for broker |
+| broker.maxReplicas | int | `10` | Max replicas for Broker HPA |
+| broker.minReplicas | int | `1` | Min replicas for Broker HPA |
 | broker.monitoring.metricsEnabled | bool | `false` | Expose metrics at /api/metrics |
 | broker.monitoring.podMonitorEnabled | bool | `false` | Create a Prometheus Operator PodMonitor |
 | broker.networkPolicy.extraEgress | list | `[]` | Extra egress rules |
@@ -97,9 +101,11 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | broker.uwsgi.image.registry | string | `"docker.io/gams"` | Image registry |
 | broker.uwsgi.image.repository | string | `"engine-broker"` | Image repository |
 | broker.uwsgi.image.tag | string | `""` | Image tag |
+| broker.uwsgi.numProcesses | int | `1` | Number of uWSGI worker processes the broker runs (defaults to 1) |
 | broker.uwsgi.resources.limits | object | `{"memory":"1000Mi"}` | Resource limits |
 | broker.uwsgi.resources.requests | object | `{"cpu":"600m","memory":"1000Mi"}` | Resource requests |
 | cleaner.affinity | object | `{}` | Affinity settings for pod assignment |
+| cleaner.extraEnv | list | `[]` | Extra environment variables for cleaner |
 | cleaner.image.pullSecrets | list | `[]` | Image pull secrets |
 | cleaner.image.registry | string | `"docker.io/gams"` | Image registry |
 | cleaner.image.repository | string | `"engine-cleaner"` | Image repository |
@@ -112,10 +118,12 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | config.licenseCheck.enabled | bool | `true` | Should job spawner check license and get reservation before creating the pod |
 | config.licenseCheck.licenseServerTimeoutSeconds | int | `10` | How much time to wait for the license server to reply |
 | config.licenseCheck.retryBackoffSeconds | int | `5` | How much time to wait before retrying in the blocking mode |
+| config.maxDataSize | string | `"1000"` | Max combined size of model and its data in MB. |
 | config.maxPendingJobDurationSeconds | int | `120` | Max duration (seconds) a job can remain pending |
 | config.maxPendingJobs | int | `5` | Max pending jobs in the queue before new ones are held |
 | config.workerStartupDurationSeconds | int | `0` | Volume quota deduction per worker spawned |
 | dependencyChecker.affinity | object | `{}` | Affinity settings for pod assignment |
+| dependencyChecker.extraEnv | list | `[]` | Extra environment variables for dependencyChecker |
 | dependencyChecker.image.pullSecrets | list | `[]` | Image pull secrets |
 | dependencyChecker.image.registry | string | `"docker.io/gams"` | Image registry |
 | dependencyChecker.image.repository | string | `"engine-dependency-checker"` | Image repository |
@@ -123,6 +131,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | dependencyChecker.resources.limits | object | `{"memory":"250Mi"}` | Resource limits |
 | dependencyChecker.resources.requests | object | `{"cpu":"50m","memory":"250Mi"}` | Resource requests |
 | eventManager.affinity | object | `{}` | Affinity settings for pod assignment |
+| eventManager.extraEnv | list | `[]` | Extra environment variables for eventManager |
 | eventManager.image.pullSecrets | list | `[]` | Image pull secrets |
 | eventManager.image.registry | string | `"docker.io/gams"` | Image registry |
 | eventManager.image.repository | string | `"engine-event-manager"` | Image repository |
@@ -131,6 +140,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | eventManager.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | eventManager.resources.requests | object | `{"cpu":"100m","memory":"100Mi"}` | Resource requests |
 | forwardProxy.affinity | object | `{}` | Affinity settings for pod assignment |
+| forwardProxy.extraEnv | list | `[]` | Extra environment variables for forwardProxy |
 | forwardProxy.image.pullSecrets | list | `[]` | Image pull secrets |
 | forwardProxy.image.registry | string | `"docker.io/gams"` | Image registry |
 | forwardProxy.image.repository | string | `"engine-forward-proxy"` | Image repository |
@@ -139,6 +149,15 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | forwardProxy.networkPolicy.extraIngress | list | `[]` | Extra ingress rules |
 | forwardProxy.resources.limits | object | `{"memory":"100Mi"}` | Resource limits |
 | forwardProxy.resources.requests | object | `{"cpu":"50m","memory":"100Mi"}` | Resource requests |
+| gams-license-server.cnpgDatabase.enabled | bool | `false` |  |
+| gams-license-server.externalDatabase.database | string | `"license_server"` |  |
+| gams-license-server.externalDatabase.generatePassword | bool | `true` | Do not change this value, unless you know what you are doing. The license server chart generates the database password and stores it in the Secret <release>-ls-db-credentials, which the license-server-db-setup Job reads. |
+| gams-license-server.externalDatabase.host | string | `"license-server-database"` | Engine's own PostgreSQL, through a Service with this fixed name. With an external Engine database (postgresql.externalDatabase.enabled), set it to that database. |
+| gams-license-server.externalDatabase.port | int | `5432` |  |
+| gams-license-server.externalDatabase.user | string | `"license_server"` |  |
+| gams-license-server.licenseServer.networkPolicy.extraEgress | list | `[{"ports":[{"port":5432,"protocol":"TCP"}],"to":[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"gams-engine"}}}]}]` | Lets the license server and its migration Job reach Engine's PostgreSQL. With an external Engine database, replace it with a rule for that database. |
+| gams-license-server.licenseServer.replicaCount | int | `1` |  |
+| gamsLicenseServer.enabled | bool | `false` | Enable to install the bundled GAMS License Server |
 | global | object | `{"dnsNamespace":"kube-system","imagePullSecrets":[],"imageRegistry":"","nodeSelector":{},"nodeSelectorSts":{},"tolerations":[],"tolerationsSts":[],"useNetworkPolicies":true}` | --------------------------------------------------------------- |
 | global.dnsNamespace | string | `"kube-system"` | Namespace of the cluster DNS pods (k8s-app: kube-dns), used in NetworkPolicy DNS egress rules |
 | global.imagePullSecrets | list | `[]` | List of image pull secrets |
@@ -149,6 +168,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | global.tolerationsSts | list | `[]` | Tolerations for StatefulSets (Databases) |
 | global.useNetworkPolicies | bool | `true` | Enable/Disable NetworkPolicies globally |
 | hypercubeAppender.affinity | object | `{}` | Affinity settings for pod assignment |
+| hypercubeAppender.extraEnv | list | `[]` | Extra environment variables for hypercubeAppender |
 | hypercubeAppender.image.pullSecrets | list | `[]` | Image pull secrets |
 | hypercubeAppender.image.registry | string | `"docker.io/gams"` | Image registry |
 | hypercubeAppender.image.repository | string | `"engine-hypercube-appender"` | Image repository |
@@ -156,6 +176,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | hypercubeAppender.resources.limits | object | `{"ephemeral-storage":"4Gi","memory":"100Mi"}` | Resource limits |
 | hypercubeAppender.resources.requests | object | `{"cpu":"50m","ephemeral-storage":"512Mi","memory":"100Mi"}` | Resource requests |
 | hypercubeUnpacker.affinity | object | `{}` | Affinity settings for pod assignment |
+| hypercubeUnpacker.extraEnv | list | `[]` | Extra environment variables for hypercubeUnpacker |
 | hypercubeUnpacker.image.pullSecrets | list | `[]` | Image pull secrets |
 | hypercubeUnpacker.image.registry | string | `"docker.io/gams"` | Image registry |
 | hypercubeUnpacker.image.repository | string | `"engine-hypercube-unpacker"` | Image repository |
@@ -172,6 +193,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | ingress.pathType | string | `"Prefix"` | The path matching type (e.g. Prefix) |
 | ingress.tls | list | `[]` | TLS configuration |
 | jobCanceler.affinity | object | `{}` | Affinity settings for pod assignment |
+| jobCanceler.extraEnv | list | `[]` | Extra environment variables for jobCanceler |
 | jobCanceler.image.pullSecrets | list | `[]` | Image pull secrets |
 | jobCanceler.image.registry | string | `"docker.io/gams"` | Image registry |
 | jobCanceler.image.repository | string | `"engine-job-canceler"` | Image repository |
@@ -180,6 +202,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | jobCanceler.resources.limits | object | `{"memory":"400Mi"}` | Resource limits |
 | jobCanceler.resources.requests | object | `{"cpu":"50m","memory":"400Mi"}` | Resource requests |
 | jobSpawner.affinity | object | `{}` | Affinity settings for pod assignment |
+| jobSpawner.extraEnv | list | `[]` | Extra environment variables for jobSpawner |
 | jobSpawner.image.pullSecrets | list | `[]` | Image pull secrets |
 | jobSpawner.image.registry | string | `"docker.io/gams"` | Image registry |
 | jobSpawner.image.repository | string | `"engine-job-spawner"` | Image repository |
@@ -193,6 +216,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | jobSpawner.workerImage.tag | string | `""` | Worker Image tag |
 | jobSpawner.workerNetworkPolicy.extraEgress | list | `[]` | Extra egress rules for workers |
 | jobWatcher.affinity | object | `{}` | Affinity settings for pod assignment |
+| jobWatcher.extraEnv | list | `[]` | Extra environment variables for jobWatcher |
 | jobWatcher.image.pullSecrets | list | `[]` | Image pull secrets |
 | jobWatcher.image.registry | string | `"docker.io/gams"` | Image registry |
 | jobWatcher.image.repository | string | `"engine-job-watcher"` | Image repository |
@@ -246,6 +270,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | postgresqlMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
 | postgresqlMigrate.image.repository | string | `"engine-postgres-migrate"` | Image repository |
 | postgresqlMigrate.image.tag | string | `""` | Image tag |
+| rabbitmq.advancedConfig | string | `""` | advanced.config content. If empty, the chart's built-in default is used (consumer_timeout: undefined — no limit). When using RabbitMQ 4.4+, consider setting an explicit limit, e.g.:   advancedConfig: |-     %% advanced.config     [       {rabbit, [         {consumer_timeout, 604800000}       ]}     ]. |
 | rabbitmq.affinity | object | `{}` | Affinity settings for pod assignment |
 | rabbitmq.image.pullSecrets | list | `[]` | Image pull secrets |
 | rabbitmq.image.registry | string | `"docker.io"` | Image registry |
@@ -260,6 +285,7 @@ The following table lists the configurable parameters of the GAMS Engine chart a
 | rabbitmq.persistence.accessMode | string | `"ReadWriteOnce"` | Access mode for the volume |
 | rabbitmq.persistence.size | string | `"4Gi"` | Size of the persistent volume |
 | rabbitmq.persistence.storageClassName | string | `""` | Storage Class to use |
+| rabbitmq.rabbitmqConf | string | `""` | rabbitmq.conf content. If empty, the chart's built-in default is used |
 | rabbitmq.resources.limits | object | `{"memory":"6Gi"}` | Resource limits |
 | rabbitmq.resources.requests | object | `{"cpu":"500m","memory":"5Gi"}` | Resource requests |
 | rabbitmqMigrate.image.registry | string | `"docker.io/gams"` | Image registry |
